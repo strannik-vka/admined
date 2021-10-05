@@ -1,5 +1,29 @@
 {
   "dependencies": {
     "react": "^17.0.2"
-  }
+  },
+  "name": "admined",
+  "version": "1.0.0",
+  "description": "Админка",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/strannik-vka/admined.git"
+  },
+  "keywords": [
+    "admin",
+    "react-admin",
+    "adminer",
+    "laravel-admin"
+  ],
+  "author": "https://vk.com/strannik_vka",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/strannik-vka/admined/issues"
+  },
+  "homepage": "https://github.com/strannik-vka/admined#readme"
 }
