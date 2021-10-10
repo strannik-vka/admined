@@ -1,14 +1,22 @@
 {
   "dependencies": {
-    "react": "^17.0.2"
+    "axios": "^0.22.0",
+    "bootstrap": "^5.1.1",
+    "react": "^17.0.2",
+    "react-bootstrap": "^2.0.0-rc.0",
+    "react-dom": "^17.0.2",
+    "react-select": "^5.1.0"
   },
   "name": "admined",
   "version": "1.0.0",
   "description": "Админка",
-  "main": "index.js",
-  "devDependencies": {},
+  "main": "lib/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "development": "mix",
+    "mix-watch": "mix watch",
+    "mix-production": "mix --production",
+    "watch": "babel --watch src -d lib",
+    "build": "babel src -d lib"
   },
   "repository": {
     "type": "git",
@@ -25,5 +33,16 @@
   "bugs": {
     "url": "https://github.com/strannik-vka/admined/issues"
   },
-  "homepage": "https://github.com/strannik-vka/admined#readme"
+  "homepage": "https://github.com/strannik-vka/admined#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.6",
+    "@babel/preset-react": "^7.14.5",
+    "babel-loader": "^8.2.2",
+    "laravel-mix": "^6.0.31",
+    "resolve-url-loader": "^4.0.0",
+    "sass": "^1.42.1",
+    "sass-loader": "^12.1.0"
+  }
 }

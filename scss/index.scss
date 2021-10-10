@@ -1,0 +1,44 @@
+// bootstrap - default
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/root";
+
+// bootstrap - color
+$primary: #adb5bd;
+
+// bootstrap - optional
+@import "../node_modules/bootstrap/scss/grid";
+@import "../node_modules/bootstrap/scss/utilities";
+@import "../node_modules/bootstrap/scss/utilities/api";
+@import "../node_modules/bootstrap/scss/modal";
+@import "../node_modules/bootstrap/scss/close";
+@import "../node_modules/bootstrap/scss/forms/form-check";
+@import "../node_modules/bootstrap/scss/forms/validation";
+@import "../node_modules/bootstrap/scss/tooltip";
+
+// Admined
+@import "./components/colors.scss";
+
+body {
+    margin: 0;
+    font-size: 15px;
+    color: #495057;
+    background-color: #f2f2f2;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+        "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    overflow-y: scroll;
+}
+
+*,
+::after,
+::before {
+    box-sizing: border-box;
+}
+
+@import "./components/scrollbar.scss";
+@import "./components/header.scss";
+@import "./components/form.scss";
+@import "./components/items.scss";
+@import "./components/modal.scss";
+@import "./components/btn.scss";

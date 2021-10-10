@@ -1,0 +1,21 @@
+.btn {
+    border-radius: 8px;
+    border: 1px solid var(--c-border-light);
+    height: calc(1.5em + 0.5rem + 2px);
+    padding: 0.25rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    cursor: pointer;
+    color: var(--c-primary-dark);
+    background: #e0e0e0;
+
+    &:hover {
+        background: #d6d5d5;
+        border-color: #d6d5d5;
+    }
+
+    &.btn-disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+}

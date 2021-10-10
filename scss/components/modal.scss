@@ -1,0 +1,16 @@
+.modal {
+    .modal-content {
+        border-radius: 8px;
+        border: 0;
+
+        .btn-close {
+            position: absolute;
+            right: 13px;
+            top: 13px;
+            z-index: 5;
+            outline: 0;
+            box-shadow: none;
+            cursor: pointer;
+        }
+    }
+}

@@ -1,0 +1,68 @@
+#header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+
+    padding-right: 15px;
+    padding-left: 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ecedee;
+    font-weight: 500;
+
+    .menu {
+        display: flex;
+        justify-content: center;
+
+        .link {
+            display: block;
+            padding: 0.5rem 1rem 0.7rem;
+            font-weight: 500;
+            color: #8b8b8b;
+            text-decoration: none;
+
+            &:hover,
+            &.active {
+                color: #495057;
+            }
+
+            &.active {
+                position: relative;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    bottom: -0.5px;
+                    transform: rotate(180deg);
+                    left: 50%;
+                    margin-left: -7px;
+                    border: 7px solid rgb(0 0 0 / 0%);
+                    border-top: 7px solid #dee2e6;
+                }
+            }
+        }
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid #dee2e6;
+        padding-bottom: 0.5rem;
+        padding-top: 0.5rem;
+
+        .saveStatus {
+            font-weight: 400;
+            margin-left: 15px;
+        }
+
+        .action-item {
+            margin-left: 8px;
+        }
+
+        .selected {
+            margin-right: 10px;
+        }
+    }
+}
