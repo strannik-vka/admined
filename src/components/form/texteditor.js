@@ -82,9 +82,11 @@ class TextEditor extends React.Component {
     }
 
     onChange = (editorState) => {
+        console.log('Опа');
+
         this.setState({
             editorState,
-            value: stateToHTML(this.state.editorState.getCurrentContent(), {
+            value: stateToHTML(editorState.getCurrentContent(), {
                 entityStyleFn: (entity) => {
                     if (entity.get('type').toLowerCase() === 'link') {
                         return {
