@@ -5,25 +5,28 @@ class Textarea extends React.Component {
     constructor(props) {
         super(props);
 
-        var value = this.props.value ? this.props.value : '',
-            rows = this.getRows(value);
+        var value = this.props.value ? this.props.value : '';
 
         this.state = {
-            rows: rows > 4 ? rows : 4,
             value: value
         }
     }
 
-    getRows(str) {
-        return str.split("\n").length;
+    autoHeight(elem) {
+        elem.parentNode.style.minHeight = elem.style.height;
+        elem.style.height = "inherit";
+        elem.style.height = (Math.max(elem.scrollHeight, 100) + 5) + 'px';
+        elem.style.overflow = "hidden";
     }
 
     onKeyPress = (e) => {
-        var rows = this.getRows(e.target.value);
+        this.autoHeight(e.target);
+    }
 
-        this.setState({
-            rows: rows > 4 ? rows : 4
-        });
+    componentDidMount() {
+        setTimeout(() => {
+            this.autoHeight(document.querySelector('form [name="' + this.props.name + '"]'));
+        }, 100);
     }
 
     onInput = (event) => {
@@ -43,7 +46,6 @@ class Textarea extends React.Component {
                     onKeyDown={this.onKeyPress}
                     onKeyUp={this.onKeyPress}
                     onInput={this.onInput}
-                    rows={this.state.rows}
                     value={this.state.value}
                 ></textarea>
                 {
