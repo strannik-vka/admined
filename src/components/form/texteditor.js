@@ -24,7 +24,7 @@ class TextEditor extends React.Component {
                         const { url } = props.contentState.getEntity(props.entityKey).getData();
 
                         return (
-                            <a href={url} title={url} className="ed-link">
+                            <a href={url} title={url}>
                                 {props.children}
                             </a>
                         );
@@ -84,7 +84,19 @@ class TextEditor extends React.Component {
     onChange = (editorState) => {
         this.setState({
             editorState,
-            value: stateToHTML(this.state.editorState.getCurrentContent())
+            value: stateToHTML(this.state.editorState.getCurrentContent(), {
+                entityStyleFn: (entity) => {
+                    if (entity.get('type').toLowerCase() === 'link') {
+                        return {
+                            element: 'a',
+                            attributes: {
+                                href: entity.getData().url,
+                                target: '_blank'
+                            }
+                        };
+                    }
+                }
+            })
         }, () => {
             if (typeof this.props.onChange === 'function') {
                 this.props.onChange();
