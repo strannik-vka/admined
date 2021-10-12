@@ -3,8 +3,8 @@ import { CloseButton, Modal } from "react-bootstrap";
 import Input from "./form/input";
 import Select from "./form/select";
 import Switch from "./form/switch";
-import Textarea from "./form/textarea";
 import File from "./form/file";
+import TextEditor from "./form/texteditor";
 
 const axios = require('axios').default;
 
@@ -41,16 +41,16 @@ class Form extends React.Component {
 
     file(input) {
         return (
-            <File name={input.name} errors={this.state.errors[input.name]} errorHide={this.errorHide} />
+            <File name={input.name} errors={this.state.errors[input.name]} errorHide={() => this.errorHide(input.name)} />
         );
     }
 
     text(input) {
         return (
-            <Textarea
+            <TextEditor
                 name={input.name}
                 errors={this.state.errors[input.name]}
-                errorHide={this.errorHide}
+                onChange={() => this.errorHide(input.name)}
                 value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
             />
         );
@@ -62,20 +62,20 @@ class Form extends React.Component {
                 type={input.type}
                 name={input.name}
                 errors={this.state.errors[input.name]}
-                errorHide={this.errorHide}
+                errorHide={() => this.errorHide(input.name)}
                 value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
             />
         );
     }
 
-    errorHide = (e) => {
-        var name = e.target.getAttribute('name');
+    errorHide = (name) => {
+        if (this.state.errors[name]) {
+            delete this.state.errors[name];
 
-        delete this.state.errors[name];
-
-        this.setState({
-            errors: this.state.errors
-        });
+            this.setState({
+                errors: this.state.errors
+            });
+        }
     }
 
     formGroups() {

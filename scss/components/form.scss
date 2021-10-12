@@ -63,6 +63,10 @@
         transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
             box-shadow 0.15s ease-in-out;
     }
+
+    &.editor {
+        height: auto;
+    }
 }
 
 .modal .form-control {
@@ -80,6 +84,18 @@
 textarea.form-control {
     height: auto;
     min-height: calc(1.5em + 0.5rem + 2px);
+}
+
+select.form-control {
+    cursor: pointer;
+}
+
+.editor-btns .btn {
+    margin-right: 3px;
+    margin-bottom: 4px;
+    padding: 3px 10px;
+    height: auto;
+    font-size: 12px;
 }
 
 .form-group label {

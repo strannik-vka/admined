@@ -57,9 +57,9 @@
   --bs-gutter-y: 0;
   display: flex;
   flex-wrap: wrap;
-  margin-top: calc(var(--bs-gutter-y) * -1);
-  margin-right: calc(var(--bs-gutter-x) * -0.5);
-  margin-left: calc(var(--bs-gutter-x) * -0.5);
+  margin-top: calc(-1 * var(--bs-gutter-y));
+  margin-right: calc(-0.5 * var(--bs-gutter-x));
+  margin-left: calc(-0.5 * var(--bs-gutter-x));
 }
 .row > * {
   flex-shrink: 0;
@@ -6843,6 +6843,9 @@ body {
   -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+.form-control.editor {
+  height: auto;
+}
 
 .modal .form-control {
   width: 100%;
@@ -6858,6 +6861,18 @@ body {
 textarea.form-control {
   height: auto;
   min-height: calc(1.5em + 0.5rem + 2px);
+}
+
+select.form-control {
+  cursor: pointer;
+}
+
+.editor-btns .btn {
+  margin-right: 3px;
+  margin-bottom: 4px;
+  padding: 3px 10px;
+  height: auto;
+  font-size: 12px;
 }
 
 .form-group label {
