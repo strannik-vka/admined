@@ -82,8 +82,6 @@ class TextEditor extends React.Component {
     }
 
     onChange = (editorState) => {
-        console.log('Опа');
-
         this.setState({
             editorState,
             value: stateToHTML(editorState.getCurrentContent(), {
