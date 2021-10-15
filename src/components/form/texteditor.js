@@ -9,7 +9,7 @@ class TextEditor extends React.Component {
 
         this.state = {
             editorState: EditorState.createWithContent(
-                ContentState.createFromBlockArray(convertFromHTML(this.props.value)),
+                ContentState.createFromBlockArray(this.props.value ? convertFromHTML(this.props.value) : []),
                 new CompositeDecorator([{
                     strategy: (contentBlock, callback, contentState) => {
                         contentBlock.findEntityRanges((character) => {
@@ -98,8 +98,8 @@ class TextEditor extends React.Component {
                 }
             })
         }, () => {
-            if (typeof this.props.onChange === 'function') {
-                this.props.onChange();
+            if (typeof this.props.onInput === 'function') {
+                this.props.onInput();
             }
         });
     }

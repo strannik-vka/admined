@@ -5,6 +5,7 @@ import Select from "./form/select";
 import Switch from "./form/switch";
 import File from "./form/file";
 import TextEditor from "./form/texteditor";
+import Textarea from "./form/textarea";
 
 const axios = require('axios').default;
 
@@ -32,6 +33,7 @@ class Form extends React.Component {
     select(input) {
         return (
             <Select
+                options={this.props.page.vars[input.name.replace('_id', '')]}
                 name={input.name}
                 url={input.url}
                 value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
@@ -47,10 +49,21 @@ class Form extends React.Component {
 
     text(input) {
         return (
+            <Textarea
+                name={input.name}
+                errors={this.state.errors[input.name]}
+                onInput={() => this.errorHide(input.name)}
+                value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
+            />
+        );
+    }
+
+    texteditor(input) {
+        return (
             <TextEditor
                 name={input.name}
                 errors={this.state.errors[input.name]}
-                onChange={() => this.errorHide(input.name)}
+                onInput={() => this.errorHide(input.name)}
                 value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
             />
         );
@@ -68,6 +81,26 @@ class Form extends React.Component {
         );
     }
 
+    datetime(input) {
+        return (
+            <Input
+                type={input.type}
+                name={input.name}
+                errors={this.state.errors[input.name]}
+                errorHide={() => this.errorHide(input.name)}
+                value={
+                    this.props.editItem[input.name]
+                        ? this.props.editItem[input.name]
+                        : (
+                            typeof input.value === 'function'
+                                ? input.value()
+                                : input.value
+                        )
+                }
+            />
+        );
+    }
+
     errorHide = (name) => {
         if (this.state.errors[name]) {
             delete this.state.errors[name];
@@ -80,7 +113,7 @@ class Form extends React.Component {
 
     formGroups() {
         return this.props.page.form.map((input) => {
-            var type = input.type ? (input.type == 'datetime' ? 'string' : input.type) : 'string';
+            var type = input.type ? input.type : 'string';
 
             return (
                 input.readonly ? false :

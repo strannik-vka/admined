@@ -26,12 +26,17 @@ class Filter extends React.Component {
                                     ? <Select
                                         name={input.name}
                                         options={this.props.page.vars[input.name.replace('_id', '')]}
+                                        placeholder={input.placeholder}
+                                        value={this.props.page.filter[input.name]}
+                                        onChange={(value) => this.props.onChange(value, input.name)}
                                     />
                                     : <DivInput
                                         readonly={input.filter === 'readonly'}
                                         name={input.name}
                                         placeholder={input.placeholder}
                                         center={input.center}
+                                        value={this.props.page.filter[input.name]}
+                                        onInput={(value, callback) => this.props.onChange(value, input.name, callback)}
                                     />
                                 }
                             </th>

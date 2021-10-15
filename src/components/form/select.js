@@ -40,12 +40,12 @@ class Select extends React.Component {
     render() {
         return (
             <select
-                className="form-control w-100"
+                className="form-control"
                 name={this.props.name}
                 onChange={this.onChange}
                 value={this.isOnChange ? (this.props.value ? this.props.value : '') : this.state.value}
             >
-                <option value="">- Выбрать -</option>
+                <option value="">{this.props.placeholder ? this.props.placeholder : '- Выбрать -'}</option>
                 {
                     (this.props.options ? this.props.options : this.state.options).map((option) => {
                         var value = option.id ? option.id : (option.value ? option.value : '');

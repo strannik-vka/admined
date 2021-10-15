@@ -86,16 +86,28 @@ textarea.form-control {
     min-height: calc(1.5em + 0.5rem + 2px);
 }
 
-select.form-control {
-    cursor: pointer;
+.public-DraftEditor-content {
+    min-height: 100px;
 }
 
-.editor-btns .btn {
-    margin-right: 3px;
-    margin-bottom: 4px;
-    padding: 3px 10px;
-    height: auto;
-    font-size: 12px;
+select.form-control {
+    cursor: pointer;
+    width: fill-available;
+}
+
+.editor-btns {
+    position: sticky;
+    top: 0px;
+    background: #fff;
+    padding-top: 4px;
+
+    .btn {
+        margin-right: 3px;
+        margin-bottom: 4px;
+        padding: 3px 10px;
+        height: auto;
+        font-size: 12px;
+    }
 }
 
 .form-group label {
@@ -143,6 +155,7 @@ div[type="text"][placeholder]:empty:focus:before {
 .form-switch {
     cursor: pointer;
     font-size: 0.875rem;
+    display: flex;
 
     .form-check-input {
         width: 28px;

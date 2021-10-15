@@ -5,9 +5,9 @@ class DivInput extends React.Component {
     constructor(props) {
         super(props);
 
-        this.onChangeTimer = false;
+        this.onInputTimer = false;
 
-        this.isOnChange = typeof this.props.onChange === 'function';
+        this.isOnInput = typeof this.props.onInput === 'function';
     }
 
     onInput = (e) => {
@@ -18,13 +18,13 @@ class DivInput extends React.Component {
             e.target.innerHTML = '';
         }
 
-        if (this.isOnChange) {
-            if (this.onChangeTimer) {
-                clearTimeout(this.onChangeTimer);
+        if (this.isOnInput) {
+            if (this.onInputTimer) {
+                clearTimeout(this.onInputTimer);
             }
 
-            this.onChangeTimer = setTimeout(() => {
-                this.props.onChange(e.target.innerText, () => {
+            this.onInputTimer = setTimeout(() => {
+                this.props.onInput(e.target.innerText, () => {
                     setCursorPosition(e.target, cursorPosition);
                 });
             }, 1000);

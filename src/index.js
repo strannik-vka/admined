@@ -25,7 +25,8 @@ class Admined extends React.Component {
             page: {
                 url: false,
                 form: [],
-                vars: {}
+                vars: {},
+                filter: {}
             },
             paginate: {
                 data: [],
@@ -39,6 +40,25 @@ class Admined extends React.Component {
         }, this.pageDefault);
 
         document.addEventListener('scroll', this.scroll);
+    }
+
+    onFilterChange = (value, name, callback) => {
+        var pageData = this.state.page;
+
+        pageData.filter[name] = value;
+
+        this.setState(
+            Object.assign(
+                this.pageDefault,
+                { page: pageData }
+            ), () => {
+                if (callback) {
+                    callback();
+                }
+
+                this.getItems();
+            }
+        );
     }
 
     onItemChange = (id, name, value, callback) => {
@@ -188,9 +208,9 @@ class Admined extends React.Component {
 
     getItems() {
         axios.get(location.pathname + '/' + this.state.page.url, {
-            params: {
+            params: Object.assign(this.state.page.filter, {
                 page: this.state.pageNumber
-            }
+            })
         }).then((response) => {
             var paginate = response.data.paginate;
 
@@ -309,6 +329,7 @@ class Admined extends React.Component {
                                 itemsToCount={this.state.paginate.data.length}
                                 itemsSelectedCount={this.state.itemsSelected.length}
                                 itemSelectAll={this.itemSelectAll}
+                                onChange={this.onFilterChange}
                                 page={this.state.page}
                             />
                         </tr>

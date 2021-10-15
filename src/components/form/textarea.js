@@ -34,7 +34,9 @@ class Textarea extends React.Component {
             value: event.target.value
         });
 
-        this.props.errorHide(event);
+        if (typeof this.props.onInput === 'function') {
+            this.props.onInput(event);
+        }
     }
 
     render() {
