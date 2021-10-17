@@ -1,7 +1,10 @@
 # import
+<pre>
 import Admined from 'admined';
+</pre>
 
 # create page
+<pre>
 Admined.page('news', 'Новости', {
     form: [
         {
@@ -21,13 +24,22 @@ Admined.page('news', 'Новости', {
         }
     ]
 });
+</pre>
 
 # form object options
-{
-    name: 'id', - name
-    placeholder: 'ID', - placeholder
-    readonly: true, - readonly
-    center: true, - text-align: center
-    filter: false, - Не выводить в фильтре
-    filter: 'readonly', - readonly в фильтре 
-}
+<pre>
+name: 'id' - name
+placeholder: 'ID' - placeholder
+readonly: true - readonly
+center: true - текст по центру
+filter: 
+    false - Не выводить в фильтре
+    'readonly' - readonly в фильтре
+type: 
+    'text' - Текстовое поле
+    'texteditor' - Визуальный редактор
+    'file' - Выбор файла
+    'switch' - Переключение
+    'datetime' - Дата и время
+    'select' - Выбор из списка
+</pre>
