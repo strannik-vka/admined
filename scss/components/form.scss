@@ -92,7 +92,7 @@ textarea.form-control {
 
 select.form-control {
     cursor: pointer;
-    width: fill-available;
+    width: -webkit-fill-available;
 }
 
 .editor-btns {
