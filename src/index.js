@@ -17,7 +17,13 @@ class Admined extends React.Component {
 
         this.ajaxItems = false;
 
-        this.pageDefault = {
+        this.state = { pages: [], ...this.pageDefault() };
+
+        document.addEventListener('scroll', this.scroll);
+    }
+
+    pageDefault() {
+        return {
             formShow: false,
             pageNumber: 1,
             itemsSelected: [],
@@ -34,12 +40,6 @@ class Admined extends React.Component {
             },
             saveStatus: ''
         }
-
-        this.state = Object.assign({
-            pages: []
-        }, this.pageDefault);
-
-        document.addEventListener('scroll', this.scroll);
     }
 
     onFilterChange = (value, name, callback) => {
@@ -47,17 +47,16 @@ class Admined extends React.Component {
 
         pageData.filter[name] = value;
 
-        this.setState(
-            Object.assign(
-                this.pageDefault,
-                { page: pageData }
-            ), () => {
-                if (callback) {
-                    callback();
-                }
-
-                this.getItems();
+        this.setState({
+            ...this.pageDefault(),
+            ...{ page: pageData }
+        }, () => {
+            if (callback) {
+                callback();
             }
+
+            this.getItems();
+        }
         );
     }
 
@@ -125,16 +124,18 @@ class Admined extends React.Component {
     }
 
     itemSelect = (id) => {
-        var index = this.state.itemsSelected.indexOf(id);
+        this.setState((prevState) => {
+            var index = prevState.itemsSelected.indexOf(id);
 
-        if (index > -1) {
-            this.state.itemsSelected.splice(index, 1);
-        } else {
-            this.state.itemsSelected.push(id);
-        }
+            if (index > -1) {
+                prevState.itemsSelected.splice(index, 1);
+            } else {
+                prevState.itemsSelected.push(id);
+            }
 
-        this.setState({
-            itemsSelected: this.state.itemsSelected
+            return {
+                itemsSelected: prevState.itemsSelected
+            }
         });
     }
 
@@ -187,7 +188,9 @@ class Admined extends React.Component {
                 ) < 300 && this.state.paginate.data.length < this.state.paginate.total
             ) {
                 this.ajaxItems = true;
-                this.getItems();
+                this.getItems(() => {
+                    this.ajaxItems = false;
+                });
             }
         }
     }
@@ -196,38 +199,37 @@ class Admined extends React.Component {
         history.pushState(null, page.name, location.pathname + '?url=' + page.url);
         document.querySelector('title').innerHTML = page.name;
 
-        this.setState(
-            Object.assign(
-                this.pageDefault,
-                { page: Object.assign(this.pageDefault.page, page) }
-            ), () => {
-                this.getItems();
-            }
-        );
+        const pageDefault = this.pageDefault();
+
+        pageDefault.page = { ...pageDefault.page, ...page };
+
+        this.setState(pageDefault, () => {
+            this.getItems();
+        });
     }
 
-    getItems() {
+    getItems(callback) {
         axios.get(location.pathname + '/' + this.state.page.url, {
-            params: Object.assign(this.state.page.filter, {
-                page: this.state.pageNumber
-            })
+            params: { ...this.state.page.filter, ...{ page: this.state.pageNumber } }
         }).then((response) => {
             var paginate = response.data.paginate;
 
             delete response.data.paginate;
 
-            this.setState({
-                paginate: {
-                    data: paginate.data
-                        ? [...this.state.paginate.data, ...paginate.data]
-                        : this.state.paginate.data,
-                    total: paginate.total,
-                },
-                page: Object.assign(this.pageDefault.page, { vars: response.data }),
-                pageNumber: this.state.pageNumber + 1
+            this.setState((prevState) => {
+                return {
+                    paginate: {
+                        data: paginate.data
+                            ? [...prevState.paginate.data, ...paginate.data]
+                            : prevState.paginate.data,
+                        total: paginate.total,
+                    },
+                    page: { ...prevState.page, ...{ vars: response.data } },
+                    pageNumber: prevState.pageNumber + 1
+                }
+            }, () => {
+                if (callback) callback();
             });
-
-            this.ajaxItems = false;
         });
     }
 

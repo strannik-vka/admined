@@ -125,7 +125,7 @@ class Items extends React.Component {
                     )}
                 </tr>
             )
-            : <tr className="empty text-center"><td colspan="100%">Ничего не найдено</td></tr>;
+            : <tr className="empty text-center"><td colSpan="100%">Ничего не найдено</td></tr>;
     }
 
 }
