@@ -43,15 +43,19 @@ class Select extends React.Component {
                 className="form-control"
                 name={this.props.name}
                 onChange={this.onChange}
-                value={this.isOnChange ? (this.props.value ? this.props.value : '') : this.state.value}
+                value={this.isOnChange ? (typeof this.props.value !== 'undefined' ? this.props.value : '') : this.state.value}
             >
                 <option value="">{this.props.placeholder ? this.props.placeholder : '- Выбрать -'}</option>
                 {
                     (this.props.options ? this.props.options : this.state.options).map((option) => {
-                        var value = option.id ? option.id : (option.value ? option.value : '');
+                        var value = typeof option === 'string' ? option : (
+                            typeof option.id !== 'undefined' ? option.id : (
+                                typeof option.value !== 'undefined' ? option.value : ''
+                            )
+                        ), name = typeof option === 'string' ? option : option.name;
 
                         return (
-                            <option key={option.name + '_' + value} value={value}>{option.name}</option>
+                            <option key={name + '_' + value} value={value}>{name}</option>
                         );
                     })
                 }
