@@ -45,7 +45,7 @@ class DivInput extends React.Component {
 
     onKeyPress(e, type) {
         if (type == 'string') {
-            if (e.key == 'Enter' || e.shiftKey) {
+            if (e.key == 'Enter' || (e.shiftKey && e.key == 'Enter')) {
                 e.preventDefault();
             }
         }

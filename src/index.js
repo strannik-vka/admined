@@ -4,6 +4,7 @@ import Filter from "./components/filter";
 import Header from './components/header';
 import Items from './components/items';
 import Form from "./components/form";
+import Charts from "./components/charts";
 import './helpers';
 
 import '../css/index.css';
@@ -212,19 +213,23 @@ class Admined extends React.Component {
         axios.get(location.pathname + '/' + this.state.page.url, {
             params: { ...this.state.page.filter, ...{ page: this.state.pageNumber } }
         }).then((response) => {
-            var paginate = response.data.paginate;
+            var isPaginate = typeof response.data.paginate !== 'undefined',
+                vars = response.data;
 
-            delete response.data.paginate;
+            if (typeof vars.paginate !== 'undefined') {
+                delete vars.paginate;
+            }
 
             this.setState((prevState) => {
                 return {
                     paginate: {
-                        data: paginate.data
-                            ? [...prevState.paginate.data, ...paginate.data]
+                        enabled: isPaginate,
+                        data: isPaginate
+                            ? [...prevState.paginate.data, ...response.data.paginate.data]
                             : prevState.paginate.data,
-                        total: paginate.total,
+                        total: isPaginate ? response.data.paginate.total : 0,
                     },
-                    page: { ...prevState.page, ...{ vars: response.data } },
+                    page: { ...prevState.page, ...{ vars: vars } },
                     pageNumber: prevState.pageNumber + 1
                 }
             }, () => {
@@ -234,6 +239,8 @@ class Admined extends React.Component {
     }
 
     page(url, name, data) {
+        data = typeof data === 'object' && data != null ? data : {};
+
         data.url = url;
         data.name = name;
 
@@ -324,7 +331,13 @@ class Admined extends React.Component {
                     itemsDelete={this.itemsDelete}
                     saveStatus={this.state.saveStatus}
                 />
-                <table className="items">
+                <Charts
+                    page={this.state.page}
+                />
+                <table
+                    className="items"
+                    style={this.state.page.form.length ? { display: 'table' } : { display: 'none' }}
+                >
                     <thead className="form-reverse">
                         <tr>
                             <Filter

@@ -7,15 +7,17 @@ class Header extends React.Component {
     }
 
     click(e, page) {
-        e.preventDefault();
-        this.props.changePage(page);
+        if (!page.href) {
+            e.preventDefault();
+            this.props.changePage(page);
+        }
     }
 
     links() {
         return this.props.pages.map((page) =>
             <a
                 className={this.props.page.url == page.url ? 'active link' : 'link'}
-                href={page.url}
+                href={page.href ? page.href : '/admin?url=' + page.url}
                 key={page.url}
                 onClick={(e) => this.click(e, page)}
             >
@@ -28,7 +30,7 @@ class Header extends React.Component {
         return (
             <header id="header">
                 <div className="menu">{this.links()}</div>
-                <div className="actions">
+                <div className="actions" style={this.props.page.form.length ? { display: 'table' } : { display: 'none' }}>
                     <div className="to_total">
                         Показано: {this.props.to} из {this.props.total}
                         <span className="saveStatus">{this.props.saveStatus}</span>
