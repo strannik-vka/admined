@@ -30,7 +30,7 @@ class Header extends React.Component {
         return (
             <header id="header">
                 <div className="menu">{this.links()}</div>
-                <div className="actions" style={this.props.page.form.length ? { display: 'table' } : { display: 'none' }}>
+                <div className="actions" style={this.props.page.form.length ? { display: 'flex' } : { display: 'none' }}>
                     <div className="to_total">
                         Показано: {this.props.to} из {this.props.total}
                         <span className="saveStatus">{this.props.saveStatus}</span>

@@ -214,7 +214,7 @@ class Admined extends React.Component {
             params: { ...this.state.page.filter, ...{ page: this.state.pageNumber } }
         }).then((response) => {
             var isPaginate = typeof response.data.paginate !== 'undefined',
-                vars = response.data;
+                vars = Object.assign({}, response.data);
 
             if (typeof vars.paginate !== 'undefined') {
                 delete vars.paginate;
