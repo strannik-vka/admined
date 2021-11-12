@@ -5,6 +5,7 @@
     "chart.js": "^3.6.0",
     "draft-js": "^0.11.7",
     "draft-js-export-html": "^1.4.1",
+    "isobject": "^3.0.1",
     "react": "^17.0.2",
     "react-bootstrap": "^2.0.0-rc.0",
     "react-chartjs-2": "^3.3.0",
@@ -12,7 +13,7 @@
     "react-select": "^5.1.0"
   },
   "name": "admined",
-  "version": "1.0.47",
+  "version": "1.0.48",
   "description": "Админка",
   "main": "lib/index.js",
   "scripts": {

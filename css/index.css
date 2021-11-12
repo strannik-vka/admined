@@ -6808,6 +6808,10 @@ body {
 .form-control:focus {
   box-shadow: 0 0 0 0.2rem var(--c-shadow);
 }
+.form-control:focus.readonly {
+  color: transparent;
+  text-shadow: 0 0 0 var(--c-primary-dark);
+}
 .form-control.multi {
   height: auto;
 }
@@ -6971,7 +6975,6 @@ div[type=text][placeholder]:empty:focus:before {
 .items {
   border-collapse: collapse;
   width: 100%;
-  margin-top: 88px;
 }
 .items tr th {
   position: -webkit-sticky;
@@ -7061,19 +7064,19 @@ div[type=text][placeholder]:empty:focus:before {
   cursor: default;
 }
 
-.charts {
-  margin-top: 70px;
-}
 .charts .chart_block {
   border: 1px solid var(--c-border-dark);
   padding: 9px 15px;
   background: #fff;
-  margin-top: 30px;
 }
 .charts .chart_block .title {
   font-weight: 500;
-  font-size: 18px;
 }
 .charts .chart_block .chart {
   max-height: 50vh;
+  min-height: 300px;
+}
+
+.content {
+  margin-top: 88px;
 }

@@ -1,3 +1,4 @@
+import isObject from "isobject";
 import React from "react";
 
 class DivInput extends React.Component {
@@ -34,6 +35,10 @@ class DivInput extends React.Component {
     onPaste(e, type) {
         e.preventDefault();
 
+        if (this.props.readonly) {
+            return false;
+        }
+
         var text = e.clipboardData.getData('text/plain');
 
         if (type == 'string') {
@@ -43,12 +48,50 @@ class DivInput extends React.Component {
         window.document.execCommand('insertText', false, text);
     }
 
+    onCut(e) {
+        if (this.props.readonly) {
+            e.preventDefault();
+            return false;
+        }
+    }
+
     onKeyPress(e, type) {
+        if (this.props.readonly) {
+            e.preventDefault();
+            return false;
+        }
+
         if (type == 'string') {
             if (e.key == 'Enter' || (e.shiftKey && e.key == 'Enter')) {
                 e.preventDefault();
             }
         }
+    }
+
+    getValue() {
+        var value = this.props.value;
+
+        if (isObject(this.props.with) && typeof this.props.text_key !== 'undefined') {
+            value = typeof this.props.with[this.props.text_key] !== 'undefined'
+                ? this.props.with[this.props.text_key]
+                : '';
+        }
+
+        return value;
+    }
+
+    className() {
+        var result = 'form-control';
+
+        if (this.props.center === true) {
+            result += ' text-center';
+        }
+
+        if (this.props.readonly) {
+            result += ' readonly';
+        }
+
+        return result;
     }
 
     render() {
@@ -58,15 +101,16 @@ class DivInput extends React.Component {
             <div
                 name={this.props.name}
                 placeholder={this.props.placeholder}
-                contentEditable={!this.props.readonly}
+                contentEditable={true}
                 suppressContentEditableWarning={true}
                 type={type}
-                className={this.props.center === true ? 'form-control text-center' : 'form-control'}
+                className={this.className()}
                 onPaste={(e) => this.onPaste(e, type)}
                 onInput={this.onInput}
                 onKeyPress={(e) => this.onKeyPress(e, type)}
+                onCut={(e) => this.onCut(e)}
             >
-                {this.props.value ? this.props.value : ''}
+                {this.props.value ? this.getValue() : ''}
             </div>
         );
     }

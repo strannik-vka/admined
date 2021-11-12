@@ -331,35 +331,37 @@ class Admined extends React.Component {
                     itemsDelete={this.itemsDelete}
                     saveStatus={this.state.saveStatus}
                 />
-                <Charts
-                    page={this.state.page}
-                />
-                <table
-                    className="items"
-                    style={this.state.page.form.length ? { display: 'table' } : { display: 'none' }}
-                >
-                    <thead className="form-reverse">
-                        <tr>
-                            <Filter
-                                itemsToCount={this.state.paginate.data.length}
-                                itemsSelectedCount={this.state.itemsSelected.length}
-                                itemSelectAll={this.itemSelectAll}
-                                onChange={this.onFilterChange}
+                <div className="content">
+                    <Charts
+                        page={this.state.page}
+                    />
+                    <table
+                        className="items"
+                        style={this.state.page.form.length ? { display: 'table' } : { display: 'none' }}
+                    >
+                        <thead className="form-reverse">
+                            <tr>
+                                <Filter
+                                    itemsToCount={this.state.paginate.data.length}
+                                    itemsSelectedCount={this.state.itemsSelected.length}
+                                    itemSelectAll={this.itemSelectAll}
+                                    onChange={this.onFilterChange}
+                                    page={this.state.page}
+                                />
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <Items
+                                itemsSelected={this.state.itemsSelected}
+                                setItemEdit={this.setItemEdit}
                                 page={this.state.page}
+                                paginate={this.state.paginate}
+                                itemSelect={this.itemSelect}
+                                onItemChange={this.onItemChange}
                             />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <Items
-                            itemsSelected={this.state.itemsSelected}
-                            setItemEdit={this.setItemEdit}
-                            page={this.state.page}
-                            paginate={this.state.paginate}
-                            itemSelect={this.itemSelect}
-                            onItemChange={this.onItemChange}
-                        />
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
                 <Form
                     page={this.state.page}
                     show={this.state.formShow}

@@ -29,6 +29,7 @@ class Filter extends React.Component {
                                         placeholder={input.placeholder}
                                         value={this.props.page.filter[input.name]}
                                         onChange={(value) => this.props.onChange(value, input.name)}
+                                        text_key={input.text_key}
                                     />
                                     : <DivInput
                                         readonly={input.filter === 'readonly'}

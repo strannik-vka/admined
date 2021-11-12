@@ -37,6 +37,7 @@ class Form extends React.Component {
                 name={input.name}
                 url={input.url}
                 value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
+                text_key={input.text_key}
             />
         );
     }

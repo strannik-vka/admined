@@ -26,6 +26,31 @@ class Header extends React.Component {
         );
     }
 
+    actions() {
+        if (typeof this.props.page.actions !== 'undefined') {
+            return this.props.page.actions.map((action, i) =>
+                <a
+                    className="btn action-item"
+                    href={action.href ? action.href : 'javascript://'}
+                    onClick={action.onclick ? action.onclick : ''}
+                    key={i}
+                >{action.text}</a>
+            );
+        }
+    }
+
+    isAddEnabled() {
+        var result = true;
+
+        if (typeof this.props.page.addAction !== 'undefined') {
+            if (this.props.page.addAction == false) {
+                result = false;
+            }
+        }
+
+        return result;
+    }
+
     render() {
         return (
             <header id="header">
@@ -40,7 +65,12 @@ class Header extends React.Component {
                             Выбрано: {this.props.itemsSelected.length}
                         </span>
                         <button className={this.props.itemsSelected.length ? "btn action-item" : "btn btn-disabled action-item"} onClick={this.props.itemsDelete}>Удалить</button>
-                        <button className="btn action-item" onClick={this.props.showForm}>Добавить</button>
+                        {
+                            this.isAddEnabled()
+                                ? <button className="btn action-item" onClick={this.props.showForm}>Добавить</button>
+                                : ''
+                        }
+                        {this.actions()}
                     </div>
                 </div>
             </header>

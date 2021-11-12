@@ -41,6 +41,7 @@ class Select extends React.Component {
         return (
             <select
                 className="form-control"
+                disabled={this.props.readonly}
                 name={this.props.name}
                 onChange={this.onChange}
                 value={this.isOnChange ? (typeof this.props.value !== 'undefined' ? this.props.value : '') : this.state.value}
@@ -52,7 +53,9 @@ class Select extends React.Component {
                             typeof option.id !== 'undefined' ? option.id : (
                                 typeof option.value !== 'undefined' ? option.value : ''
                             )
-                        ), name = typeof option === 'string' ? option : option.name;
+                        ), name = typeof option === 'string' ? option : (
+                            typeof this.props.text_key !== 'undefined' ? option[this.props.text_key] : option.name
+                        );
 
                         return (
                             <option key={name + '_' + value} value={value}>{name}</option>
