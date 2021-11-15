@@ -18,18 +18,26 @@ class Input extends React.Component {
         this.props.errorHide(event);
     }
 
+    isErrors() {
+        if (typeof this.props.errors === 'object' && this.props.errors != null) {
+            return Object.keys(this.props.errors).length;
+        }
+
+        return false;
+    }
+
     render() {
         return (
             <>
                 <input
                     name={this.props.name}
                     type="text"
-                    className={this.props.errors ? 'form-control is-invalid' : 'form-control'}
+                    className={this.isErrors() ? 'form-control is-invalid' : 'form-control'}
                     onInput={this.onInput}
                     value={this.props.type == 'datetime' ? dateFormat(this.state.value) : this.state.value}
                 />
                 {
-                    this.props.errors
+                    this.isErrors()
                         ? <div className="invalid-feedback">{this.props.errors[0]}</div>
                         : ''
                 }
