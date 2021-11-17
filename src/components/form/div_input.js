@@ -110,7 +110,7 @@ class DivInput extends React.Component {
                 onKeyPress={(e) => this.onKeyPress(e, type)}
                 onCut={(e) => this.onCut(e)}
             >
-                {this.props.value ? this.getValue() : ''}
+                {this.getValue()}
             </div>
         );
     }

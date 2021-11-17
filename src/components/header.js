@@ -39,18 +39,6 @@ class Header extends React.Component {
         }
     }
 
-    isAddEnabled() {
-        var result = true;
-
-        if (typeof this.props.page.addAction !== 'undefined') {
-            if (this.props.page.addAction == false) {
-                result = false;
-            }
-        }
-
-        return result;
-    }
-
     render() {
         return (
             <header id="header">
@@ -61,12 +49,17 @@ class Header extends React.Component {
                         <span className="saveStatus">{this.props.saveStatus}</span>
                     </div>
                     <div>
-                        <span className="selected">
-                            Выбрано: {this.props.itemsSelected.length}
-                        </span>
-                        <button className={this.props.itemsSelected.length ? "btn action-item" : "btn btn-disabled action-item"} onClick={this.props.itemsDelete}>Удалить</button>
                         {
-                            this.isAddEnabled()
+                            this.props.page.config('deleteAction', true)
+                                ?
+                                <>
+                                    <span className="selected">Выбрано: {this.props.itemsSelected.length}</span>
+                                    <button className={this.props.itemsSelected.length ? "btn action-item" : "btn btn-disabled action-item"} onClick={this.props.itemsDelete}>Удалить</button>
+                                </>
+                                : ''
+                        }
+                        {
+                            this.props.page.config('addAction', true)
                                 ? <button className="btn action-item" onClick={this.props.showForm}>Добавить</button>
                                 : ''
                         }

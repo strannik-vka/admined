@@ -33,7 +33,16 @@ class Admined extends React.Component {
                 url: false,
                 form: [],
                 vars: {},
-                filter: {}
+                filter: {},
+                config: function (name, _default) {
+                    var result = typeof _default !== 'undefined' ? _default : null;
+
+                    if (typeof this[name] !== 'undefined') {
+                        result = this[name];
+                    }
+
+                    return result;
+                }
             },
             paginate: {
                 data: [],
