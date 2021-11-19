@@ -7081,3 +7081,7 @@ div[type=text][placeholder]:empty:focus:before {
 .content {
   margin-top: 88px;
 }
+
+.pointer {
+  cursor: pointer;
+}

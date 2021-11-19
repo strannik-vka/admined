@@ -206,12 +206,25 @@ class Admined extends React.Component {
     }
 
     changePage = (page) => {
-        history.pushState(null, page.name, location.pathname + '?url=' + page.url);
+        var params = window.location.search.substring(1);
+        params = params.replace('url=' + page.url, '');
+
+        history.pushState(null, page.name, location.pathname + '?url=' + page.url + (params ? params : ''));
         document.querySelector('title').innerHTML = page.name;
 
         const pageDefault = this.pageDefault();
 
         pageDefault.page = { ...pageDefault.page, ...page };
+
+        if (params) {
+            var params_arr = params.split('&');
+
+            params_arr.forEach(element => {
+                var elem_arr = element.split('=');
+
+                pageDefault.page.filter[elem_arr[0]] = decodeURIComponent(elem_arr[1]);
+            });
+        }
 
         this.setState(pageDefault, () => {
             this.getItems();
@@ -259,7 +272,7 @@ class Admined extends React.Component {
             }
         }, () => {
             if (this.state.page.form.length == 0) {
-                var url = currentUrl();
+                var url = URLParam('url');
 
                 if (url) {
                     if (url == data.url) {

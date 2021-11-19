@@ -91,7 +91,22 @@ class DivInput extends React.Component {
             result += ' readonly';
         }
 
+        if (isObject(this.props.onClick) || (typeof this.props.href !== 'undefined' && this.props.href)) {
+            result += ' pointer';
+        }
+
         return result;
+    }
+
+    onClick() {
+        var isHref = (typeof this.props.href !== 'undefined' && this.props.href);
+
+        if (isHref) {
+            window.open(
+                template(this.props.href, this.props.item),
+                (typeof this.props.target !== 'undefined' && this.props.target ? this.props.target : '')
+            );
+        }
     }
 
     render() {
@@ -109,6 +124,7 @@ class DivInput extends React.Component {
                 onInput={this.onInput}
                 onKeyPress={(e) => this.onKeyPress(e, type)}
                 onCut={(e) => this.onCut(e)}
+                onClick={() => this.onClick()}
             >
                 {this.getValue()}
             </div>
