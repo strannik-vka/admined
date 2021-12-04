@@ -2,6 +2,7 @@ import React from "react";
 import DivInput from "./form/div_input";
 import Checkbox from "./form/checkbox";
 import Select from "./form/select";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 class Filter extends React.Component {
 
@@ -24,6 +25,38 @@ class Filter extends React.Component {
         }
     }
 
+    getInputHtml(input, key) {
+        var result = input.type == 'select'
+            ? <Select
+                name={key}
+                options={this.props.page.vars[key.replace('_id', '')]}
+                placeholder={input.placeholder}
+                value={this.props.page.filter[key]}
+                onChange={(value) => this.props.onChange(value, key)}
+                text_key={input.text_key}
+            />
+            : <DivInput
+                readnly={input.filter === 'readonly'}
+                name={key}
+                placeholder={input.placeholder}
+                center={input.center}
+                value={this.props.page.filter[key]}
+                onInput={(value, callback) => this.props.onChange(value, key, callback)}
+            />;
+
+        if (typeof input.description !== 'undefined') {
+            result = <OverlayTrigger
+                key="top"
+                placement="top"
+                overlay={
+                    <Tooltip>{input.description}</Tooltip>
+                }
+            ><div>{result}</div></OverlayTrigger>
+        }
+
+        return result;
+    }
+
     render() {
         return (
             <>
@@ -37,27 +70,9 @@ class Filter extends React.Component {
                         }
 
                         return (
-                            input.filter === false ? false :
-                                <th key={key} className="filter-item">
-                                    {input.type == 'select'
-                                        ? <Select
-                                            name={key}
-                                            options={this.props.page.vars[key.replace('_id', '')]}
-                                            placeholder={input.placeholder}
-                                            value={this.props.page.filter[key]}
-                                            onChange={(value) => this.props.onChange(value, key)}
-                                            text_key={input.text_key}
-                                        />
-                                        : <DivInput
-                                            readonly={input.filter === 'readonly'}
-                                            name={key}
-                                            placeholder={input.placeholder}
-                                            center={input.center}
-                                            value={this.props.page.filter[key]}
-                                            onInput={(value, callback) => this.props.onChange(value, key, callback)}
-                                        />
-                                    }
-                                </th>
+                            input.filter === false
+                                ? false
+                                : <th key={key} className="filter-item">{this.getInputHtml(input, key)}</th>
                         )
                     })
                 }

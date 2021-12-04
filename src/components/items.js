@@ -43,18 +43,35 @@ class Items extends React.Component {
             : item[input.name.replace('_id', '')];
     }
 
+    getName(str) {
+        var str = str.split('[');
+
+        return str[0];
+    }
+
     file(item, input) {
+        var image = false, fileUrls = [],
+            name = this.getName(input.name);
+
+        if (typeof item[name] === 'object' && item[name] != null) {
+            fileUrls = item[name];
+        } else {
+            image = isImage(item[name]);
+        }
+
         return (
-            isImage(item[input.name])
-                ? <a href={item[input.name]} target="_blank">
+            image
+                ? <a href={item[name]} target="_blank">
                     <img
-                        src={imageUrl(item[input.name], input.thumb)}
+                        src={imageUrl(item[name], input.thumb)}
                         className="image"
                     />
                 </a>
                 : (
-                    item[input.name]
-                        ? <a href={item[input.name]} target="_blank">Скачать файл</a>
+                    fileUrls.length
+                        ? fileUrls.map((url, i) => {
+                            return <a key={i} className="d-block" href={url} target="_blank">Скачать&nbsp;файл</a>;
+                        })
                         : '—'
                 )
         );

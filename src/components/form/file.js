@@ -6,12 +6,18 @@ class File extends React.Component {
         super(props);
     }
 
+    onChange = (event) => {
+        if (this.props.onInput) {
+            this.props.onInput(event);
+        }
+    }
+
     render() {
         return (
             <>
                 <input
                     className={this.props.errors ? 'form-control is-invalid' : 'form-control'}
-                    onChange={this.props.errorHide}
+                    onChange={this.onChange}
                     type="file"
                     name={this.props.name}
                     multiple={this.props.multiple}

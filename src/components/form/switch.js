@@ -26,7 +26,7 @@ class Switch extends React.Component {
         return (
             <>
                 <input
-                    readonly={this.props.readonly}
+                    readOnly={this.props.readonly}
                     name={this.props.name}
                     checked={this.isOnChange ? !this.props.checked : !this.state.checked}
                     onChange={() => { }}
@@ -40,7 +40,7 @@ class Switch extends React.Component {
                         onChange={this.onChange}
                         checked={this.isOnChange ? this.props.checked : this.state.checked}
                         value={this.props.value}
-                        readonly={this.props.readonly}
+                        readOnly={this.props.readonly}
                         type="checkbox"
                         className="form-check-input"
                     />

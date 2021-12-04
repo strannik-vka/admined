@@ -115,11 +115,20 @@ select.form-control {
     }
 }
 
-.form-group label {
-    display: inline-block;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
-    color: #6c757d;
+.form-group {
+    label {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+        color: #6c757d;
+    }
+
+    .description {
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        margin-top: -5px;
+        color: var(--c-placeholder-dark);
+    }
 }
 
 // div editor
@@ -206,5 +215,52 @@ div[type="text"][placeholder]:empty:focus:before {
 
     &.not-label {
         margin-bottom: 0;
+    }
+}
+
+// fieldset
+fieldset {
+    border: 1px solid var(--c-border-dark);
+    padding: 15px;
+
+    legend {
+        font-weight: 700;
+        color: #6c757d;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0 !important;
+    }
+}
+
+.multiple_block_icon {
+    transition: background 20ms ease-in 0s;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 3px;
+    height: 24px;
+    width: 24px;
+    margin-left: 4px;
+    background: rgba(55, 53, 47, 0.08);
+    vertical-align: middle;
+
+    &:hover {
+        background: rgba(55, 53, 47, 0.13);
+    }
+
+    svg {
+        width: 14px;
+        height: 14px;
+        display: block;
+        fill: rgba(55, 53, 47, 0.4);
+        flex-shrink: 0;
+        backface-visibility: hidden;
+    }
+
+    .delete {
+        height: 100%;
     }
 }

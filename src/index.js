@@ -8,6 +8,7 @@ import Charts from "./components/charts";
 import './helpers';
 
 import '../css/index.css';
+import isObject from "isobject";
 
 const axios = require('axios').default;
 
@@ -265,6 +266,29 @@ class Admined extends React.Component {
 
         data.url = url;
         data.name = name;
+
+        if (isObject(data)) {
+            if (typeof data.form === 'object' && data.form != null) {
+                data.form.forEach((item, i) => {
+                    data.form[i].filter = typeof item.filter !== 'undefined' ? item.filter : true;
+
+                    if (typeof item.type !== 'undefined') {
+                        if (item.type == 'array') {
+                            data.form[i].filter = false;
+                        }
+                    }
+
+                    data.form[i].type = data.form[i].type ? data.form[i].type : 'string';
+
+                    if (typeof item.fields === 'object' && item.fields != null) {
+                        item.fields.forEach((element, index) => {
+                            data.form[i].fields[index].type = data.form[i].fields[index].type
+                                ? data.form[i].fields[index].type : 'string';
+                        });
+                    }
+                });
+            }
+        }
 
         this.setState((state) => {
             return {
