@@ -13,7 +13,7 @@
     "react-select": "^5.1.0"
   },
   "name": "admined",
-  "version": "1.0.53",
+  "version": "1.0.54",
   "description": "Админка",
   "main": "lib/index.js",
   "scripts": {

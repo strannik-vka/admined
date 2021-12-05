@@ -38,6 +38,12 @@ class Select extends React.Component {
     }
 
     render() {
+        var defaultOption = null;
+
+        if (typeof this.props.defaultOption === 'undefined' || this.props.defaultOption !== false) {
+            defaultOption = <option value="">{this.props.placeholder ? this.props.placeholder : '- Выбрать -'}</option>;
+        }
+
         return (
             <select
                 className="form-control"
@@ -46,7 +52,7 @@ class Select extends React.Component {
                 onChange={this.onChange}
                 value={this.isOnChange ? (typeof this.props.value !== 'undefined' ? this.props.value : '') : this.state.value}
             >
-                <option value="">{this.props.placeholder ? this.props.placeholder : '- Выбрать -'}</option>
+                {defaultOption}
                 {
                     (this.props.options ? this.props.options : this.state.options).map((option) => {
                         var value = typeof option === 'string' ? option : (
