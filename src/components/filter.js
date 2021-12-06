@@ -3,6 +3,7 @@ import DivInput from "./form/div_input";
 import Checkbox from "./form/checkbox";
 import Select from "./form/select";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import Switch from "./form/switch";
 
 class Filter extends React.Component {
 
@@ -26,16 +27,27 @@ class Filter extends React.Component {
     }
 
     getInputHtml(input, key) {
-        var result = input.type == 'select'
-            ? <Select
+        var result = null;
+
+        if (input.type == 'select') {
+            result = <Select
                 name={key}
                 options={this.props.page.vars[key.replace('_id', '')]}
                 placeholder={input.placeholder}
                 value={this.props.page.filter[key]}
                 onChange={(value) => this.props.onChange(value, key)}
                 text_key={input.text_key}
-            />
-            : <DivInput
+            />;
+        } else if (input.type == 'switch') {
+            result = <Select
+                name={key}
+                options={[{ name: 'Да', value: 1 }, { name: 'Нет', value: 0 }]}
+                placeholder={input.placeholder}
+                value={this.props.page.filter[key]}
+                onChange={(value) => this.props.onChange(value, key)}
+            />;
+        } else {
+            result = <DivInput
                 readnly={input.filter === 'readonly'}
                 name={key}
                 placeholder={input.placeholder}
@@ -43,6 +55,7 @@ class Filter extends React.Component {
                 value={this.props.page.filter[key]}
                 onInput={(value, callback) => this.props.onChange(value, key, callback)}
             />;
+        }
 
         if (typeof input.description !== 'undefined') {
             result = <OverlayTrigger
