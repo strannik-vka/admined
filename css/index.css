@@ -6709,7 +6709,7 @@
 body {
   margin: 0;
   font-size: 15px;
-  color: #495057;
+  color: var(--c-primary-dark);
   background-color: #f2f2f2;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   overflow-y: scroll;
@@ -6719,6 +6719,13 @@ body {
 ::after,
 ::before {
   box-sizing: border-box;
+}
+
+a {
+  color: var(--c-primary-dark);
+}
+a:hover {
+  text-decoration: none;
 }
 
 ::-webkit-scrollbar {
@@ -6893,7 +6900,7 @@ select.form-control {
 }
 
 .form-group label {
-  display: inline-block;
+  display: block;
   margin-bottom: 0.5rem;
   font-weight: 700;
   color: #6c757d;
@@ -6903,6 +6910,10 @@ select.form-control {
   font-size: 0.875rem;
   margin-top: -5px;
   color: var(--c-placeholder-dark);
+}
+.form-group .download_file {
+  display: inline-block;
+  margin: 0 0.5rem 0.5rem 0;
 }
 
 div[type=string],

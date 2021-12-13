@@ -43,6 +43,7 @@ class FormFields extends React.Component {
                 name={input.name}
                 errors={this.getError(input.name)}
                 onInput={() => this.errorHide(input.name)}
+                value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
             />
         );
     }
