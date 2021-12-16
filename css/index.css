@@ -6741,7 +6741,7 @@ a:hover {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 999;
+  z-index: 1021;
   padding-right: 15px;
   padding-left: 15px;
   background-color: #f8f9fa;
@@ -6751,6 +6751,28 @@ a:hover {
 #header .menu {
   display: flex;
   justify-content: center;
+}
+#header .menu .links {
+  position: relative;
+}
+#header .menu .links .link svg {
+  margin-left: 6px;
+}
+#header .menu .links .childrens {
+  display: none;
+  border-radius: 4px;
+  position: absolute;
+  transform: translate(-50%, 0);
+  left: 50%;
+  top: 100%;
+  background: #fff;
+  border: 1px solid #dee2e6;
+}
+#header .menu .links .childrens .active::before {
+  display: none;
+}
+#header .menu .links:hover .childrens {
+  display: block;
 }
 #header .menu .link {
   display: block;
