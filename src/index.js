@@ -150,7 +150,7 @@ class Admined extends React.Component {
         });
     }
 
-    itemEdit(successData) {
+    itemEdit = (successData) => {
         if (successData && successData.id) {
             var data = {
                 paginate: this.state.paginate
@@ -175,15 +175,13 @@ class Admined extends React.Component {
         }
     }
 
-    setFormShow = (val, successData) => {
+    setFormShow = (val) => {
         var data = {
             formShow: val
         }
 
-        if (val == false) {
+        if (!val) {
             data.editItem = {};
-
-            this.itemEdit(successData);
         }
 
         this.setState(data);
@@ -359,8 +357,10 @@ class Admined extends React.Component {
             }
         });
 
-        this.setState({ editItem: itemData });
-        this.setFormShow(true);
+        this.setState({
+            editItem: itemData,
+            formShow: TextTrackCue
+        });
     }
 
     render() {
@@ -412,7 +412,8 @@ class Admined extends React.Component {
                     page={this.state.page}
                     show={this.state.formShow}
                     editItem={this.state.editItem}
-                    onHide={(successData) => this.setFormShow(false, successData)}
+                    itemEdit={this.itemEdit}
+                    hideForm={() => this.setFormShow(false)}
                 />
             </>
         );

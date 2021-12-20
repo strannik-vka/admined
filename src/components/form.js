@@ -10,7 +10,10 @@ class Form extends React.Component {
         super(props);
 
         this.state = {
-            errors: []
+            ajaxProcess: false,
+            errors: [],
+            upload_queue_total: 0,
+            upload_queue_success: 0,
         }
     }
 
@@ -32,8 +35,46 @@ class Form extends React.Component {
         });
     }
 
+    getUploadQueueName() {
+        if (this.props.editItem.id) {
+            return false;
+        }
+
+        var result = false;
+
+        this.props.page.form.forEach(input => {
+            if (input.upload_queue) {
+                result = input.name;
+            }
+        });
+
+        if (result) {
+            if (result.indexOf('[') == -1) {
+                result += '[]';
+            }
+        }
+
+        return result;
+    }
+
     onSubmit = (e) => {
         e.preventDefault();
+
+        var stateData = {
+            ajaxProcess: true
+        }
+
+        var uploadQueueName = this.getUploadQueueName();
+
+        if (uploadQueueName) {
+            stateData.upload_queue_total = e.target.querySelector('[name="' + uploadQueueName + '"]').files.length;
+        }
+
+        if (this.state.ajaxProcess) {
+            return false;
+        } else {
+            this.setState(stateData);
+        }
 
         var data = new FormData(e.target);
 
@@ -41,31 +82,65 @@ class Form extends React.Component {
             data.append('_method', 'PUT');
         }
 
+        if (uploadQueueName) {
+            data.append(uploadQueueName.replace('[]', ''), e.target.querySelector('[name="' + uploadQueueName + '"]').files[this.state.upload_queue_success]);
+        }
+
+        this.ajaxSend({
+            uploadQueueName: uploadQueueName,
+            data: data,
+            event: e
+        });
+    }
+
+    ajaxSend(obj) {
         axios({
             method: 'post',
             url: location.pathname + '/' + this.props.page.url + (this.props.editItem.id ? '/' + this.props.editItem.id : ''),
-            data: data,
+            data: obj.data,
             processData: false,
             contentType: false,
             headers: { 'Content-Type': 'multipart/form-data' },
         }).then((response) => {
-            if (response.data.errors) {
-                this.errorsAdd(response.data.errors);
-            } else if (response.data.success) {
-                this.props.onHide(response.data.success);
+            var stateData = {
+                ajaxProcess: false
             }
+
+            if (obj.uploadQueueName) {
+                stateData.upload_queue_success = this.state.upload_queue_success + 1;
+            }
+
+            this.setState(stateData, () => {
+                if (response.data.errors) {
+                    this.errorsAdd(response.data.errors);
+                } else if (response.data.success) {
+                    this.props.itemEdit(response.data.success);
+
+                    if (obj.uploadQueueName) {
+                        if (this.state.upload_queue_success == this.state.upload_queue_total) {
+                            this.props.hideForm(false);
+                        } else {
+                            setTimeout(() => {
+                                this.onSubmit(obj.event);
+                            }, 0);
+                        }
+                    } else {
+                        this.props.hideForm(false);
+                    }
+                }
+            });
         });
     }
 
     render() {
         return <Modal
             show={this.props.show}
-            onHide={this.props.onHide}
+            onHide={this.props.hideForm}
             size="xl"
             centered
         >
             <Modal.Body>
-                <CloseButton onClick={this.props.onHide} />
+                <CloseButton onClick={() => { this.props.hideForm(false) }} />
                 <form className="form-reverse" onSubmit={this.onSubmit}>
                     <FormFields
                         page={this.props.page}
@@ -74,8 +149,9 @@ class Form extends React.Component {
                         errorHide={(name) => this.errorHide(name)}
                         editItem={this.props.editItem}
                     />
-                    <div className="d-flex justify-content-end">
-                        <button type="submit" className="btn">Сохранить</button>
+                    <div className="d-flex justify-content-end align-items-center">
+                        {this.getUploadQueueName() && this.state.ajaxProcess ? <div className="upload_queue_text">Успешно {this.state.upload_queue_success} из {this.state.upload_queue_total}</div> : ''}
+                        <button type="submit" className="btn">{this.state.ajaxProcess ? 'Подождите..' : 'Сохранить'}</button>
                     </div>
                 </form>
             </Modal.Body>

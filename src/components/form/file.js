@@ -17,10 +17,10 @@ class File extends React.Component {
 
         if (typeof this.props.value === 'object' && this.props.value != null) {
             this.props.value.forEach((file, i) => {
-                result.push(<a href={file} target="_blank" class="download_file">Посмотреть файл {i + 1}</a>);
+                result.push(<a key={i} href={file} target="_blank" className="download_file">Посмотреть файл {i + 1}</a>);
             });
         } else if (this.props.value) {
-            result.push(<a href={this.props.value} target="_blank" class="download_file">Посмотреть файл</a>);
+            result.push(<a key="0" href={this.props.value} target="_blank" className="download_file">Посмотреть файл</a>);
         }
 
         return result;

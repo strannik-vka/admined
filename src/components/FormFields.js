@@ -37,10 +37,18 @@ class FormFields extends React.Component {
     }
 
     file(input) {
+        var name = input.name;
+
+        if (input.upload_queue) {
+            if (name.indexOf('[') == -1) {
+                name += '[]';
+            }
+        }
+
         return (
             <File
                 multiple={input.multiple}
-                name={input.name}
+                name={name}
                 errors={this.getError(input.name)}
                 onInput={() => this.errorHide(input.name)}
                 value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}

@@ -6780,6 +6780,7 @@ a:hover {
   font-weight: 500;
   color: #8b8b8b;
   text-decoration: none;
+  white-space: nowrap;
 }
 #header .menu .link:hover, #header .menu .link.active {
   color: #495057;
@@ -7052,6 +7053,10 @@ fieldset .form-group:last-child {
 }
 .multiple_block_icon .delete {
   height: 100%;
+}
+
+.upload_queue_text {
+  margin-right: 1rem;
 }
 
 .items {
