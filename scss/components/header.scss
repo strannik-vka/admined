@@ -33,6 +33,7 @@
                 top: 100%;
                 background: #fff;
                 border: 1px solid #dee2e6;
+                z-index: 1;
 
                 .active {
                     &::before {

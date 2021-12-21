@@ -74,12 +74,16 @@ class Header extends React.Component {
     user_actions() {
         if (typeof this.props.page.actions !== 'undefined') {
             return this.props.page.actions.map((action, i) =>
-                <a
-                    className="btn action-item"
-                    href={action.href ? action.href : 'javascript://'}
-                    onClick={action.onclick ? action.onclick : ''}
-                    key={i}
-                >{action.text}</a>
+                <>
+                    {i ? null : <div className="divider">|</div>}
+                    <a
+                        className="btn action-item"
+                        href={action.href ? action.href : null}
+                        onClick={action.onclick ? action.onclick : null}
+                        target={action.target ? action.target : null}
+                        key={i}
+                    >{action.text}</a>
+                </>
             );
         }
     }
@@ -99,13 +103,13 @@ class Header extends React.Component {
                                 ?
                                 <>
                                     <span className="selected">Выбрано: {this.props.itemsSelected.length}</span>
-                                    <button className={this.props.itemsSelected.length ? "btn action-item" : "btn btn-disabled action-item"} onClick={this.props.itemsDelete}>Удалить</button>
+                                    <a className={this.props.itemsSelected.length ? "btn action-item" : "btn btn-disabled action-item"} onClick={this.props.itemsDelete}>Удалить</a>
                                 </>
                                 : ''
                         }
                         {
                             this.props.page.config('addAction', true)
-                                ? <button className="btn action-item" onClick={this.props.showForm}>Добавить</button>
+                                ? <a className="btn action-item" onClick={this.props.showForm}>Добавить</a>
                                 : ''
                         }
                         {this.user_actions()}
