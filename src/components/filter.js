@@ -3,7 +3,6 @@ import DivInput from "./form/div_input";
 import Checkbox from "./form/checkbox";
 import Select from "./form/select";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import Switch from "./form/switch";
 
 class Filter extends React.Component {
 
@@ -12,16 +11,25 @@ class Filter extends React.Component {
     }
 
     actions() {
-        var isActions = this.props.page.config('deleteAction', true);
+        var actions = [];
 
-        if (isActions) {
+        if (this.props.page.config('deleteAction', true)) {
+            actions.push(
+                <Checkbox
+                    key="deleteAction"
+                    checked={(this.props.itemsToCount == this.props.itemsSelectedCount) && this.props.itemsSelectedCount}
+                    onChange={this.props.itemSelectAll}
+                />
+            );
+        }
+
+        if (this.props.page.config('editAction', true)) {
+            actions.push('');
+        }
+
+        if (actions.length) {
             return (
-                <th className="filter-item">
-                    <Checkbox
-                        checked={(this.props.itemsToCount == this.props.itemsSelectedCount) && this.props.itemsSelectedCount}
-                        onChange={this.props.itemSelectAll}
-                    />
-                </th>
+                <th className="filter-item">{actions}</th>
             )
         }
     }
