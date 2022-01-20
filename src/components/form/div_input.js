@@ -9,6 +9,29 @@ class DivInput extends React.Component {
         this.onInputTimer = false;
 
         this.isOnInput = typeof this.props.onInput === 'function';
+
+        this.state = {
+            focus: false,
+            value: this.props.value ? this.props.value : ''
+        }
+    }
+
+    onFocus = () => {
+        var data = {
+            focus: true
+        };
+
+        if (this.props.value != this.state.value) {
+            data.value = this.props.value;
+        }
+
+        this.setState(data);
+    }
+
+    onBlur = () => {
+        this.setState({
+            focus: false
+        });
     }
 
     onInput = (e) => {
@@ -19,17 +42,25 @@ class DivInput extends React.Component {
             e.target.innerHTML = '';
         }
 
-        if (this.isOnInput) {
-            if (this.onInputTimer) {
-                clearTimeout(this.onInputTimer);
-            }
+        text = e.target.innerText;
 
-            this.onInputTimer = setTimeout(() => {
-                this.props.onInput(e.target.innerText, () => {
-                    setCursorPosition(e.target, cursorPosition);
-                });
-            }, 1000);
-        }
+        this.setState({
+            value: text
+        }, () => {
+            if (this.isOnInput) {
+                setCursorPosition(e.target, cursorPosition);
+
+                if (this.onInputTimer) {
+                    clearTimeout(this.onInputTimer);
+                }
+
+                this.onInputTimer = setTimeout(() => {
+                    this.props.onInput(text, () => {
+                        this.onInputTimer = false;
+                    });
+                }, 1000);
+            }
+        });
     }
 
     onPaste(e, type) {
@@ -69,7 +100,7 @@ class DivInput extends React.Component {
     }
 
     getValue() {
-        var value = this.props.value;
+        var value = this.state.focus || this.onInputTimer ? this.state.value : this.props.value;
 
         if (isObject(this.props.with) && typeof this.props.text_key !== 'undefined') {
             value = typeof this.props.with[this.props.text_key] !== 'undefined'
@@ -122,6 +153,8 @@ class DivInput extends React.Component {
                 className={this.className()}
                 onPaste={(e) => this.onPaste(e, type)}
                 onInput={this.onInput}
+                onFocus={this.onFocus}
+                onBlur={this.onBlur}
                 onKeyPress={(e) => this.onKeyPress(e, type)}
                 onCut={(e) => this.onCut(e)}
                 onClick={() => this.onClick()}

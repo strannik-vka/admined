@@ -28,6 +28,7 @@ class Header extends React.Component {
             var childrens = this.getMenuItems(page.url);
 
             if (childrens.length) {
+                childrens.unshift(this.getMenuItem(page));
                 result.push(<div className="links" key={page.url + '_group'}>
                     {this.getMenuItem(page, true)}
                     <div className="childrens shadow">

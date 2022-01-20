@@ -6762,12 +6762,11 @@ a:hover {
   display: none;
   border-radius: 4px;
   position: absolute;
-  transform: translate(-50%, 0);
-  left: 50%;
-  top: 100%;
+  top: -1px;
   background: #fff;
   border: 1px solid #dee2e6;
   z-index: 1;
+  left: -1px;
 }
 #header .menu .links .childrens .active::before {
   display: none;
