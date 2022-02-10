@@ -1,6 +1,7 @@
 import React from "react";
 import { stateToHTML } from 'draft-js-export-html';
-import { Editor, EditorState, RichUtils, CompositeDecorator, ContentState, convertFromHTML } from 'draft-js';
+import { stateFromHTML } from 'draft-js-import-html';
+import { Editor, EditorState, RichUtils, CompositeDecorator } from 'draft-js';
 
 class TextEditor extends React.Component {
 
@@ -9,7 +10,7 @@ class TextEditor extends React.Component {
 
         this.state = {
             editorState: EditorState.createWithContent(
-                ContentState.createFromBlockArray(this.props.value ? convertFromHTML(this.props.value) : []),
+                stateFromHTML(this.props.value),
                 new CompositeDecorator([{
                     strategy: (contentBlock, callback, contentState) => {
                         contentBlock.findEntityRanges((character) => {
