@@ -80,18 +80,38 @@ window.imageUrl = (url, thumb) => {
     ) : '';
 }
 
+window.isObject = function (val) {
+    return val != null && typeof val === 'object' && Array.isArray(val) === false;
+}
+
 window.getDataValue = function (str, data) {
-    var parts = str.split('.');
+    let parts = [];
 
-    for (var i = 0; i < parts.length; i++) {
-        data = data[parts[i]];
+    if (str.indexOf('.') > -1) {
+        parts = str.split('.');
+    } else if (str.indexOf('[') > -1) {
+        parts = str.split('[');
 
-        if (!data) {
-            break;
-        }
+        parts = parts.map(item => {
+            return item.replace(']', '');
+        });
+    } else {
+        parts.push(str);
     }
 
-    return data ? data : null;
+    if (parts.length) {
+        for (let i = 0; i < parts.length; i++) {
+            data = data[parts[i]];
+
+            if (!data) {
+                break;
+            }
+        }
+
+        return data ? data : null;
+    }
+
+    return null;
 }
 
 window.template = (str, data) => {

@@ -15,8 +15,9 @@ class Fildsets extends React.Component {
         ]
         */
 
-        var fields = typeof this.props.editItem[this.props.input.name] === 'object' && this.props.editItem[this.props.input.name] != null
-            ? this.props.editItem[this.props.input.name] : [];
+        let fields = getDataValue(this.props.input.name, this.props.editItem);
+
+        fields = typeof fields === 'object' && fields != null && !isObject(fields) ? fields : [];
 
         fields = fields.map((item, i) => {
             item.id = Math.random();
@@ -45,10 +46,17 @@ class Fildsets extends React.Component {
     }
 
     getName(str) {
-        var str = str.split('['),
-            str = str[1].split(']');
+        let parts = str.split('[');
 
-        return str[0];
+        parts = parts.map(item => {
+            return item.replace(']', '');
+        });
+
+        parts = parts.filter(item => {
+            return item;
+        });
+
+        return parts[parts.length - 1];
     }
 
     fieldsAdd = () => {
