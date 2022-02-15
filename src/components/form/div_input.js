@@ -12,7 +12,7 @@ class DivInput extends React.Component {
 
         this.state = {
             focus: false,
-            value: this.props.value ? this.props.value : ''
+            value: this.props.value
         }
     }
 

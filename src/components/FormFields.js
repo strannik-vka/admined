@@ -14,10 +14,12 @@ class FormFields extends React.Component {
     }
 
     switch(input) {
+        let value = this.getValue(input);
+
         return (
             <Switch
                 name={input.name}
-                checked={(this.props.editItem[input.name] ? this.props.editItem[input.name] : input.checked) === 1}
+                checked={(value ? value : input.checked) === 1}
                 placeholder={input.placeholder}
                 value="1"
             />
@@ -30,7 +32,7 @@ class FormFields extends React.Component {
                 options={this.props.page.vars[input.name.replace('_id', '')]}
                 name={input.name}
                 url={input.url}
-                value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
+                value={this.getValue(input)}
                 text_key={input.text_key}
             />
         );
@@ -51,7 +53,7 @@ class FormFields extends React.Component {
                 name={name}
                 errors={this.getError(input.name)}
                 onInput={() => this.errorHide(input.name)}
-                value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
+                value={this.getValue(input)}
             />
         );
     }
@@ -62,7 +64,7 @@ class FormFields extends React.Component {
                 name={input.name}
                 errors={this.getError(input.name)}
                 onInput={() => this.errorHide(input.name)}
-                value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
+                value={this.getValue(input)}
             />
         );
     }
@@ -73,7 +75,7 @@ class FormFields extends React.Component {
                 name={input.name}
                 errors={this.getError(input.name)}
                 onInput={() => this.errorHide(input.name)}
-                value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
+                value={this.getValue(input)}
             />
         );
     }
@@ -85,7 +87,7 @@ class FormFields extends React.Component {
                 name={input.name}
                 errors={this.getError(input.name)}
                 onInput={() => this.errorHide(input.name)}
-                value={this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value}
+                value={this.getValue(input)}
             />
         );
     }
@@ -97,15 +99,7 @@ class FormFields extends React.Component {
                 name={input.name}
                 errors={this.getError(input.name)}
                 onInput={() => this.errorHide(input.name)}
-                value={
-                    this.props.editItem[input.name]
-                        ? this.props.editItem[input.name]
-                        : (
-                            typeof input.value === 'function'
-                                ? input.value()
-                                : input.value
-                        )
-                }
+                value={this.getValue(input)}
             />
         );
     }
@@ -115,6 +109,42 @@ class FormFields extends React.Component {
             input={input}
             editItem={this.props.editItem}
         />;
+    }
+
+    getValue(input) {
+        let name = input.name,
+            value = null,
+            isNameArray = name.indexOf('[') > -1 && name.indexOf(']') > -1 && name.indexOf('[]') == -1;
+
+        if (isNameArray) {
+            let nameArray = name.split('[');
+
+            nameArray = nameArray.map(item => {
+                return item.replace(']', '');
+            });
+
+            let data = this.props.editItem;
+
+            for (var i = 0; i < nameArray.length; i++) {
+                data = data[nameArray[i]];
+
+                if (!data) {
+                    break;
+                }
+            }
+
+            value = data ? data : input.value;
+        } else {
+            value = this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value;
+        }
+
+        if (input.type == 'datetime') {
+            if (typeof input.value === 'function') {
+                value = input.value();
+            }
+        }
+
+        return value;
     }
 
     getError(name) {
