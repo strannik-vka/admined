@@ -40,7 +40,7 @@ class Items extends React.Component {
 
     with(input, item) {
         return typeof input.with !== 'undefined'
-            ? item[input.with]
+            ? getDataValue(input.with, item)
             : item[input.name.replace('_id', '')];
     }
 
