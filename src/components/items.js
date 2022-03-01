@@ -111,8 +111,13 @@ class Items extends React.Component {
                 type="text"
                 readonly={input.readonly}
                 center={input.center}
+                item={item}
                 value={item[input.name]}
+                with={this.with(input, item)}
+                text_key={input.text_key}
                 onInput={(value, callback) => this.props.onItemChange(item.id, input.name, value, callback)}
+                href={input.href}
+                target={input.target}
             />
         );
     }
