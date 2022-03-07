@@ -40,10 +40,13 @@
                 display: flex;
                 align-items: center;
 
+                .form-check {
+                    margin-right: 15px;
+                }
+
                 .edit-icon {
                     width: 18px;
                     height: 18px;
-                    margin-left: 15px;
                     display: block;
                     cursor: pointer;
                 }

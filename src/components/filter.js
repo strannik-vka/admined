@@ -39,8 +39,8 @@ class Filter extends React.Component {
 
         if (input.type == 'select') {
             result = <Select
-                name={key}
-                options={this.props.page.vars[key.replace('_id', '')]}
+                name={key.replace('[]', '')}
+                options={this.props.page.vars[key.replace('_id', '').replace('[]', '')]}
                 placeholder={input.placeholder}
                 value={this.props.page.filter[key]}
                 onChange={(value) => this.props.onChange(value, key)}
@@ -56,7 +56,7 @@ class Filter extends React.Component {
             />;
         } else {
             result = <DivInput
-                readnly={input.filter === 'readonly'}
+                readonly={input.filter === 'readonly'}
                 name={key}
                 placeholder={input.placeholder}
                 center={input.center}

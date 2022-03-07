@@ -6851,6 +6851,10 @@ a:hover {
   opacity: 1;
   cursor: default;
 }
+.form-control.readonly {
+  cursor: default;
+  box-shadow: none;
+}
 .form-control::-moz-placeholder {
   color: var(--c-placeholder-dark);
 }
@@ -6884,13 +6888,6 @@ a:hover {
 
 .modal .form-control {
   width: 100%;
-}
-
-.form-reverse .form-control {
-  background-color: var(--c-bg-dark);
-}
-.form-reverse .form-control:focus {
-  background-color: #fff;
 }
 
 textarea.form-control {
@@ -6964,6 +6961,7 @@ div[type=string][placeholder]:empty:before,
 div[type=text][placeholder]:empty:before {
   content: attr(placeholder);
   color: var(--c-placeholder-dark);
+  cursor: text;
 }
 
 div[type=string][placeholder]:empty:focus:before,
@@ -7059,6 +7057,22 @@ fieldset .form-group:last-child {
   margin-right: 1rem;
 }
 
+.form-reverse .form-control {
+  background-color: var(--c-bg-dark);
+}
+.form-reverse .form-control:focus {
+  background-color: #fff;
+}
+.form-reverse .form-control.readonly {
+  cursor: default;
+  background-color: var(--c-bg-dark);
+  box-shadow: none;
+}
+.form-reverse .form-control.readonly[placeholder]:empty:before {
+  cursor: default;
+  content: attr(placeholder);
+}
+
 .items {
   border-collapse: collapse;
   width: 100%;
@@ -7092,10 +7106,12 @@ fieldset .form-group:last-child {
   display: flex;
   align-items: center;
 }
+.items tr td .actions .form-check {
+  margin-right: 15px;
+}
 .items tr td .actions .edit-icon {
   width: 18px;
   height: 18px;
-  margin-left: 15px;
   display: block;
   cursor: pointer;
 }
@@ -7176,6 +7192,70 @@ fieldset .form-group:last-child {
   color: #e0e0e0;
   font-weight: 100;
   margin-left: 8px;
+}
+
+.react-select-container {
+  font-weight: normal;
+}
+.react-select-container .react-select__control {
+  border: 1px solid var(--c-border-light);
+  min-height: 31px;
+  border-radius: 8px;
+  min-width: -webkit-max-content;
+  min-width: -moz-max-content;
+  min-width: max-content;
+  width: 100%;
+}
+.react-select-container .react-select__control:hover {
+  border: 1px solid var(--c-border-light);
+}
+.react-select-container .react-select__control.react-select__control--is-focused {
+  box-shadow: 0 0 0 0.2rem var(--c-shadow);
+}
+.react-select-container .react-select__indicator {
+  padding: 4px;
+  cursor: pointer;
+}
+.react-select-container .react-select__value-container {
+  padding: 0 7px;
+  justify-content: start;
+  cursor: pointer;
+}
+.react-select-container .react-select__value-container .react-select__placeholder {
+  color: var(--c-placeholder-dark);
+}
+.react-select-container .react-select__value-container .react-select__single-value {
+  color: var(--c-primary-dark);
+}
+.react-select-container .react-select__value-container .react-select__multi-value {
+  border-radius: 8px;
+}
+.react-select-container .react-select__value-container .react-select__multi-value__remove {
+  border-radius: 8px;
+}
+.react-select-container .react-select__value-container .react-select__multi-value__remove:hover {
+  background-color: var(--c-bg-dark-hover);
+  color: var(--c-primary-dark);
+}
+.react-select-container .react-select__menu {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+.react-select-container .react-select__menu .react-select__option {
+  text-align: left;
+  padding: 5.5px 10px;
+}
+.react-select-container .react-select__menu .react-select__option.react-select__option--is-focused {
+  background-color: var(--c-border-light);
+  cursor: pointer;
+}
+.react-select-container .react-select__menu .react-select__option.react-select__option--is-selected {
+  background-color: var(--c-border-light);
+  color: var(--c-primary-dark);
+}
+
+.form-reverse .react-select-container .react-select__control,
+.filter-item .react-select-container .react-select__control {
+  background-color: var(--c-bg-dark);
 }
 
 .content {

@@ -38,6 +38,11 @@
         cursor: default;
     }
 
+    &.readonly {
+        cursor: default;
+        box-shadow: none;
+    }
+
     &::-moz-placeholder {
         color: var(--c-placeholder-dark);
     }
@@ -76,14 +81,6 @@
 
 .modal .form-control {
     width: 100%;
-}
-
-.form-reverse .form-control {
-    background-color: var(--c-bg-dark);
-
-    &:focus {
-        background-color: #fff;
-    }
 }
 
 textarea.form-control {
@@ -163,6 +160,7 @@ div[type="string"][placeholder]:empty:before,
 div[type="text"][placeholder]:empty:before {
     content: attr(placeholder);
     color: var(--c-placeholder-dark);
+    cursor: text;
 }
 
 div[type="string"][placeholder]:empty:focus:before,
@@ -272,4 +270,26 @@ fieldset {
 
 .upload_queue_text {
     margin-right: 1rem;
+}
+
+// form-reverse
+.form-reverse {
+    .form-control {
+        background-color: var(--c-bg-dark);
+
+        &:focus {
+            background-color: #fff;
+        }
+
+        &.readonly {
+            cursor: default;
+            background-color: var(--c-bg-dark);
+            box-shadow: none;
+
+            &[placeholder]:empty:before {
+                cursor: default;
+                content: attr(placeholder);
+            }
+        }
+    }
 }

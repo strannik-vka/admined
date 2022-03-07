@@ -17,7 +17,9 @@ class Admined extends React.Component {
     constructor(props) {
         super(props);
 
+        this.ajaxItemsRequest = null;
         this.ajaxItems = false;
+        this.itemsUpdateInterval = false;
 
         this.state = { pages: [], ...this.pageDefault() };
 
@@ -67,8 +69,7 @@ class Admined extends React.Component {
             }
 
             this.getItems();
-        }
-        );
+        });
     }
 
     onItemChange = (id, name, value, callback) => {
@@ -92,7 +93,14 @@ class Admined extends React.Component {
         var formData = new FormData();
 
         formData.append('_method', 'PUT');
-        formData.append(name, value);
+
+        if (Array.isArray(value)) {
+            value.forEach(item => {
+                formData.append(name, item);
+            });
+        } else {
+            formData.append(name, value);
+        }
 
         axios({
             method: 'post',
@@ -227,15 +235,98 @@ class Admined extends React.Component {
 
         this.setState(pageDefault, () => {
             this.getItems();
+            this.itemsUpdateStart();
+        });
+    }
+
+    itemsUpdateStart() {
+        if (this.itemsUpdateInterval) {
+            clearInterval(this.itemsUpdateInterval);
+        }
+
+        this.itemsUpdateInterval = setInterval(() => {
+            this.itemsUpdate(() => {
+                this.itemsUpdateStart();
+            });
+        }, 5000);
+    }
+
+    itemsUpdate(callback) {
+        if (this.ajaxItemsRequest) {
+            this.ajaxItemsRequest.cancel();
+        }
+
+        this.ajaxItemsRequest = axios.CancelToken.source();
+
+        axios.get(location.pathname + '/' + this.state.page.url, {
+            cancelToken: this.ajaxItemsRequest.token,
+            params: { ...this.state.page.filter, ...{ page: 1 } }
+        }).then((response) => {
+            var isPaginate = typeof response.data.paginate !== 'undefined',
+                vars = Object.assign({}, response.data);
+
+            window.vars = vars;
+
+            if (typeof vars.paginate !== 'undefined') {
+                delete vars.paginate;
+            }
+
+            let paginateData = {
+                enabled: isPaginate,
+                total: isPaginate ? response.data.paginate.total : 0
+            }
+
+            this.setState((prevState) => {
+                if (isPaginate) {
+                    let itemLast = prevState.paginate.data.length ? prevState.paginate.data[0] : null,
+                        newItems = [];
+
+                    if (itemLast) {
+                        let prevDataIds = prevState.paginate.data.map(item => {
+                            return item.id;
+                        });
+
+                        response.data.paginate.data.forEach(item => {
+                            if (prevDataIds.indexOf(item.id) == -1) {
+                                newItems.push(item);
+                            }
+                        });
+                    } else {
+                        newItems = response.data.paginate.data;
+                    }
+
+                    if (newItems.length) {
+                        paginateData.data = [...newItems, ...prevState.paginate.data];
+                    } else {
+                        paginateData.data = prevState.paginate.data;
+                    }
+                }
+
+                return {
+                    paginate: paginateData,
+                    page: { ...prevState.page, ...{ vars: vars } }
+                }
+            }, () => {
+                if (callback) callback();
+            });
         });
     }
 
     getItems(callback) {
+        if (this.ajaxItemsRequest) {
+            this.ajaxItemsRequest.cancel();
+        }
+
+        this.ajaxItemsRequest = axios.CancelToken.source();
+
         axios.get(location.pathname + '/' + this.state.page.url, {
+            cancelToken: this.ajaxItemsRequest.token,
             params: { ...this.state.page.filter, ...{ page: this.state.pageNumber } }
         }).then((response) => {
             var isPaginate = typeof response.data.paginate !== 'undefined',
                 vars = Object.assign({}, response.data);
+
+            window.vars = vars;
 
             if (typeof vars.paginate !== 'undefined') {
                 delete vars.paginate;

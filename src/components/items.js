@@ -29,8 +29,8 @@ class Items extends React.Component {
             <Select
                 readonly={input.readonly}
                 name={input.name}
-                value={item[input.name]}
-                options={this.props.page.vars[input.name.replace('_id', '')]}
+                value={item[input.name.replace('[]', '')]}
+                options={this.props.page.vars[input.name.replace('_id', '').replace('[]', '')]}
                 text_key={input.text_key}
                 defaultOption={input.defaultOption}
                 onChange={(value) => this.props.onItemChange(item.id, input.name, value)}
@@ -170,12 +170,18 @@ class Items extends React.Component {
             ? this.props.paginate.data.map((item) =>
                 <tr key={item.id}>
                     {this.actions(item)}
-                    {this.props.page.form.map((input) =>
-                        input.filter === false ? false :
-                            <td key={item.id + '_' + input.name} className={input.center ? 'text-center' : ''}>
-                                {this[input.type ? input.type : 'string'](item, input)}
-                            </td>
-                    )}
+                    {
+                        this.props.page.form.map((input) => {
+                            if (typeof input.value === 'function') {
+                                item = input.value(Object.assign({}, item));
+                            }
+
+                            return input.filter === false ? false :
+                                <td key={item.id + '_' + input.name} className={input.center ? 'text-center' : ''}>
+                                    {this[input.type ? input.type : 'string'](item, input)}
+                                </td>
+                        })
+                    }
                 </tr>
             )
             : <tr className="empty text-center"><td colSpan="100%">Ничего не найдено</td></tr>;

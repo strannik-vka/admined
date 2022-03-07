@@ -29,7 +29,7 @@ class FormFields extends React.Component {
     select(input) {
         return (
             <Select
-                options={this.props.page.vars[input.name.replace('_id', '')]}
+                options={this.props.page.vars[input.name.replace('_id', '').replace('[]', '')]}
                 name={input.name}
                 url={input.url}
                 value={this.getValue(input)}
