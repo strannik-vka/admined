@@ -78,5 +78,5 @@ Admined.page('user', 'Пользователи', {...});
 
 ## Что дальше?
 Как видите, очень легко интегрировать Admined в сайт. Итак, вот ваши следующие шаги:
-* Перейдите на страницу <a href="https://github.com/strannik-vka/admined/wiki/2.-%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B">параметры</a>, чтобы узнать больше обо всех возможностях и о том, как им управлять
+* Перейдите на страницу <a href="https://github.com/strannik-vka/admined/wiki/2-%D0%9F%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%82%D1%80%D1%8B">параметры</a>, чтобы узнать больше обо всех возможностях и о том, как им управлять
 * Если у вас есть вопросы о Admined, задайте их мне ВКонтакте <a target="_blank" href="https://vk.com/strannik_vka">https://vk.com/strannik_vka</a>
