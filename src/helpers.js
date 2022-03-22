@@ -89,6 +89,10 @@ window.getDataValue = function (str, data) {
         return data[str];
     }
 
+    if (data[str + '[]']) {
+        return data[str + '[]'];
+    }
+
     let parts = [];
 
     if (str.indexOf('.') > -1) {
