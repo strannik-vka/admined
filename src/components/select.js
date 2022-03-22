@@ -29,7 +29,7 @@ class Select extends React.Component {
     }
 
     onChange = (selectedOption) => {
-        let value = selectedOption !== null ? selectedOption.value : null;
+        let value = selectedOption !== null ? selectedOption.value : '';
 
         if (Array.isArray(selectedOption)) {
             value = [];
@@ -40,6 +40,12 @@ class Select extends React.Component {
         }
 
         if (this.isOnChange) {
+            if (Array.isArray(value)) {
+                if (value.length == 0) {
+                    value = '';
+                }
+            }
+
             this.props.onChange(value);
         } else {
             this.setState({
@@ -48,12 +54,21 @@ class Select extends React.Component {
         }
     }
 
+    isErrors() {
+        if (typeof this.props.errors === 'object' && this.props.errors != null) {
+            return Object.keys(this.props.errors).length;
+        }
+
+        return false;
+    }
+
     render() {
         var multiple = this.props.name.indexOf('[]') > -1,
             value = this.isOnChange ? (typeof this.props.value !== 'undefined' ? this.props.value : '') : this.state.value,
             options = this.props.options ? this.props.options : this.state.options,
+            options = Array.isArray(options) ? options : [],
             placeholder = null,
-            valueIsArray = typeof value === 'object' && value != null,
+            valueIsArray = Array.isArray(value),
             defaultValue = valueIsArray ? [] : null;
 
         if (typeof this.props.defaultOption === 'undefined' || this.props.defaultOption !== false) {
@@ -84,18 +99,25 @@ class Select extends React.Component {
             return option;
         });
 
-        return <ReactSelect
-            className="react-select-container"
-            classNamePrefix="react-select"
-            placeholder={placeholder}
-            defaultValue={defaultValue}
-            isDisabled={this.props.readonly}
-            isMulti={multiple}
-            name={this.props.name}
-            onChange={this.onChange}
-            options={options}
-            isClearable={true}
-        />
+        return <>
+            <ReactSelect
+                className={'react-select-container' + (this.isErrors() ? ' is-invalid' : '')}
+                classNamePrefix="react-select"
+                placeholder={placeholder}
+                defaultValue={defaultValue}
+                isDisabled={this.props.readonly}
+                isMulti={multiple}
+                name={this.props.name}
+                onChange={this.onChange}
+                options={options}
+                isClearable={true}
+            />
+            {
+                this.isErrors()
+                    ? <div className="invalid-feedback">{this.props.errors[0]}</div>
+                    : ''
+            }
+        </>
     }
 
 }

@@ -10,7 +10,7 @@ class TextEditor extends React.Component {
 
         this.state = {
             editorState: EditorState.createWithContent(
-                stateFromHTML(this.props.value),
+                stateFromHTML(this.props.value ? this.props.value : ''),
                 new CompositeDecorator([{
                     strategy: (contentBlock, callback, contentState) => {
                         contentBlock.findEntityRanges((character) => {

@@ -16,6 +16,7 @@ $primary: #adb5bd;
 @import "../node_modules/bootstrap/scss/forms/form-check";
 @import "../node_modules/bootstrap/scss/forms/validation";
 @import "../node_modules/bootstrap/scss/tooltip";
+@import "../node_modules/bootstrap/scss/popover";
 
 // Admined
 @import "./components/colors.scss";
@@ -53,6 +54,8 @@ a {
 @import "./components/chart.scss";
 @import "./components/divider.scss";
 @import "./components/react-select.scss";
+@import "./components/popover.scss";
+@import "./components/constructor.scss";
 
 .content {
     margin-top: 88px;

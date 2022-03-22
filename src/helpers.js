@@ -49,7 +49,7 @@ window.isImage = (url) => {
             ext = ext.toLowerCase(),
             ext = ext.split('?'),
             ext = ext[0],
-            images = ['jpg', 'png', 'jpeg', 'webp', 'gif', 'svg'];
+            images = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'];
 
         return images.indexOf(ext) > -1;
     }
@@ -85,6 +85,10 @@ window.isObject = function (val) {
 }
 
 window.getDataValue = function (str, data) {
+    if (data[str]) {
+        return data[str];
+    }
+
     let parts = [];
 
     if (str.indexOf('.') > -1) {

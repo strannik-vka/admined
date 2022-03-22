@@ -225,6 +225,7 @@ div[type="text"][placeholder]:empty:focus:before {
 fieldset {
     border: 1px solid var(--c-border-dark);
     padding: 15px;
+    border-radius: 8px;
 
     legend {
         font-weight: 700;
@@ -234,6 +235,15 @@ fieldset {
     .form-group:last-child {
         margin-bottom: 0 !important;
     }
+}
+
+.multiple_block_placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    vertical-align: middle;
+    flex-shrink: 0;
 }
 
 .multiple_block_icon {
@@ -246,7 +256,7 @@ fieldset {
     border-radius: 3px;
     height: 24px;
     width: 24px;
-    margin-left: 4px;
+    margin-right: 4px;
     background: rgba(55, 53, 47, 0.08);
     vertical-align: middle;
 
@@ -292,4 +302,74 @@ fieldset {
             }
         }
     }
+}
+
+// filePreviewImage
+.previews {
+    &.count-1 {
+        .filePreviewImage {
+            width: 25%;
+        }
+    }
+
+    &.count-3 {
+        .filePreviewImage {
+            width: 33.3%;
+        }
+    }
+
+    &.count-4 {
+        .filePreviewImage {
+            width: 25%;
+        }
+    }
+
+    &.count-5 {
+        .filePreviewImage {
+            width: 20%;
+        }
+    }
+
+    &.count-6 {
+        .filePreviewImage {
+            width: 16.6%;
+        }
+    }
+
+    &.count-7 {
+        .filePreviewImage {
+            width: 14.28%;
+        }
+    }
+
+    &.count-8 {
+        .filePreviewImage {
+            width: 12.5%;
+        }
+    }
+
+    &.count-9 {
+        .filePreviewImage {
+            width: 11.1%;
+        }
+    }
+
+    &.count-10 {
+        .filePreviewImage {
+            width: 10%;
+        }
+    }
+
+    .filePreviewImage {
+        margin-bottom: 0.5rem;
+        vertical-align: bottom;
+        max-width: 100%;
+    }
+}
+
+// is-invalid
+.is-invalid {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 0 0 0.2rem #ff6868;
 }

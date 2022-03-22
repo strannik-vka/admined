@@ -1,6 +1,6 @@
 import React from "react";
 import { CloseButton, Modal } from "react-bootstrap";
-import FormFields from "./FormFields";
+import FormFields from "../components/formFields";
 
 const axios = require('axios').default;
 
@@ -97,6 +97,10 @@ class Form extends React.Component {
     }
 
     ajaxSend(obj) {
+        var stateData = {
+            ajaxProcess: false
+        }
+
         axios({
             method: 'post',
             url: location.pathname + '/' + this.props.page.url + (this.props.editItem.id ? '/' + this.props.editItem.id : ''),
@@ -105,10 +109,6 @@ class Form extends React.Component {
             contentType: false,
             headers: { 'Content-Type': 'multipart/form-data' },
         }).then((response) => {
-            var stateData = {
-                ajaxProcess: false
-            }
-
             if (obj.uploadQueueName) {
                 stateData.upload_queue_success = this.state.upload_queue_success + 1;
             }
@@ -137,6 +137,9 @@ class Form extends React.Component {
                     }
                 }
             });
+        }).catch(() => {
+            alert('Ошибка сервера');
+            this.setState(stateData);
         });
     }
 

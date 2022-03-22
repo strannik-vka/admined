@@ -1,11 +1,12 @@
 import React from "react";
-import Input from "./form/input";
-import Select from "./form/select";
-import Switch from "./form/switch";
-import File from "./form/file";
-import TextEditor from "./form/texteditor";
-import Textarea from "./form/textarea";
-import Fieldsets from "./form/fieldsets";
+import Input from "./input";
+import Select from "./select";
+import Switch from "./switch";
+import File from "./file";
+import TextEditor from "./texteditor";
+import Textarea from "./textarea";
+import Fieldsets from "./fieldsets";
+import Constructor from "./constructor";
 
 class FormFields extends React.Component {
 
@@ -29,11 +30,13 @@ class FormFields extends React.Component {
     select(input) {
         return (
             <Select
-                options={this.props.page.vars[input.name.replace('_id', '').replace('[]', '')]}
                 name={input.name}
-                url={input.url}
                 value={this.getValue(input)}
+                options={this.props.page.vars[input.name.replace('_id', '').replace('[]', '')]}
                 text_key={input.text_key}
+                url={input.url}
+                errors={this.getError(input.name)}
+                onChange={() => this.errorHide(input.name)}
             />
         );
     }
@@ -104,23 +107,27 @@ class FormFields extends React.Component {
         );
     }
 
+    _constructor(input) {
+        return <Constructor
+            name={input.name}
+            screen={input.screen}
+            fields={input.fields}
+            value={this.getValue(input)}
+        />
+    }
+
     array(input) {
         return <Fieldsets
             input={input}
             editItem={this.props.editItem}
-        />;
+            fields={this.props.fields}
+        />
     }
 
     getValue(input) {
-        let value = null,
-            isNameArray = input.name.indexOf('[') > -1 && input.name.indexOf(']') > -1 && input.name.indexOf('[]') == -1;
+        let value = getDataValue(input.name.replace('[]', ''), this.props.editItem);
 
-        if (isNameArray) {
-            value = getDataValue(input.name, this.props.editItem);
-            value = value ? value : input.value;
-        } else {
-            value = this.props.editItem[input.name] ? this.props.editItem[input.name] : input.value;
-        }
+        value = value !== null ? value : input.value;
 
         if (input.type == 'datetime') {
             if (typeof input.value === 'function') {
@@ -132,12 +139,13 @@ class FormFields extends React.Component {
     }
 
     getError(name) {
-        return this.props.errors && this.props.errors[name] ? this.props.errors[name] : null;
+        let inputName = name.replace('[]', '');
+        return this.props.errors && this.props.errors[inputName] ? this.props.errors[inputName] : null;
     }
 
     errorHide(name) {
         if (this.props.errorHide) {
-            this.props.errorHide(name);
+            this.props.errorHide(name.replace('[]', ''));
         }
     }
 
@@ -146,7 +154,7 @@ class FormFields extends React.Component {
             return (
                 input.readonly ? false :
                     <div key={input.name} className="form-group mb-3">
-                        {input.type !== 'switch' ? <label>{input.placeholder}</label> : ''}
+                        {input.type !== 'switch' && input.placeholder ? <label>{input.placeholder}</label> : ''}
                         {input.description ? <div className="description">{input.description}</div> : ''}
                         {this[input.type](input)}
                     </div>

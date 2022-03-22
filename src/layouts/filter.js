@@ -1,8 +1,8 @@
 import React from "react";
-import DivInput from "./form/div_input";
-import Checkbox from "./form/checkbox";
-import Select from "./form/select";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import DivInput from "../components/divInput";
+import Checkbox from "../components/checkbox";
+import Select from "../components/select";
 
 class Filter extends React.Component {
 
@@ -13,7 +13,7 @@ class Filter extends React.Component {
     actions() {
         var actions = [];
 
-        if (this.props.page.config('deleteAction', true)) {
+        if (this.props.page.config('deleteAction', true) && this.props.itemsToCount) {
             actions.push(
                 <Checkbox
                     key="deleteAction"

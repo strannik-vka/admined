@@ -1,9 +1,9 @@
 import React from "react";
-import DivInput from "./form/div_input";
-import Checkbox from "./form/checkbox";
-import Switch from "./form/switch";
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import Select from "./form/select";
+import DivInput from "../components/divInput";
+import Checkbox from "../components/checkbox";
+import Switch from "../components/switch";
+import Select from "../components/select";
 
 class Items extends React.Component {
 
