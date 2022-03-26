@@ -6,13 +6,15 @@ class Input extends React.Component {
         super(props);
 
         this.state = {
-            value: this.props.value ? this.props.value : ''
+            value: this.props.value ? this.props.value : '',
+            isChange: false
         }
     }
 
     onInput = (event) => {
         this.setState({
-            value: event.target.value
+            value: event.target.value,
+            isChange: true
         }, () => {
             if (this.props.onInput) {
                 this.props.onInput(event);
@@ -28,6 +30,16 @@ class Input extends React.Component {
         return false;
     }
 
+    getValue() {
+        let result = this.state.value;
+
+        if (this.props.type == 'datetime' && this.state.isChange == false) {
+            result = dateFormat(this.state.value);
+        }
+
+        return result;
+    }
+
     render() {
         return (
             <>
@@ -36,7 +48,7 @@ class Input extends React.Component {
                     type="text"
                     className={this.isErrors() ? 'form-control is-invalid' : 'form-control'}
                     onInput={this.onInput}
-                    value={this.props.type == 'datetime' ? dateFormat(this.state.value) : this.state.value}
+                    value={this.getValue()}
                 />
                 {
                     this.isErrors()

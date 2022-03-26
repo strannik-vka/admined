@@ -5,8 +5,8 @@
         border: 1px solid var(--c-border-light);
         min-height: 31px;
         border-radius: 8px;
-        min-width: max-content;
         width: 100%;
+        flex-wrap: nowrap;
 
         &:hover {
             border: 1px solid var(--c-border-light);
@@ -29,10 +29,12 @@
 
         .react-select__placeholder {
             color: var(--c-placeholder-dark);
+            min-width: max-content;
         }
 
         .react-select__single-value {
             color: var(--c-primary-dark);
+            min-width: max-content;
         }
 
         .react-select__multi-value {
