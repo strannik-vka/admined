@@ -1,6 +1,6 @@
 import React from "react";
-import { CloseButton, Modal } from "react-bootstrap";
 import FormFields from "../components/formFields";
+import Modal from "../components/modal";
 
 const axios = require('axios').default;
 
@@ -147,26 +147,21 @@ class Form extends React.Component {
         return <Modal
             show={this.props.show}
             onHide={this.props.hideForm}
-            size="xl"
-            centered
         >
-            <Modal.Body>
-                <CloseButton onClick={() => { this.props.hideForm(false) }} />
-                <form className="form-reverse" onSubmit={this.onSubmit}>
-                    <FormFields
-                        page={this.props.page}
-                        inputs={this.props.page.form}
-                        errors={this.state.errors}
-                        errorHide={(name) => this.errorHide(name)}
-                        editItem={this.props.editItem}
-                    />
-                    <div className="d-flex justify-content-end align-items-center">
-                        {this.getUploadQueueName() && this.state.ajaxProcess ? <div className="upload_queue_text">Успешно {this.state.upload_queue_success} из {this.state.upload_queue_total}</div> : ''}
-                        <button type="submit" className="btn">{this.state.ajaxProcess ? 'Подождите..' : 'Сохранить'}</button>
-                    </div>
-                </form>
-            </Modal.Body>
-        </Modal>;
+            <form key={JSON.stringify(this.props.editItem)} className="form-reverse" onSubmit={this.onSubmit}>
+                <FormFields
+                    page={this.props.page}
+                    inputs={this.props.page.form}
+                    errors={this.state.errors}
+                    errorHide={(name) => this.errorHide(name)}
+                    editItem={this.props.editItem}
+                />
+                <div className="d-flex justify-content-end align-items-center">
+                    {this.getUploadQueueName() && this.state.ajaxProcess ? <div className="upload_queue_text">Успешно {this.state.upload_queue_success} из {this.state.upload_queue_total}</div> : ''}
+                    <button type="submit" className="btn">{this.state.ajaxProcess ? 'Подождите..' : 'Сохранить'}</button>
+                </div>
+            </form>
+        </Modal>
     }
 
 }

@@ -132,6 +132,8 @@ class FormFields extends React.Component {
         if (input.type == 'datetime') {
             if (typeof input.value === 'function') {
                 value = input.value();
+            } else if (value == 'now') {
+                value = nowDateTime();
             }
         }
 

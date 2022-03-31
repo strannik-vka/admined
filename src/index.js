@@ -23,8 +23,12 @@ class Admined extends React.Component {
         this.ajaxItemsRequest = null;
         this.ajaxItems = false;
         this.itemsUpdateInterval = false;
+        this.pages = [];
+        this.isMiddleware = false;
 
-        this.state = { pages: [], ...this.pageDefault() };
+        this.state = {
+            pages: [], ...this.pageDefault()
+        };
 
         document.addEventListener('scroll', this.scroll);
     }
@@ -279,39 +283,35 @@ class Admined extends React.Component {
                 total: isPaginate ? response.data.paginate.total : 0
             }
 
-            this.setState((prevState) => {
-                if (isPaginate) {
-                    let itemLast = prevState.paginate.data.length ? prevState.paginate.data[0] : null,
-                        newItems = [];
+            if (isPaginate) {
+                let itemLast = this.state.paginate.data.length ? this.state.paginate.data[0] : null,
+                    newItems = [];
 
-                    if (itemLast) {
-                        let prevDataIds = prevState.paginate.data.map(item => {
-                            return item.id;
-                        });
+                if (itemLast) {
+                    let prevDataIds = this.state.paginate.data.map(item => {
+                        return item.id;
+                    });
 
-                        response.data.paginate.data.forEach(item => {
-                            if (prevDataIds.indexOf(item.id) == -1) {
-                                newItems.push(item);
-                            }
-                        });
-                    } else {
-                        newItems = response.data.paginate.data;
-                    }
-
-                    if (newItems.length) {
-                        paginateData.data = [...newItems, ...prevState.paginate.data];
-                    } else {
-                        paginateData.data = prevState.paginate.data;
-                    }
+                    response.data.paginate.data.forEach(item => {
+                        if (prevDataIds.indexOf(item.id) == -1) {
+                            newItems.push(item);
+                        }
+                    });
+                } else {
+                    newItems = response.data.paginate.data;
                 }
 
-                return {
-                    paginate: paginateData,
-                    page: { ...prevState.page, ...{ vars: vars } }
+                if (newItems.length) {
+                    paginateData.data = [...newItems, ...this.state.paginate.data];
+
+                    this.setState({
+                        paginate: paginateData,
+                        page: { ...this.state.page, ...{ vars: vars } }
+                    }, () => {
+                        if (callback) callback();
+                    })
                 }
-            }, () => {
-                if (callback) callback();
-            });
+            }
         });
     }
 
@@ -392,23 +392,65 @@ class Admined extends React.Component {
             }
         }
 
-        this.setState((state) => {
-            return {
-                pages: [...state.pages, data]
-            }
-        }, () => {
-            if (this.state.page.form.length == 0) {
-                var url = URLParam('url');
+        this.pages = [...this.pages, data];
 
-                if (url) {
-                    if (url == data.url) {
-                        this.changePage(data);
-                    }
-                } else {
-                    this.changePage(data);
-                }
-            }
-        });
+        if (typeof data.middleware !== 'undefined') {
+            this.isMiddleware = true;
+        }
+
+        if (this.changePageTimer) {
+            clearTimeout(this.changePageTimer);
+        }
+
+        this.changePageTimer = setTimeout(() => {
+            this.middlewarePages(() => {
+                let url = URLParam('url'),
+                    pageData = this.state.pages.filter((pageData, index) => {
+                        if (url) {
+                            if (url == pageData.url) {
+                                return pageData;
+                            }
+                        } else if (index == 0) {
+                            return pageData;
+                        }
+                    });
+
+                this.changePage(pageData[0]);
+            });
+        }, 100);
+    }
+
+    middlewarePages(callback) {
+        if (this.isMiddleware) {
+            axios.get(location.pathname + '/middleware').then(response => {
+                let url = URLParam('url'),
+                    pages = this.pages.filter(page => {
+                        let access = false;
+
+                        if (Array.isArray(page.middleware)) {
+                            access = page.middleware.indexOf(response.data) > -1;
+                        } else {
+                            access = page.middleware === response.data;
+                        }
+
+                        if (access) {
+                            return page;
+                        } else {
+                            if (page.url == url) {
+                                history.pushState(null, page.name, location.pathname);
+                            }
+                        }
+                    });
+
+                this.setState({
+                    pages: pages
+                }, () => {
+                    callback();
+                });
+            });
+        } else {
+            callback();
+        }
     }
 
     itemsDelete = () => {

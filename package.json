@@ -8,13 +8,13 @@
     "draft-js-import-html": "^1.4.1",
     "isobject": "^3.0.1",
     "react": "^17.0.2",
-    "react-bootstrap": "^2.0.0-rc.0",
+    "react-bootstrap": "^2.2.2",
     "react-chartjs-2": "^3.3.0",
     "react-dom": "^17.0.2",
     "react-select": "^5.2.2"
   },
   "name": "admined",
-  "version": "1.0.73",
+  "version": "1.0.74",
   "description": "Админка",
   "main": "lib/index.js",
   "scripts": {

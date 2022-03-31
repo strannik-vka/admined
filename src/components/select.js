@@ -69,38 +69,42 @@ class Select extends React.Component {
             options = Array.isArray(options) ? options : [],
             placeholder = null,
             valueIsArray = Array.isArray(value),
+            valueKey = valueIsArray ? value.split(',') : value,
             defaultValue = valueIsArray ? [] : null;
 
         if (typeof this.props.defaultOption === 'undefined' || this.props.defaultOption !== false) {
             placeholder = this.props.placeholder ? this.props.placeholder : '- Выбрать -';
         }
 
-        options.map(option => {
-            option.value = typeof option === 'string' ? option : (
+        options = options.map(option => {
+            let result = {};
+
+            result.value = typeof option === 'string' ? option : (
                 typeof option.id !== 'undefined' ? option.id : (
                     typeof option.value !== 'undefined' ? option.value : ''
                 )
             );
 
-            option.label = typeof option === 'string' ? option : (
+            result.label = typeof option === 'string' ? option : (
                 typeof this.props.text_key !== 'undefined' ? option[this.props.text_key] : option.name
             );
 
             if (valueIsArray) {
-                if (value.indexOf('' + option.value + '') > -1 || value.indexOf(option.value) > -1) {
-                    defaultValue.push(option);
+                if (value.indexOf('' + result.value + '') > -1 || value.indexOf(result.value) > -1) {
+                    defaultValue.push(result);
                 }
             } else {
-                if (option.value === value) {
-                    defaultValue = option;
+                if (result.value === value) {
+                    defaultValue = result;
                 }
             }
 
-            return option;
+            return result;
         });
 
         return <>
             <ReactSelect
+                key={this.props.name + '_' + valueKey}
                 className={'react-select-container' + (this.isErrors() ? ' is-invalid' : '')}
                 classNamePrefix="react-select"
                 placeholder={placeholder}

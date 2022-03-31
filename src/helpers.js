@@ -85,11 +85,11 @@ window.isObject = function (val) {
 }
 
 window.getDataValue = function (str, data) {
-    if (data[str]) {
+    if (typeof data[str] !== 'undefined') {
         return data[str];
     }
 
-    if (data[str + '[]']) {
+    if (typeof data[str + '[]'] !== 'undefined') {
         return data[str + '[]'];
     }
 
@@ -116,7 +116,7 @@ window.getDataValue = function (str, data) {
             }
         }
 
-        return data ? data : null;
+        return data === undefined ? null : data;
     }
 
     return null;
@@ -138,4 +138,59 @@ window.template = (str, data) => {
     }
 
     return result;
+}
+
+window.nowDateTime = () => {
+    var date = new Date(),
+        month = date.getMonth() + 1,
+        day = date.getDate(),
+        datetime = '';
+
+    datetime += date.getFullYear() + '-';
+    datetime += (month < 10 ? '0' + month : month) + '-';
+    datetime += (day < 10 ? '0' + day : day) + ' ';
+    datetime += date.toLocaleTimeString().slice(0, -3);
+
+    return datetime;
+}
+
+window.getScrollBarWidth = () => {
+    var inner = document.createElement('p');
+    inner.style.width = "100%";
+    inner.style.height = "200px";
+
+    var outer = document.createElement('div');
+    outer.style.position = "absolute";
+    outer.style.top = "0px";
+    outer.style.left = "0px";
+    outer.style.visibility = "hidden";
+    outer.style.width = "200px";
+    outer.style.height = "150px";
+    outer.style.overflow = "hidden";
+    outer.appendChild(inner);
+
+    document.body.appendChild(outer);
+    var w1 = inner.offsetWidth;
+    outer.style.overflow = 'scroll';
+    var w2 = inner.offsetWidth;
+    if (w1 == w2) w2 = outer.clientWidth;
+
+    document.body.removeChild(outer);
+
+    return (w1 - w2);
+}
+
+window.hasClass = (ele, cls) => {
+    return ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
+}
+
+window.addClass = (ele, cls) => {
+    if (!hasClass(ele, cls)) ele.className += " " + cls;
+}
+
+window.removeClass = (ele, cls) => {
+    if (hasClass(ele, cls)) {
+        var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
+        ele.className = ele.className.replace(reg, ' ');
+    }
 }
