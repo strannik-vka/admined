@@ -30,7 +30,7 @@ class Fildsets extends React.Component {
         }
 
         fields = fields.map(item => {
-            return Object.assign(item, {
+            return Object.assign(isObject(item) ? item : {}, {
                 id: new String(Math.random()).replace('.', '')
             });
         });

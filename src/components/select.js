@@ -69,7 +69,7 @@ class Select extends React.Component {
             options = Array.isArray(options) ? options : [],
             placeholder = null,
             valueIsArray = Array.isArray(value),
-            valueKey = valueIsArray ? value.split(',') : value,
+            valueKey = valueIsArray ? value.join(',') : (isObject(value) ? JSON.stringify(value) : value),
             defaultValue = valueIsArray ? [] : null;
 
         if (typeof this.props.defaultOption === 'undefined' || this.props.defaultOption !== false) {
