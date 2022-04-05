@@ -19,7 +19,7 @@ class Constructor extends React.Component {
     constructor(props) {
         super(props);
 
-        let fieldsToCreate = [
+        this.fieldsToCreate = [
             {
                 type: 'string',
                 placeholder: 'Строка',
@@ -79,9 +79,21 @@ class Constructor extends React.Component {
 
         this.state = {
             fields: fields,
-            fieldsToCreate: [...fieldsToCreate, ...fieldsFromUser],
+            fieldsToCreate: [...this.fieldsToCreateAllow(), ...fieldsFromUser],
             screen: null
         }
+    }
+
+    fieldsToCreateAllow() {
+        if (Array.isArray(this.props.defaultFields)) {
+            return this.fieldsToCreate.filter(field => {
+                if (this.props.defaultFields.indexOf(field.type) > -1) {
+                    return field;
+                }
+            });
+        }
+
+        return this.fieldsToCreate;
     }
 
     getFieldsDB() {
@@ -99,15 +111,28 @@ class Constructor extends React.Component {
                     value: item[name]
                 });
             });
+        } else if (typeof this.props.value === 'string') {
+            let idGenerate = this.generateId();
+
+            fields.push({
+                name: this.props.name + '[texteditor_' + idGenerate + ']',
+                id: idGenerate,
+                type: 'texteditor',
+                value: this.props.value
+            });
         }
 
         return fields;
     }
 
+    generateId() {
+        return new String(Math.random()).replace('.', '');
+    }
+
     addField = (type, id) => {
         document.body.click();
 
-        var idGenerate = new String(Math.random()).replace('.', ''),
+        var idGenerate = this.generateId(),
             name = this.props.name + '[' + type + '_' + idGenerate + ']';
 
         this.setState(prevState => {

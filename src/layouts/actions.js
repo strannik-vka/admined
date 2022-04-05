@@ -8,18 +8,19 @@ class Actions extends React.Component {
 
     actions() {
         if (typeof this.props.page.actions !== 'undefined') {
-            return this.props.page.actions.map((action, i) =>
-                <>
-                    {i ? null : <div className="divider">|</div>}
-                    <a
-                        className="btn action-item"
-                        href={action.href ? action.href : null}
-                        onClick={action.onclick ? action.onclick : null}
-                        target={action.target ? action.target : null}
-                        key={i}
-                    >{action.text}</a>
-                </>
+            let result = this.props.page.actions.map((action, i) =>
+                <a
+                    className="btn action-item"
+                    href={action.href ? action.href : null}
+                    onClick={action.onclick ? action.onclick : null}
+                    target={action.target ? action.target : null}
+                    key={i}
+                >{action.text}</a>
             );
+
+            result.push(<div key="divider" className="divider">|</div>);
+
+            return result;
         }
     }
 
@@ -31,6 +32,7 @@ class Actions extends React.Component {
                     <span className="saveStatus">{this.props.saveStatus}</span>
                 </div>
                 <div>
+                    {this.actions()}
                     {
                         this.props.page.config('deleteAction', true)
                             ?
@@ -45,7 +47,6 @@ class Actions extends React.Component {
                             ? <a className="btn action-item" onClick={this.props.showForm}>Добавить</a>
                             : ''
                     }
-                    {this.actions()}
                 </div>
             </div>
         );

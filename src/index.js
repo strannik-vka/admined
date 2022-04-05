@@ -20,9 +20,10 @@ class Admined extends React.Component {
     constructor(props) {
         super(props);
 
-        this.ajaxItemsRequest = null;
+        this.UpdateCancelTokenSource = axios.CancelToken.source();
+        this.CancelTokenSource = axios.CancelToken.source();
         this.ajaxItems = false;
-        this.itemsUpdateInterval = false;
+        this.itemsUpdateTimeout = false;
         this.pages = [];
         this.isMiddleware = false;
 
@@ -247,11 +248,11 @@ class Admined extends React.Component {
     }
 
     itemsUpdateStart() {
-        if (this.itemsUpdateInterval) {
-            clearInterval(this.itemsUpdateInterval);
+        if (this.itemsUpdateTimeout) {
+            clearTimeout(this.itemsUpdateTimeout);
         }
 
-        this.itemsUpdateInterval = setInterval(() => {
+        this.itemsUpdateTimeout = setTimeout(() => {
             this.itemsUpdate(() => {
                 this.itemsUpdateStart();
             });
@@ -259,98 +260,115 @@ class Admined extends React.Component {
     }
 
     itemsUpdate(callback) {
-        if (this.ajaxItemsRequest) {
-            this.ajaxItemsRequest.cancel();
-        }
+        if (this.ajaxItems) {
+            if (callback) callback();
+        } else {
+            this.UpdateCancelTokenSource.cancel();
+            this.UpdateCancelTokenSource = axios.CancelToken.source();
 
-        this.ajaxItemsRequest = axios.CancelToken.source();
+            axios.get(location.pathname + '/' + this.state.page.url, {
+                cancelToken: this.UpdateCancelTokenSource.token,
+                params: { ...this.state.page.filter, ...{ page: 1 } }
+            }).then((response) => {
+                var isPaginate = typeof response.data.paginate !== 'undefined',
+                    vars = Object.assign({}, response.data);
 
-        axios.get(location.pathname + '/' + this.state.page.url, {
-            cancelToken: this.ajaxItemsRequest.token,
-            params: { ...this.state.page.filter, ...{ page: 1 } }
-        }).then((response) => {
-            var isPaginate = typeof response.data.paginate !== 'undefined',
-                vars = Object.assign({}, response.data);
+                window.vars = vars;
 
-            window.vars = vars;
+                if (typeof vars.paginate !== 'undefined') {
+                    delete vars.paginate;
+                }
 
-            if (typeof vars.paginate !== 'undefined') {
-                delete vars.paginate;
-            }
+                let paginateData = {
+                    enabled: isPaginate,
+                    total: isPaginate ? response.data.paginate.total : 0
+                }
 
-            let paginateData = {
-                enabled: isPaginate,
-                total: isPaginate ? response.data.paginate.total : 0
-            }
+                if (isPaginate) {
+                    let itemLast = this.state.paginate.data.length ? this.state.paginate.data[0] : null,
+                        newItems = [];
 
-            if (isPaginate) {
-                let itemLast = this.state.paginate.data.length ? this.state.paginate.data[0] : null,
-                    newItems = [];
+                    if (itemLast) {
+                        let prevDataIds = this.state.paginate.data.map(item => {
+                            return item.id;
+                        });
 
-                if (itemLast) {
-                    let prevDataIds = this.state.paginate.data.map(item => {
-                        return item.id;
-                    });
+                        response.data.paginate.data.forEach(item => {
+                            if (prevDataIds.indexOf(item.id) == -1) {
+                                newItems.push(item);
+                            }
+                        });
+                    } else {
+                        newItems = response.data.paginate.data;
+                    }
 
-                    response.data.paginate.data.forEach(item => {
-                        if (prevDataIds.indexOf(item.id) == -1) {
-                            newItems.push(item);
-                        }
-                    });
+                    if (newItems.length) {
+                        paginateData.data = [...newItems, ...this.state.paginate.data];
+
+                        this.setState({
+                            paginate: paginateData,
+                            page: { ...this.state.page, ...{ vars: vars } }
+                        }, () => {
+                            callback();
+                        })
+                    } else {
+                        callback();
+                    }
                 } else {
-                    newItems = response.data.paginate.data;
+                    callback();
                 }
-
-                if (newItems.length) {
-                    paginateData.data = [...newItems, ...this.state.paginate.data];
-
-                    this.setState({
-                        paginate: paginateData,
-                        page: { ...this.state.page, ...{ vars: vars } }
-                    }, () => {
-                        if (callback) callback();
-                    })
-                }
-            }
-        });
+            }).catch(() => {
+                callback();
+            });
+        }
     }
 
     getItems(callback) {
-        if (this.ajaxItemsRequest) {
-            this.ajaxItemsRequest.cancel();
-        }
+        this.CancelTokenSource.cancel();
+        this.UpdateCancelTokenSource.cancel();
 
-        this.ajaxItemsRequest = axios.CancelToken.source();
+        this.CancelTokenSource = axios.CancelToken.source();
 
-        axios.get(location.pathname + '/' + this.state.page.url, {
-            cancelToken: this.ajaxItemsRequest.token,
-            params: { ...this.state.page.filter, ...{ page: this.state.pageNumber } }
-        }).then((response) => {
-            var isPaginate = typeof response.data.paginate !== 'undefined',
-                vars = Object.assign({}, response.data);
+        this.setState({
+            saveStatus: 'Загрузка списка..'
+        }, () => {
+            axios.get(location.pathname + '/' + this.state.page.url, {
+                cancelToken: this.CancelTokenSource.token,
+                params: { ...this.state.page.filter, ...{ page: this.state.pageNumber } }
+            }).then(response => {
+                var isPaginate = typeof response.data.paginate !== 'undefined',
+                    vars = Object.assign({}, response.data);
 
-            window.vars = vars;
+                window.vars = vars;
 
-            if (typeof vars.paginate !== 'undefined') {
-                delete vars.paginate;
-            }
-
-            this.setState((prevState) => {
-                return {
-                    paginate: {
-                        enabled: isPaginate,
-                        data: isPaginate
-                            ? [...prevState.paginate.data, ...response.data.paginate.data]
-                            : prevState.paginate.data,
-                        total: isPaginate ? response.data.paginate.total : 0,
-                    },
-                    page: { ...prevState.page, ...{ vars: vars } },
-                    pageNumber: prevState.pageNumber + 1
+                if (typeof vars.paginate !== 'undefined') {
+                    delete vars.paginate;
                 }
-            }, () => {
-                if (callback) callback();
+
+                this.setState((prevState) => {
+                    return {
+                        paginate: {
+                            enabled: isPaginate,
+                            data: isPaginate
+                                ? [...prevState.paginate.data, ...response.data.paginate.data]
+                                : prevState.paginate.data,
+                            total: isPaginate ? response.data.paginate.total : 0,
+                        },
+                        page: { ...prevState.page, ...{ vars: vars } },
+                        pageNumber: prevState.pageNumber + 1,
+                        saveStatus: ''
+                    }
+                }, () => {
+                    if (callback) callback();
+                });
+            }).catch(() => {
+                this.setState({
+                    saveStatus: 'Ошибка загрузки списка, попробуйте еще раз..'
+                }, () => {
+                    if (callback) callback();
+                });
             });
-        });
+        })
     }
 
     page(url, name, data) {

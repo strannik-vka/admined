@@ -8,8 +8,13 @@ class Select extends React.Component {
     constructor(props) {
         super(props);
 
+        this.ajaxTimer = false;
+        this.localOptionsIds = [];
+        this.localOptions = this.getLocalOptions();
+
         this.state = {
-            options: [],
+            isLoading: this.props.url ? true : false,
+            options: this.localOptions,
             value: this.props.value ? this.props.value : ''
         };
 
@@ -20,12 +25,62 @@ class Select extends React.Component {
         this.isOnChange = typeof this.props.onChange === 'function';
     }
 
-    getOptions() {
-        axios.get(this.props.url).then((response) => {
+    getLocalOptions() {
+        let result = [];
+
+        if (Array.isArray(this.props.value)) {
+            this.props.value.forEach(option => {
+                if (isObject(option)) {
+                    let localOption = {};
+
+                    localOption.id = typeof option.id !== 'undefined' ? option.id : (
+                        typeof option.value !== 'undefined' ? option.value : ''
+                    )
+
+                    localOption.name = typeof option.name !== 'undefined' ? option.name : (
+                        typeof option.title !== 'undefined' ? option.title : ''
+                    )
+
+                    if (localOption.id && localOption.name) {
+                        this.localOptionsIds.push(localOption.id);
+                        result.push(localOption);
+                    }
+                }
+            });
+        }
+
+        return result;
+    }
+
+    getOptions = (name) => {
+        let config = {};
+
+        if (typeof name !== 'undefined') {
+            config.params = {
+                name: name
+            };
+        }
+
+        axios.get(this.props.url, config).then(response => {
             this.setState({
-                options: response.data.paginate.data
+                options: [...response.data.paginate.data, ...this.localOptions],
+                isLoading: false
             });
         });
+    }
+
+    onInputChange = (value) => {
+        if (value) {
+            this.setState({
+                isLoading: true
+            }, () => {
+                if (this.ajaxTimer) clearTimeout(this.ajaxTimer);
+
+                this.ajaxTimer = setTimeout(() => {
+                    this.getOptions(value);
+                }, 1000);
+            });
+        }
     }
 
     onChange = (selectedOption) => {
@@ -64,12 +119,15 @@ class Select extends React.Component {
 
     render() {
         var multiple = this.props.name.indexOf('[]') > -1,
-            value = this.isOnChange ? (typeof this.props.value !== 'undefined' ? this.props.value : '') : this.state.value,
+            value = this.isOnChange ? (
+                typeof this.props.value !== 'undefined' ? (
+                    this.localOptionsIds.length ? this.localOptionsIds : this.props.value
+                ) : ''
+            ) : this.state.value,
             options = this.props.options ? this.props.options : this.state.options,
             options = Array.isArray(options) ? options : [],
             placeholder = null,
             valueIsArray = Array.isArray(value),
-            valueKey = valueIsArray ? value.join(',') : (isObject(value) ? JSON.stringify(value) : value),
             defaultValue = valueIsArray ? [] : null;
 
         if (typeof this.props.defaultOption === 'undefined' || this.props.defaultOption !== false) {
@@ -104,7 +162,7 @@ class Select extends React.Component {
 
         return <>
             <ReactSelect
-                key={this.props.name + '_' + valueKey}
+                key={this.props.name + '_' + JSON.stringify(value)}
                 className={'react-select-container' + (this.isErrors() ? ' is-invalid' : '')}
                 classNamePrefix="react-select"
                 placeholder={placeholder}
@@ -113,8 +171,13 @@ class Select extends React.Component {
                 isMulti={multiple}
                 name={this.props.name}
                 onChange={this.onChange}
+                onInputChange={this.onInputChange}
                 options={options}
                 isClearable={true}
+                closeMenuOnSelect={!multiple}
+                isLoading={this.state.isLoading}
+                loadingMessage={() => 'Загрузка..'}
+                noOptionsMessage={() => 'Пусто..'}
             />
             {
                 this.isErrors()
