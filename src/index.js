@@ -1,17 +1,15 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 
-import Menu from "./layouts/menu";
-import Actions from './layouts/actions';
+import './helpers';
+
+import Header from "./layouts/header";
 import Filter from "./layouts/filter";
 import Items from './layouts/items';
 import Form from "./layouts/form";
 import Charts from "./layouts/charts";
 
-import './helpers';
-
 import '../css/index.css';
-import isObject from "isobject";
 
 const axios = require('axios').default;
 
@@ -28,13 +26,15 @@ class Admined extends React.Component {
         this.isMiddleware = false;
 
         this.state = {
-            pages: [], ...this.pageDefault()
+            isDomRender: false,
+            pages: [],
+            ...this.stateDefault()
         };
 
         document.addEventListener('scroll', this.scroll);
     }
 
-    pageDefault() {
+    stateDefault() {
         return {
             formShow: false,
             pageNumber: 1,
@@ -69,7 +69,7 @@ class Admined extends React.Component {
         pageData.filter[name] = value;
 
         this.setState({
-            ...this.pageDefault(),
+            ...this.stateDefault(),
             ...{ page: pageData }
         }, () => {
             if (callback) {
@@ -227,9 +227,9 @@ class Admined extends React.Component {
         history.pushState(null, page.name, location.pathname + '?url=' + page.url + (params ? params : ''));
         document.querySelector('title').innerHTML = page.name;
 
-        const pageDefault = this.pageDefault();
+        const stateDefault = this.stateDefault();
 
-        pageDefault.page = { ...pageDefault.page, ...page };
+        stateDefault.page = { ...stateDefault.page, ...page };
 
         if (params) {
             var params_arr = params.split('&');
@@ -237,11 +237,15 @@ class Admined extends React.Component {
             params_arr.forEach(element => {
                 var elem_arr = element.split('=');
 
-                pageDefault.page.filter[elem_arr[0]] = decodeURIComponent(elem_arr[1]);
+                stateDefault.page.filter[elem_arr[0]] = decodeURIComponent(elem_arr[1]);
             });
         }
 
-        this.setState(pageDefault, () => {
+        if (this.state.isDomRender == false) {
+            stateDefault.isDomRender = true;
+        }
+
+        this.setState(stateDefault, () => {
             this.getItems();
             this.itemsUpdateStart();
         });
@@ -530,22 +534,18 @@ class Admined extends React.Component {
     render() {
         return (
             <>
-                <header id="header">
-                    <Menu
-                        pages={this.state.pages}
-                        page={this.state.page}
-                        changePage={this.changePage}
-                    />
-                    <Actions
-                        page={this.state.page}
-                        to={this.state.paginate.data.length}
-                        total={this.state.paginate.total}
-                        saveStatus={this.state.saveStatus}
-                        itemsSelected={this.state.itemsSelected}
-                        itemsDelete={this.itemsDelete}
-                        showForm={() => this.setFormShow(true)}
-                    />
-                </header>
+                <Header
+                    isDomRender={this.state.isDomRender}
+                    pages={this.state.pages}
+                    page={this.state.page}
+                    changePage={this.changePage}
+                    to={this.state.paginate.data.length}
+                    total={this.state.paginate.total}
+                    saveStatus={this.state.saveStatus}
+                    itemsSelected={this.state.itemsSelected}
+                    itemsDelete={this.itemsDelete}
+                    showForm={() => this.setFormShow(true)}
+                />
                 <div className="content">
                     <Charts
                         page={this.state.page}
