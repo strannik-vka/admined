@@ -471,7 +471,11 @@ class Admined extends React.Component {
                 });
             });
         } else {
-            callback();
+            this.setState({
+                pages: this.pages
+            }, () => {
+                callback();
+            });
         }
     }
 
