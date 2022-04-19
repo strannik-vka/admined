@@ -594,7 +594,13 @@ class Admined extends React.Component {
 
 }
 
-export default ReactDOM.render(
+const AdminedDOM = ReactDOM.render(
     <Admined />,
     document.getElementById('admined')
-);
+)
+
+window.Admined = {
+    page: (...args) => {
+        AdminedDOM.page(...args);
+    }
+}
