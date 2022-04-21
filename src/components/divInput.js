@@ -144,23 +144,33 @@ class DivInput extends React.Component {
         const type = this.props.type ? this.props.type : 'string';
 
         return (
-            <div
-                name={this.props.name}
-                placeholder={this.props.placeholder}
-                contentEditable={true}
-                suppressContentEditableWarning={true}
-                type={type}
-                className={this.className()}
-                onPaste={(e) => this.onPaste(e, type)}
-                onInput={this.onInput}
-                onFocus={this.onFocus}
-                onBlur={this.onBlur}
-                onKeyPress={(e) => this.onKeyPress(e, type)}
-                onCut={(e) => this.onCut(e)}
-                onClick={() => this.onClick()}
-            >
-                {this.getValue()}
-            </div>
+            <>
+                <div
+                    name={this.props.name}
+                    placeholder={this.props.placeholder}
+                    contentEditable={true}
+                    suppressContentEditableWarning={true}
+                    type={type}
+                    className={this.className()}
+                    onPaste={(e) => this.onPaste(e, type)}
+                    onInput={this.onInput}
+                    onFocus={this.onFocus}
+                    onBlur={this.onBlur}
+                    onKeyPress={(e) => this.onKeyPress(e, type)}
+                    onCut={(e) => this.onCut(e)}
+                    onClick={() => this.onClick()}
+                    style={this.props.href ? { textDecoration: 'underline', cursor: 'pointer' } : {}}
+                >
+                    {this.getValue()}
+                </div>
+                {
+                    this.props.href
+                        ? <svg className="icon_href" width="16" viewBox="0 0 416 368" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M400 184L224 16V112C55.57 112 16 232.77 16 352C64.61 289.76 107.6 256 224 256V352L400 184Z" stroke="black" stroke-width="32" stroke-linejoin="round" />
+                        </svg>
+                        : ''
+                }
+            </>
         );
     }
 

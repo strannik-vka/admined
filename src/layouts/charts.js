@@ -1,3 +1,4 @@
+import isObject from "isobject";
 import React from "react";
 import { Line } from 'react-chartjs-2';
 
@@ -11,8 +12,10 @@ class Charts extends React.Component {
         if (typeof this.props.page.vars.charts !== 'undefined') {
             return <div className="charts">
                 {this.props.page.vars.charts.map((data, i) => {
-                    var options = {
-                        resposive: true
+                    var options = isObject(data.options) ? data.options : {};
+
+                    if (!options.resposive) {
+                        options.resposive = true;
                     }
 
                     return (
