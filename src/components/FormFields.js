@@ -28,11 +28,26 @@ class FormFields extends React.Component {
     }
 
     select(input) {
+        let options = [],
+            nameWith = input.name.replace('_id', '');
+
+        if (Array.isArray(this.props.page.vars[input.name.replace('_id', '').replace('[]', '')])) {
+            options = Array.from(this.props.page.vars[input.name.replace('_id', '').replace('[]', '')]);
+        }
+
+        if (this.props.editItem[nameWith]) {
+            let option = this.props.editItem[nameWith];
+
+            if (JSON.stringify(options).indexOf('"id":' + option.id + '') == -1) {
+                options.unshift(option);
+            }
+        }
+
         return (
             <Select
                 name={input.name}
                 value={this.getValue(input)}
-                options={this.props.page.vars[input.name.replace('_id', '').replace('[]', '')]}
+                options={options}
                 text_key={input.text_key}
                 url={input.url}
                 errors={this.getError(input.name)}

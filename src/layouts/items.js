@@ -25,15 +25,31 @@ class Items extends React.Component {
     }
 
     select(item, input) {
+        let options = [],
+            nameWith = input.name.replace('_id', '');
+
+        if (Array.isArray(this.props.page.vars[input.name.replace('_id', '').replace('[]', '')])) {
+            options = Array.from(this.props.page.vars[input.name.replace('_id', '').replace('[]', '')]);
+        }
+
+        if (item[nameWith]) {
+            let option = item[nameWith];
+
+            if (JSON.stringify(options).indexOf('"id":' + option.id + '') == -1) {
+                options.unshift(option);
+            }
+        }
+
         return (
             <Select
                 readonly={input.readonly}
                 name={input.name}
                 value={item[input.name.replace('[]', '')]}
-                options={this.props.page.vars[input.name.replace('_id', '').replace('[]', '')]}
+                options={options}
                 text_key={input.text_key}
                 defaultOption={input.defaultOption}
                 onChange={(value) => this.props.onItemChange(item.id, input.name, value)}
+                url={input.url}
             />
         );
     }

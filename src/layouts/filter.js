@@ -45,6 +45,7 @@ class Filter extends React.Component {
                 value={this.props.page.filter[key]}
                 onChange={(value) => this.props.onChange(value, key)}
                 text_key={input.text_key}
+                url={input.url}
             />;
         } else if (input.type == 'switch') {
             result = <Select

@@ -8,25 +8,18 @@ class Select extends React.Component {
     constructor(props) {
         super(props);
 
-        this.ajaxTimer = false;
-        this.localOptionsIds = [];
         this.localOptions = this.getLocalOptions();
 
         this.state = {
-            isLoading: this.props.url ? true : false,
-            options: this.localOptions,
+            isLoading: false,
+            ajaxOptions: null,
             value: this.props.value ? this.props.value : ''
-        };
-
-        if (this.props.url) {
-            this.getOptions();
         }
-
-        this.isOnChange = typeof this.props.onChange === 'function';
     }
 
-    getLocalOptions() {
-        let result = [];
+    getLocalOptions = () => {
+        let options = [],
+            ids = [];
 
         if (Array.isArray(this.props.value)) {
             this.props.value.forEach(option => {
@@ -42,43 +35,64 @@ class Select extends React.Component {
                     )
 
                     if (localOption.id && localOption.name) {
-                        this.localOptionsIds.push(localOption.id);
-                        result.push(localOption);
+                        ids.push(localOption.id);
+                        options.push(localOption);
                     }
                 }
             });
         }
 
-        return result;
+        return {
+            ids: ids,
+            options: options
+        }
     }
 
-    getOptions = (name) => {
-        let config = {};
-
-        if (typeof name !== 'undefined') {
-            config.params = {
-                name: name
-            };
-        }
-
-        axios.get(this.props.url, config).then(response => {
+    ajaxPreloader = (callback) => {
+        if (this.state.isLoading != true) {
             this.setState({
-                options: [...response.data.paginate.data, ...this.localOptions],
-                isLoading: false
-            });
+                isLoading: true
+            }, callback);
+        } else {
+            callback();
+        }
+    }
+
+    getAjaxOptions = (name, callback) => {
+        this.ajaxPreloader(() => {
+            let config = {};
+
+            if (typeof name !== 'undefined') {
+                config.params = {
+                    name: name
+                };
+            }
+
+            if (this.ajaxTimer) {
+                clearTimeout(this.ajaxTimer);
+            }
+
+            this.ajaxTimer = setTimeout(() => {
+                axios.get(this.props.url, config).then(response => {
+                    callback(response.data.paginate.data);
+                });
+            }, 1000);
         });
     }
 
     onInputChange = (value) => {
-        if (value) {
-            this.setState({
-                isLoading: true
-            }, () => {
-                if (this.ajaxTimer) clearTimeout(this.ajaxTimer);
+        if (value && this.props.url) {
+            this.getAjaxOptions(value, options => {
+                let propsOptions = JSON.stringify(this.props.options ? this.props.options : this.localOptions.options);
 
-                this.ajaxTimer = setTimeout(() => {
-                    this.getOptions(value);
-                }, 1000);
+                options = options.filter(option => {
+                    return propsOptions.indexOf('"id":' + option.id + '') == -1;
+                });
+
+                this.setState({
+                    isLoading: false,
+                    ajaxOptions: options
+                });
             });
         }
     }
@@ -94,7 +108,7 @@ class Select extends React.Component {
             });
         }
 
-        if (this.isOnChange) {
+        if (this.props.onChange) {
             if (Array.isArray(value)) {
                 if (value.length == 0) {
                     value = '';
@@ -109,7 +123,7 @@ class Select extends React.Component {
         }
     }
 
-    isErrors() {
+    isErrors = () => {
         if (typeof this.props.errors === 'object' && this.props.errors != null) {
             return Object.keys(this.props.errors).length;
         }
@@ -117,62 +131,104 @@ class Select extends React.Component {
         return false;
     }
 
-    render() {
-        var multiple = this.props.name.indexOf('[]') > -1,
-            value = this.isOnChange ? (
-                typeof this.props.value !== 'undefined' ? (
-                    this.localOptionsIds.length ? this.localOptionsIds : this.props.value
-                ) : ''
-            ) : this.state.value,
-            options = this.props.options ? this.props.options : this.state.options,
-            options = Array.isArray(options) ? options : [],
-            placeholder = null,
-            valueIsArray = Array.isArray(value),
-            defaultValue = valueIsArray ? [] : null;
+    isMultiple = () => {
+        return this.props.name.indexOf('[]') > -1;
+    }
+
+    getPlaceholder = () => {
+        let result = null;
 
         if (typeof this.props.defaultOption === 'undefined' || this.props.defaultOption !== false) {
-            placeholder = this.props.placeholder ? this.props.placeholder : '- Выбрать -';
+            result = this.props.placeholder ? this.props.placeholder : '- Выбрать -';
         }
 
-        options = options.map(option => {
+        return result;
+    }
+
+    getValue = () => {
+        let result = '';
+
+        if (this.props.onChange) {
+            if (typeof this.props.value !== 'undefined') {
+                if (this.localOptions.ids.length) {
+                    result = this.localOptions.ids;
+                } else {
+                    result = this.props.value;
+                }
+            }
+        } else {
+            result = this.state.value;
+        }
+
+        return result;
+    }
+
+    formatOptions = ({ options, labelKey, value }) => {
+        let defaultValue = Array.isArray(value) ? [] : null;
+
+        options = Array.isArray(options) ? options.map(option => {
             let result = {};
 
-            result.value = typeof option === 'string' ? option : (
-                typeof option.id !== 'undefined' ? option.id : (
-                    typeof option.value !== 'undefined' ? option.value : ''
-                )
-            );
-
-            result.label = typeof option === 'string' ? option : (
-                typeof this.props.text_key !== 'undefined' ? option[this.props.text_key] : option.name
-            );
-
-            if (valueIsArray) {
-                if (value.indexOf('' + result.value + '') > -1 || value.indexOf(result.value) > -1) {
-                    defaultValue.push(result);
-                }
+            if (typeof option === 'string') {
+                result.value = option;
+                result.label = option;
             } else {
-                if (result.value === value) {
-                    defaultValue = result;
+                result.value = typeof option.id !== 'undefined' ? option.id : (
+                    typeof option.value !== 'undefined' ? option.value : ''
+                );
+
+                result.label = labelKey ? option[labelKey] : option.name
+            }
+
+            if (typeof value !== 'undefined') {
+                if (Array.isArray(value)) {
+                    if (value.indexOf('' + result.value + '') > -1 || value.indexOf(result.value) > -1) {
+                        defaultValue.push(result);
+                    }
+                } else {
+                    if (value === result.value) {
+                        defaultValue = result;
+                    }
                 }
             }
 
             return result;
-        });
+        }) : [];
+
+        return {
+            defaultValue: defaultValue,
+            options: options
+        }
+    }
+
+    render() {
+        let options = this.props.options ? this.props.options : this.localOptions.options;
+
+        if (this.state.ajaxOptions) {
+            options = [...this.state.ajaxOptions, ...options];
+        }
+
+        let value = this.getValue(),
+            multiple = this.isMultiple(),
+            formatOptions = this.formatOptions({
+                value: value,
+                options: options,
+                labelKey: this.props.text_key
+            });
 
         return <>
             <ReactSelect
                 key={this.props.name + '_' + JSON.stringify(value)}
                 className={'react-select-container' + (this.isErrors() ? ' is-invalid' : '')}
                 classNamePrefix="react-select"
-                placeholder={placeholder}
-                defaultValue={defaultValue}
+                placeholder={this.getPlaceholder()}
+                defaultValue={formatOptions.defaultValue}
                 isDisabled={this.props.readonly}
                 isMulti={multiple}
                 name={this.props.name}
                 onChange={this.onChange}
                 onInputChange={this.onInputChange}
-                options={options}
+                options={formatOptions.options}
                 isClearable={true}
                 closeMenuOnSelect={!multiple}
                 isLoading={this.state.isLoading}
@@ -180,9 +236,7 @@ class Select extends React.Component {
                 noOptionsMessage={() => 'Пусто..'}
             />
             {
-                this.isErrors()
-                    ? <div className="invalid-feedback">{this.props.errors[0]}</div>
-                    : ''
+                this.isErrors() ? <div className="invalid-feedback">{this.props.errors[0]}</div> : ''
             }
         </>
     }

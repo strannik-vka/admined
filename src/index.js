@@ -521,17 +521,13 @@ class Admined extends React.Component {
     }
 
     setItemEdit = (id) => {
-        var itemData = {};
-
-        this.state.paginate.data.map((item) => {
-            if (item.id == id) {
-                itemData = item;
-            }
-        });
-
-        this.setState({
-            editItem: itemData,
-            formShow: TextTrackCue
+        axios.get(location.pathname + '/' + this.state.page.url + '/' + id + '/edit').then(response => {
+            this.setState({
+                editItem: response.data,
+                formShow: TextTrackCue
+            }, () => {
+                this.itemEdit(response.data);
+            });
         });
     }
 
