@@ -13,7 +13,7 @@ class Select extends React.Component {
         this.state = {
             isLoading: false,
             ajaxOptions: null,
-            value: this.props.value ? this.props.value : ''
+            value: typeof this.props.value !== 'undefined' ? this.props.value : ''
         }
     }
 
@@ -145,15 +145,15 @@ class Select extends React.Component {
         return result;
     }
 
-    getValue = () => {
+    getValue = (propsValue) => {
         let result = '';
 
         if (this.props.onChange) {
-            if (typeof this.props.value !== 'undefined') {
+            if (typeof propsValue !== 'undefined') {
                 if (this.localOptions.ids.length) {
                     result = this.localOptions.ids;
                 } else {
-                    result = this.props.value;
+                    result = propsValue;
                 }
             }
         } else {
@@ -186,7 +186,10 @@ class Select extends React.Component {
                         defaultValue.push(result);
                     }
                 } else {
-                    if (value === result.value) {
+                    let val1 = !isNaN(value) ? parseFloat(value) : value,
+                        val2 = !isNaN(result.value) ? parseFloat(result.value) : result.value;
+
+                    if (val1 === val2) {
                         defaultValue = result;
                     }
                 }
@@ -208,7 +211,7 @@ class Select extends React.Component {
             options = [...this.state.ajaxOptions, ...options];
         }
 
-        let value = this.getValue(),
+        let value = this.getValue(this.props.value),
             multiple = this.isMultiple(),
             formatOptions = this.formatOptions({
                 value: value,

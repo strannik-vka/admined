@@ -1,7 +1,8 @@
 let mix = require('laravel-mix');
 
 mix.options({
-    legacyNodePolyfills: false
+    legacyNodePolyfills: false,
+    processCssUrls: false
 }).react();
 
 mix.sass('./scss/index.scss', 'css');

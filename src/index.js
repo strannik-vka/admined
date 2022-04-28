@@ -64,14 +64,17 @@ class Admined extends React.Component {
     }
 
     onFilterChange = (value, name, callback) => {
-        var pageData = this.state.page;
+        this.setState(prevState => {
+            if (value !== '') {
+                prevState.page.filter[name] = value;
+            } else if (typeof prevState.page.filter[name] !== 'undefined') {
+                delete prevState.page.filter[name];
+            }
 
-        pageData.filter[name] = value;
-
-        this.setState({
-            ...this.stateDefault(),
-            ...{ page: pageData }
+            return { ...this.stateDefault(), ...{ page: prevState.page } }
         }, () => {
+            this.historyPushState();
+
             if (callback) {
                 callback();
             }
@@ -151,7 +154,7 @@ class Admined extends React.Component {
     }
 
     itemSelect = (id) => {
-        this.setState((prevState) => {
+        this.setState(prevState => {
             var index = prevState.itemsSelected.indexOf(id);
 
             if (index > -1) {
@@ -220,25 +223,40 @@ class Admined extends React.Component {
         }
     }
 
-    changePage = (page, reset) => {
-        var params = reset ? '' : window.location.search.substring(1);
-        params = params.replace('url=' + page.url, '');
+    historyPushState = () => {
+        let urlParams = [],
+            filterKeys = Object.keys(this.state.page.filter);
 
-        history.pushState(null, page.name, location.pathname + '?url=' + page.url + (params ? params : ''));
+        filterKeys.forEach(filterKey => {
+            urlParams.push(filterKey + '=' + this.state.page.filter[filterKey]);
+        });
+
+        urlParams = urlParams.join('&');
+
+        history.pushState(null, this.state.page.name, location.pathname + '?url=' + this.state.page.url + (urlParams ? '&' + urlParams : ''));
+    }
+
+    changePage = (page, reset) => {
         document.querySelector('title').innerHTML = page.name;
 
         const stateDefault = this.stateDefault();
 
         stateDefault.page = { ...stateDefault.page, ...page };
 
-        if (params) {
-            var params_arr = params.split('&');
+        if (!reset) {
+            let urlParams = window.location.search.substring(1);
 
-            params_arr.forEach(element => {
-                var elem_arr = element.split('=');
+            if (urlParams) {
+                urlParams = urlParams.split('&');
 
-                stateDefault.page.filter[elem_arr[0]] = decodeURIComponent(elem_arr[1]);
-            });
+                urlParams.forEach(urlParam => {
+                    var urlParamArr = urlParam.split('=');
+
+                    if (urlParamArr[0] != 'url' && urlParamArr[0] && urlParamArr[1]) {
+                        stateDefault.page.filter[urlParamArr[0]] = decodeURIComponent(urlParamArr[1]);
+                    }
+                });
+            }
         }
 
         if (this.state.isDomRender == false) {
@@ -246,6 +264,7 @@ class Admined extends React.Component {
         }
 
         this.setState(stateDefault, () => {
+            this.historyPushState();
             this.getItems();
             this.itemsUpdateStart();
         });
@@ -349,7 +368,7 @@ class Admined extends React.Component {
                     delete vars.paginate;
                 }
 
-                this.setState((prevState) => {
+                this.setState(prevState => {
                     return {
                         paginate: {
                             enabled: isPaginate,

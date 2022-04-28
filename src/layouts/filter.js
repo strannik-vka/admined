@@ -34,7 +34,7 @@ class Filter extends React.Component {
         }
     }
 
-    getInputHtml(input, key) {
+    getInputHtml(input, key, value) {
         var result = null;
 
         if (input.type == 'select') {
@@ -42,7 +42,7 @@ class Filter extends React.Component {
                 name={key.replace('[]', '')}
                 options={this.props.page.vars[key.replace('_id', '').replace('[]', '')]}
                 placeholder={input.placeholder}
-                value={this.props.page.filter[key]}
+                value={value}
                 onChange={(value) => this.props.onChange(value, key)}
                 text_key={input.text_key}
                 url={input.url}
@@ -52,7 +52,7 @@ class Filter extends React.Component {
                 name={key}
                 options={[{ name: 'Да', value: 1 }, { name: 'Нет', value: 0 }]}
                 placeholder={input.placeholder}
-                value={this.props.page.filter[key]}
+                value={value}
                 onChange={(value) => this.props.onChange(value, key)}
             />;
         } else {
@@ -61,7 +61,7 @@ class Filter extends React.Component {
                 name={key}
                 placeholder={input.placeholder}
                 center={input.center}
-                value={this.props.page.filter[key]}
+                value={value}
                 onInput={(value, callback) => this.props.onChange(value, key, callback)}
             />;
         }
@@ -84,7 +84,7 @@ class Filter extends React.Component {
             <>
                 {this.actions()}
                 {
-                    this.props.page.form.map((input) => {
+                    this.props.page.form.map(input => {
                         var key = input.name;
 
                         if (typeof input.text_key !== 'undefined' && typeof input.with !== 'undefined') {
@@ -94,7 +94,9 @@ class Filter extends React.Component {
                         return (
                             input.filter === false
                                 ? false
-                                : <th key={key} className="filter-item">{this.getInputHtml(input, key)}</th>
+                                : <th key={key} className="filter-item">{
+                                    this.getInputHtml(input, key, this.props.page.filter[key])
+                                }</th>
                         )
                     })
                 }
