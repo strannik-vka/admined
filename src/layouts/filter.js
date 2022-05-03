@@ -38,9 +38,15 @@ class Filter extends React.Component {
         var result = null;
 
         if (input.type == 'select') {
+            let options = [];
+
+            if (Array.isArray(this.props.page.vars[key.replace('_id', '').replace('[]', '')])) {
+                options = Array.from(this.props.page.vars[key.replace('_id', '').replace('[]', '')]);
+            }
+
             result = <Select
                 name={key.replace('[]', '')}
-                options={this.props.page.vars[key.replace('_id', '').replace('[]', '')]}
+                options={options}
                 placeholder={input.placeholder}
                 value={value}
                 onChange={(value) => this.props.onChange(value, key)}

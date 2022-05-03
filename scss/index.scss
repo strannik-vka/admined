@@ -45,6 +45,8 @@ a {
     }
 }
 
+@import "./layouts/preview.scss";
+
 @import "./components/scrollbar.scss";
 @import "./components/header.scss";
 @import "./components/form.scss";

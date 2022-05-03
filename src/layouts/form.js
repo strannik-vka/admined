@@ -125,7 +125,7 @@ class Form extends React.Component {
                                 upload_queue_success: 0,
                                 upload_queue_total: 0,
                             }, () => {
-                                this.props.hideForm(false);
+                                this.props.formVisible(false);
                             });
                         } else {
                             setTimeout(() => {
@@ -133,7 +133,7 @@ class Form extends React.Component {
                             }, 0);
                         }
                     } else {
-                        this.props.hideForm(false);
+                        this.props.formVisible(false);
                     }
                 }
             });
@@ -146,9 +146,9 @@ class Form extends React.Component {
     render() {
         return <Modal
             show={this.props.show}
-            onHide={this.props.hideForm}
+            onHide={() => this.props.formVisible(false)}
         >
-            <form key={JSON.stringify(this.props.editItem)} className="form-reverse" onSubmit={this.onSubmit}>
+            <form id="itemsForm" key={JSON.stringify(this.props.editItem)} className="form-reverse" onSubmit={this.onSubmit}>
                 <FormFields
                     page={this.props.page}
                     inputs={this.props.page.form}
@@ -158,6 +158,7 @@ class Form extends React.Component {
                 />
                 <div className="d-flex justify-content-end align-items-center">
                     {this.getUploadQueueName() && this.state.ajaxProcess ? <div className="upload_queue_text">Успешно {this.state.upload_queue_success} из {this.state.upload_queue_total}</div> : ''}
+                    {this.props.isPreview ? <button style={{ marginRight: '1rem' }} onClick={() => this.props.previewVisible(true)} type="button" className="btn">Предпросмотр</button> : ''}
                     <button type="submit" className="btn">{this.state.ajaxProcess ? 'Подождите..' : 'Сохранить'}</button>
                 </div>
             </form>

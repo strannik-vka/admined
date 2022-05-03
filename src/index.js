@@ -8,8 +8,10 @@ import Filter from "./layouts/filter";
 import Items from './layouts/items';
 import Form from "./layouts/form";
 import Charts from "./layouts/charts";
+import Preview from "./layouts/preview";
 
 import '../css/index.css';
+import '../css/preview.css';
 
 const axios = require('axios').default;
 
@@ -28,15 +30,17 @@ class Admined extends React.Component {
         this.state = {
             isDomRender: false,
             pages: [],
-            ...this.stateDefault()
+            ...this.stateDefault({})
         };
 
         document.addEventListener('scroll', this.scroll);
     }
 
-    stateDefault() {
+    stateDefault(page) {
         return {
-            formShow: false,
+            previewShow: null,
+            preview: page.preview ? page.preview : null,
+            formIsShow: null,
             pageNumber: 1,
             itemsSelected: [],
             editItem: {},
@@ -71,7 +75,7 @@ class Admined extends React.Component {
                 delete prevState.page.filter[name];
             }
 
-            return { ...this.stateDefault(), ...{ page: prevState.page } }
+            return { ...this.stateDefault(prevState.page), ...{ page: prevState.page } }
         }, () => {
             this.historyPushState();
 
@@ -194,16 +198,26 @@ class Admined extends React.Component {
         }
     }
 
-    setFormShow = (val) => {
-        var data = {
-            formShow: val
-        }
+    formVisible = (val) => {
+        if (this.state.formIsShow !== val) {
+            let data = {
+                formIsShow: val
+            }
 
-        if (!val) {
-            data.editItem = {};
-        }
+            if (!val) {
+                data.editItem = {};
+            }
 
-        this.setState(data);
+            this.setState(data);
+        }
+    }
+
+    previewVisible = (val) => {
+        if (this.state.previewIsShow !== val) {
+            this.setState({
+                previewIsShow: val
+            });
+        }
     }
 
     scroll = (e) => {
@@ -239,7 +253,7 @@ class Admined extends React.Component {
     changePage = (page, reset) => {
         document.querySelector('title').innerHTML = page.name;
 
-        const stateDefault = this.stateDefault();
+        const stateDefault = this.stateDefault(page);
 
         stateDefault.page = { ...stateDefault.page, ...page };
 
@@ -543,7 +557,7 @@ class Admined extends React.Component {
         axios.get(location.pathname + '/' + this.state.page.url + '/' + id + '/edit').then(response => {
             this.setState({
                 editItem: response.data,
-                formShow: TextTrackCue
+                formIsShow: true
             }, () => {
                 this.itemEdit(response.data);
             });
@@ -563,7 +577,7 @@ class Admined extends React.Component {
                     saveStatus={this.state.saveStatus}
                     itemsSelected={this.state.itemsSelected}
                     itemsDelete={this.itemsDelete}
-                    showForm={() => this.setFormShow(true)}
+                    formVisible={this.formVisible}
                 />
                 <div className="content">
                     <Charts
@@ -598,10 +612,17 @@ class Admined extends React.Component {
                 </div>
                 <Form
                     page={this.state.page}
-                    show={this.state.formShow}
+                    show={this.state.formIsShow}
                     editItem={this.state.editItem}
                     itemEdit={this.itemEdit}
-                    hideForm={() => this.setFormShow(false)}
+                    formVisible={this.formVisible}
+                    isPreview={isObject(this.state.preview)}
+                    previewVisible={this.previewVisible}
+                />
+                <Preview
+                    show={this.state.previewIsShow}
+                    options={this.state.preview}
+                    previewVisible={this.previewVisible}
                 />
             </>
         );

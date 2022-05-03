@@ -73,14 +73,13 @@ class File extends React.Component {
             }
         }
 
-        return <div className={'previews ' + 'count-' + count}>{result}</div>;
+        return <div data-preview={this.props.name} className={'previews ' + 'count-' + count}>{result}</div>;
     }
 
     render() {
         return (
             <>
-                {this.files()}
-                {this.preview(this.state.files)}
+                {this.state.files.length ? this.preview(this.state.files) : this.files()}
                 <input
                     className={this.props.errors ? 'form-control is-invalid' : 'form-control'}
                     onChange={this.onChange}

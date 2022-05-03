@@ -83,7 +83,7 @@ class Select extends React.Component {
     onInputChange = (value) => {
         if (value && this.props.url) {
             this.getAjaxOptions(value, options => {
-                let propsOptions = JSON.stringify(this.props.options ? this.props.options : this.localOptions.options);
+                let propsOptions = JSON.stringify([...this.props.options, ...this.localOptions.options]);
 
                 options = options.filter(option => {
                     return propsOptions.indexOf('"id":' + option.id + '') == -1;
@@ -205,7 +205,7 @@ class Select extends React.Component {
     }
 
     render() {
-        let options = this.props.options ? this.props.options : this.localOptions.options;
+        let options = [...this.props.options, ...this.localOptions.options];
 
         if (this.state.ajaxOptions) {
             options = [...this.state.ajaxOptions, ...options];

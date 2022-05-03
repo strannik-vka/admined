@@ -29,18 +29,22 @@ class Fildsets extends React.Component {
             }
         }
 
-        fields = fields.map(item => {
+        fields = fields.map((item, id) => {
             return Object.assign(isObject(item) ? item : {}, {
-                id: new String(Math.random()).replace('.', '')
+                id: id
             });
         });
 
+        let lastId = fields.length;
+
         if (fields.length == 0) {
+            lastId++;
             fields.push(this.getEmptyFields());
         }
 
         this.state = {
-            fields: fields
+            fields: fields,
+            lastId: lastId
         };
     }
 
@@ -51,7 +55,7 @@ class Fildsets extends React.Component {
             data[this.getName(element.name)] = '';
         });
 
-        data.id = new String(Math.random()).replace('.', '');
+        data.id = this.state && this.state.lastId ? this.state.lastId : 0;
 
         return data;
     }
@@ -75,6 +79,7 @@ class Fildsets extends React.Component {
             prevState.fields.push(this.getEmptyFields());
 
             return {
+                lastId: prevState.lastId + 1,
                 fields: prevState.fields
             };
         });
@@ -89,6 +94,7 @@ class Fildsets extends React.Component {
             }
 
             return {
+                lastId: prevState.lastId + 1,
                 fields: feilds
             };
         });
