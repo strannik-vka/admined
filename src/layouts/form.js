@@ -137,9 +137,20 @@ class Form extends React.Component {
                     }
                 }
             });
-        }).catch(() => {
-            alert('Ошибка сервера');
+        }).catch((error) => {
             this.setState(stateData);
+
+            if (error.response) {
+                if (error.response.data) {
+                    if (error.response.data.errors) {
+                        return this.errorsAdd(error.response.data.errors);
+                    } else if (error.response.data.error) {
+                        return alert(error.response.data.error);
+                    }
+                }
+            }
+
+            alert('Ошибка сервера');
         });
     }
 

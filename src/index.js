@@ -133,6 +133,10 @@ class Admined extends React.Component {
                 this.setState({
                     saveStatus: 'Ошибка: ' + response.data.errors[name][0]
                 });
+            } else if (response.data.error) {
+                this.setState({
+                    saveStatus: 'Ошибка: ' + response.data.error
+                });
             }
 
             setTimeout(() => {
