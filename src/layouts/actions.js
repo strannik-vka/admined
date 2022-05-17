@@ -6,7 +6,7 @@ class Actions extends React.Component {
         super(props);
     }
 
-    actions() {
+    actions(defaultActions) {
         if (typeof this.props.page.actions !== 'undefined') {
             let result = this.props.page.actions.map((action, i) =>
                 <a
@@ -18,13 +18,17 @@ class Actions extends React.Component {
                 >{action.text}</a>
             );
 
-            result.push(<div key="divider" className="divider">|</div>);
+            if (defaultActions) {
+                result.push(<div key="divider" className="divider">|</div>);
+            }
 
             return result;
         }
     }
 
     render() {
+        let defaultActions = this.props.page.config('deleteAction', true) || this.props.page.config('addAction', true);
+
         return (
             <div className="actions" style={this.props.page.form.length ? { display: 'flex' } : { display: 'none' }}>
                 <div className="to_total">
@@ -32,7 +36,7 @@ class Actions extends React.Component {
                     <span className="saveStatus">{this.props.saveStatus}</span>
                 </div>
                 <div>
-                    {this.actions()}
+                    {this.actions(defaultActions)}
                     {
                         this.props.page.config('deleteAction', true)
                             ?

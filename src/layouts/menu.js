@@ -48,7 +48,7 @@ export default (props) => {
 
     const getOtherItemsUrls = () => {
         let result = [],
-            headerWidth = document.querySelector('#header').scrollWidth - 200,
+            headerWidth = document.querySelector('#header').clientWidth - 150,
             menuItems = document.querySelector('.menu').childNodes,
             menuWidth = 0;
 

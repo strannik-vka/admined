@@ -24,7 +24,7 @@ class Items extends React.Component {
         );
     }
 
-    select(item, input) {
+    getOptions(item, input) {
         let options = [],
             nameWith = input.name.replace('_id', '');
 
@@ -39,6 +39,12 @@ class Items extends React.Component {
                 options.unshift(option);
             }
         }
+
+        return options;
+    }
+
+    select(item, input) {
+        let options = this.getOptions(item, input);
 
         return (
             <Select
@@ -86,18 +92,49 @@ class Items extends React.Component {
     }
 
     string(item, input) {
+        let value = item[input.name],
+            values = [];
+
+        if (input.type == 'select') {
+            let options = this.getOptions(item, input);
+
+            for (let i = 0; i < options.length; i++) {
+                if (Array.isArray(value)) {
+                    if (value.indexOf('' + options[i].id + '') > -1 || value.indexOf(options[i].id) > -1) {
+                        values.push(options[i].name);
+                    }
+                } else {
+                    if (options[i].id === value) {
+                        value = options[i].name;
+                        break;
+                    }
+                }
+            }
+
+            if (values.length) {
+                value = values.join("\n");
+            }
+        } else if (input.type == 'datetime') {
+            value = dateFormat(value);
+        }
+
+        if (typeof input.afterValue === 'function') {
+            value = input.afterValue(item, value);
+        }
+
         return (
             <DivInput
-                type="string"
+                type={values.length ? 'text' : 'string'}
                 readonly={input.readonly}
                 center={input.center}
                 item={item}
-                value={item[input.name]}
+                value={value}
                 with={this.with(input, item)}
                 text_key={input.text_key}
                 onInput={(value, callback) => this.props.onItemChange(item.id, input.name, value, callback)}
                 href={input.href}
                 target={input.target}
+                heightAuto={input.heightAuto}
             />
         );
     }
@@ -134,6 +171,7 @@ class Items extends React.Component {
                 onInput={(value, callback) => this.props.onItemChange(item.id, input.name, value, callback)}
                 href={input.href}
                 target={input.target}
+                heightAuto={input.heightAuto}
             />
         );
     }
@@ -194,7 +232,7 @@ class Items extends React.Component {
 
                             return input.filter === false ? false :
                                 <td key={item.id + '_' + input.name} className={input.center ? 'text-center' : ''}>
-                                    {this[input.type ? input.type : 'string'](item, input)}
+                                    {this[!input.readonly && input.type ? input.type : 'string'](item, input)}
                                 </td>
                         })
                     }

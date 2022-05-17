@@ -143,6 +143,17 @@ class DivInput extends React.Component {
     render() {
         const type = this.props.type ? this.props.type : 'string';
 
+        let style = {};
+
+        if (this.props.href) {
+            style.textDecoration = 'underline';
+            style.cursor = 'pointer';
+        }
+
+        if (this.props.heightAuto) {
+            style.height = 'auto';
+        }
+
         return (
             <>
                 <div
@@ -159,7 +170,7 @@ class DivInput extends React.Component {
                     onKeyPress={(e) => this.onKeyPress(e, type)}
                     onCut={(e) => this.onCut(e)}
                     onClick={() => this.onClick()}
-                    style={this.props.href ? { textDecoration: 'underline', cursor: 'pointer' } : {}}
+                    style={style}
                 >
                     {this.getValue()}
                 </div>
