@@ -41,7 +41,6 @@ class Admined extends React.Component {
             previewShow: null,
             preview: page.preview ? page.preview : null,
             formIsShow: null,
-            pageNumber: 1,
             itemsSelected: [],
             editItem: {},
             page: {
@@ -60,6 +59,8 @@ class Admined extends React.Component {
                 }
             },
             paginate: {
+                next_page_url: null,
+                prev_page_url: null,
                 data: [],
                 total: 0,
             },
@@ -231,12 +232,12 @@ class Admined extends React.Component {
                     e.target.documentElement.scrollHeight - (
                         e.target.documentElement.scrollTop + window.innerHeight
                     )
-                ) < 300 && this.state.paginate.data.length < this.state.paginate.total
+                ) < 300 && this.state.paginate.next_page_url
             ) {
                 this.ajaxItems = true;
                 this.getItems(() => {
                     this.ajaxItems = false;
-                });
+                }, this.state.paginate.next_page_url);
             }
         }
     }
@@ -309,7 +310,7 @@ class Admined extends React.Component {
 
             axios.get(location.pathname + '/' + this.state.page.url, {
                 cancelToken: this.UpdateCancelTokenSource.token,
-                params: { ...this.state.page.filter, ...{ page: 1 } }
+                params: this.state.page.filter
             }).then((response) => {
                 var isPaginate = typeof response.data.paginate !== 'undefined',
                     vars = Object.assign({}, response.data);
@@ -345,6 +346,8 @@ class Admined extends React.Component {
 
                     if (newItems.length) {
                         paginateData.data = [...newItems, ...this.state.paginate.data];
+                        paginateData.next_page_url = this.state.paginate.next_page_url;
+                        paginateData.prev_page_url = this.state.paginate.prev_page_url;
 
                         this.setState({
                             paginate: paginateData,
@@ -364,7 +367,7 @@ class Admined extends React.Component {
         }
     }
 
-    getItems(callback) {
+    getItems(callback, next_page_url) {
         this.CancelTokenSource.cancel();
         this.UpdateCancelTokenSource.cancel();
 
@@ -373,9 +376,19 @@ class Admined extends React.Component {
         this.setState({
             saveStatus: 'Загрузка списка..'
         }, () => {
-            axios.get(location.pathname + '/' + this.state.page.url, {
+            let url = location.pathname + '/' + this.state.page.url;
+
+            if (next_page_url) {
+                url = next_page_url;
+
+                if (url.indexOf(location.pathname) == -1) {
+                    url = location.pathname + '/' + this.state.page.url + url;
+                }
+            }
+
+            axios.get(url, {
                 cancelToken: this.CancelTokenSource.token,
-                params: { ...this.state.page.filter, ...{ page: this.state.pageNumber } }
+                params: this.state.page.filter
             }).then(response => {
                 var isPaginate = typeof response.data.paginate !== 'undefined',
                     vars = Object.assign({}, response.data);
@@ -394,9 +407,14 @@ class Admined extends React.Component {
                                 ? [...prevState.paginate.data, ...response.data.paginate.data]
                                 : prevState.paginate.data,
                             total: isPaginate ? response.data.paginate.total : 0,
+                            next_page_url: isPaginate
+                                ? response.data.paginate.next_page_url
+                                : prevState.paginate.next_page_url,
+                            prev_page_url: isPaginate
+                                ? response.data.paginate.next_page_url
+                                : prevState.paginate.next_page_url,
                         },
                         page: { ...prevState.page, ...{ vars: vars } },
-                        pageNumber: prevState.pageNumber + 1,
                         saveStatus: ''
                     }
                 }, () => {
@@ -532,7 +550,9 @@ class Admined extends React.Component {
                     var data = {
                         paginate: {
                             data: this.state.paginate.data,
-                            total: this.state.paginate.total - this.state.itemsSelected.length
+                            total: this.state.paginate.total - this.state.itemsSelected.length,
+                            next_page_url: this.state.paginate.next_page_url,
+                            prev_page_url: this.state.paginate.prev_page_url,
                         },
                         itemsSelected: []
                     }
