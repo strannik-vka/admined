@@ -115,7 +115,7 @@ class Items extends React.Component {
                 value = values.join("\n");
             }
         } else if (input.type == 'datetime') {
-            value = dateFormat(value);
+            return this.datetime(item, input);
         }
 
         if (typeof input.afterValue === 'function') {
