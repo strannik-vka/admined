@@ -1,61 +1,69 @@
-import React from "react";
-
-class Actions extends React.Component {
-
-    constructor(props) {
-        super(props);
-    }
-
-    actions(defaultActions) {
-        if (typeof this.props.page.actions !== 'undefined') {
-            let result = this.props.page.actions.map((action, i) =>
-                <a
-                    className="btn action-item"
-                    href={action.href ? action.href : null}
-                    onClick={action.onclick ? action.onclick : null}
-                    target={action.target ? action.target : null}
-                    key={i}
-                >{action.text}</a>
-            );
-
-            if (defaultActions) {
-                result.push(<div key="divider" className="divider">|</div>);
-            }
-
-            return result;
+export default (props) => {
+    const selectedCount = () => {
+        if (props.itemsSelected.length) {
+            return <div className="selectedCount">{props.itemsSelected.length}</div>
         }
     }
 
-    render() {
-        let defaultActions = this.props.page.config('deleteAction', true) || this.props.page.config('addAction', true);
+    const actions = () => {
+        if (typeof props.page.actions !== 'undefined') {
+            let selectedCountElem = selectedCount(),
+                locationSearch = '';
 
-        return (
-            <div className="actions" style={this.props.page.form.length ? { display: 'flex' } : { display: 'none' }}>
-                <div className="to_total">
-                    Показано: {this.props.to} из {this.props.total}
-                    <span className="saveStatus">{this.props.saveStatus}</span>
-                </div>
-                <div>
-                    {this.actions(defaultActions)}
-                    {
-                        this.props.page.config('deleteAction', true)
-                            ?
-                            <>
-                                <span className="selected">Выбрано: {this.props.itemsSelected.length}</span>
-                                <a className={this.props.itemsSelected.length ? "btn action-item" : "btn btn-disabled action-item"} onClick={this.props.itemsDelete}>Удалить</a>
-                            </>
-                            : ''
+            if (location.search.indexOf('&') > -1) {
+                locationSearch = location.search.substring(
+                    location.search.indexOf('&') + 1, location.search.length
+                )
+            }
+
+            if (props.itemsSelected.length) {
+                locationSearch += (locationSearch ? '&' : '') + 'items=' + props.itemsSelected.join(',');
+            }
+
+            return props.page.actions.map((action, i) =>
+                <a
+                    className="btn action-item"
+                    href={
+                        action.href
+                            ? action.href + (
+                                locationSearch
+                                    ? (action.href.indexOf('?') > -1 ? '&' : '?') + locationSearch
+                                    : ''
+                            )
+                            : null
                     }
-                    {
-                        this.props.page.config('addAction', true)
-                            ? <a className="btn action-item" onClick={this.props.showForm}>Добавить</a>
-                            : ''
-                    }
-                </div>
-            </div>
-        );
+                    onClick={action.onclick ? action.onclick : null}
+                    target={action.target ? action.target : null}
+                    key={i}
+                >{action.text}{action.selectedCount ? selectedCountElem : ''}</a>
+            )
+        }
     }
 
-}
+    const deleteAction = () => {
+        if (props.page.config('deleteAction', true)) {
+            return <a className={props.itemsSelected.length ? "btn action-item" : "btn btn-disabled action-item"} onClick={props.itemsDelete}>Удалить{selectedCount()}</a>
+        }
+    }
 
-export default Actions;
+    const addAction = () => {
+        if (props.page.config('addAction', true)) {
+            return <a className="btn action-item" onClick={props.showForm}>Добавить</a>
+        }
+    }
+
+    return <div
+        className="actions"
+        style={props.page.form.length ? { display: 'flex' } : { display: 'none' }}
+    >
+        <div className="to_total">
+            Кол-во: {props.to}/{props.total}
+            <span className="saveStatus">{props.saveStatus}</span>
+        </div>
+        <div>
+            {actions()}
+            {deleteAction()}
+            {addAction()}
+        </div>
+    </div>
+}

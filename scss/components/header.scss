@@ -185,14 +185,23 @@
 
         .action-item {
             margin-left: 8px;
-        }
 
-        .selected {
-            margin-right: 10px;
-            display: inline-block;
-            font-size: 0.875rem;
-            position: relative;
-            top: 0.5px;
+            .selectedCount {
+                position: absolute;
+                z-index: 1;
+                top: 0;
+                right: 0;
+                transform: translate(30%, -30%);
+                height: 15px;
+                min-width: 15px;
+                padding: 0 3px;
+                background: #0d6efd;
+                color: #fff;
+                border-radius: 4px;
+                text-align: center;
+                font-size: 10px;
+                line-height: 1.4;
+            }
         }
     }
 }
