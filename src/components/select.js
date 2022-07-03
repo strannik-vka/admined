@@ -195,6 +195,10 @@ class Select extends React.Component {
                 }
             }
 
+            if (option.options) {
+                result.options = option.options;
+            }
+
             return result;
         }) : [];
 
