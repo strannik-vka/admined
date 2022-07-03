@@ -1,6 +1,13 @@
 .react-select-container {
     font-weight: normal;
 
+    .react-select__group-heading {
+        font-weight: bold;
+        text-align: left;
+        color: var(--c-primary-dark);
+        padding-left: 10px;
+    }
+
     .react-select__control {
         border: 1px solid var(--c-border-light);
         min-height: 31px;
