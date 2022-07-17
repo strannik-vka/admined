@@ -28,7 +28,7 @@
 Наконец, нам нужно создать js файл для запуска Admined
 <pre>
 // Импортируем admined
-import Admined from 'admined';
+require('admined');
 
 // Создаем страницу Новости
 Admined.page('post', 'Новости', {
