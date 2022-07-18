@@ -18,7 +18,13 @@ class Poll extends React.Component {
             fields: [
                 {
                     name: this.props.name + '[variant][]',
-                    type: 'string'
+                    type: 'string',
+                    placeholder: 'Текст ответа'
+                },
+                {
+                    name: this.props.name + '[count][]',
+                    type: 'string',
+                    placeholder: 'Количество голосов'
                 }
             ]
         }
@@ -28,10 +34,11 @@ class Poll extends React.Component {
         let result = [];
 
         if (this.props.value && this.props.value.variant) {
-            this.props.value.variant.forEach(value => {
+            this.props.value.variant.forEach((variant, i) => {
                 result.push({
                     name: this.props.name + '[variant][]',
-                    variant: value
+                    variant: variant,
+                    count: this.props.value.count[i]
                 });
             });
         }

@@ -141,7 +141,11 @@ class FormFields extends React.Component {
     }
 
     getValue(input) {
-        let value = getDataValue(input.name.replace('[]', ''), this.props.editItem);
+        let value = this.props.editItem[input.name];
+
+        if (typeof value === 'undefined') {
+            value = getDataValue(input.name.replace('[]', ''), this.props.editItem);
+        }
 
         value = value !== null ? value : input.value;
 

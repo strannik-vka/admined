@@ -106,7 +106,10 @@ class Fildsets extends React.Component {
         this.props.input.fields.forEach(element => {
             var name = this.getName(element.name);
 
-            if (typeof this.state.fields[index][name] !== 'undefined' && this.state.fields[index][name] != null) {
+            if (
+                typeof this.state.fields[index][name] !== 'undefined' &&
+                this.state.fields[index][name] != null
+            ) {
                 editItem[element.name] = this.state.fields[index][name];
             }
         });
