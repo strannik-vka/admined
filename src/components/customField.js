@@ -7,10 +7,12 @@ class CustomField extends React.Component {
         super(props);
     }
 
-    getFieldsetsInputs() {
-        let inputs = [];
+    getUserField() {
+        let input = null;
 
-        this.props.fields.forEach(element => {
+        for (let i = 0; i < this.props.fields.length; i++) {
+            let element = this.props.fields[i];
+
             if (this.props.field.type == element.name) {
                 let element_clone = Object.assign({}, element);
 
@@ -26,11 +28,13 @@ class CustomField extends React.Component {
                     });
                 }
 
-                inputs.push(element_clone);
-            }
-        });
+                input = element_clone;
 
-        return inputs;
+                break;
+            }
+        }
+
+        return input;
     }
 
     getFields(input) {
@@ -68,14 +72,44 @@ class CustomField extends React.Component {
         return result;
     }
 
+    getEditItem() {
+        let results = {}, parts = [];
+
+        if (this.props.field.name.indexOf('[') > -1) {
+            parts = this.props.field.name.split('[');
+
+            parts = parts.map(item => {
+                return item.replace(']', '');
+            });
+        } else {
+            parts = [this.props.field.name];
+        }
+
+        parts = parts.reverse();
+
+        parts.forEach((part, i) => {
+            if (i) {
+                results[part] = results;
+            } else {
+                results[part] = this.props.field.value;
+            }
+        });
+
+        return results;
+    }
+
     render() {
-        let result = null;
+        let result = null, userField = null;
 
         if (Array.isArray(this.props.fields)) {
-            let inputs = this.getFieldsetsInputs();
+            userField = this.getUserField();
+        }
 
-            if (inputs.length) {
-                result = <FormFields inputs={inputs} fields={this.getFields(inputs[0])} />
+        if (isObject(userField)) {
+            if (userField.type == 'fields') {
+                result = <FormFields inputs={userField.fields} fields={this.getFields(userField.fields[0])} editItem={this.getEditItem()} />
+            } else {
+                result = <FormFields inputs={[userField]} fields={this.getFields(userField)} />
             }
         } else {
             result = <Input name={this.props.field.name} value={this.props.field.value} />
