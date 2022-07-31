@@ -83,6 +83,7 @@ class FormFields extends React.Component {
                 errors={this.getError(input.name)}
                 onInput={() => this.errorHide(input.name)}
                 value={this.getValue(input)}
+                max={input.max}
             />
         );
     }
@@ -106,6 +107,7 @@ class FormFields extends React.Component {
                 errors={this.getError(input.name)}
                 onInput={() => this.errorHide(input.name)}
                 value={this.getValue(input)}
+                max={input.max}
             />
         );
     }
@@ -114,6 +116,7 @@ class FormFields extends React.Component {
         return (
             <Input
                 type={input.type}
+                format={input.format}
                 name={input.name}
                 errors={this.getError(input.name)}
                 onInput={() => this.errorHide(input.name)}
@@ -175,9 +178,9 @@ class FormFields extends React.Component {
         return this.props.inputs.map(input => {
             return (
                 input.readonly ? false :
-                    <div key={input.name} className="form-group mb-3">
+                    <div key={input.name} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
                         {input.type !== 'switch' && input.placeholder ? <label>{input.placeholder}</label> : ''}
-                        {input.description ? <div className="description">{input.description}</div> : ''}
+                        {input.description ? <div className="description" dangerouslySetInnerHTML={{ __html: input.description }}></div> : ''}
                         {this[input.type](input)}
                     </div>
             );

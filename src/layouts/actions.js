@@ -58,7 +58,7 @@ export default (props) => {
     >
         <div className="to_total">
             Кол-во: {props.to}/{props.total}
-            <span className="saveStatus">{props.saveStatus}</span>
+            <span className="saveStatus" dangerouslySetInnerHTML={{ __html: props.saveStatus }}></span>
         </div>
         <div>
             {actions()}

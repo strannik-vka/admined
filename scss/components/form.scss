@@ -113,6 +113,8 @@ select.form-control {
 }
 
 .form-group {
+    position: relative;
+
     label {
         display: block;
         margin-bottom: 0.5rem;
@@ -131,6 +133,24 @@ select.form-control {
         display: inline-block;
         margin: 0 0.5rem 0.5rem 0;
     }
+
+    &.maxLength {
+        textarea.form-control {
+            padding-bottom: 1.5rem;
+        }
+
+        input.form-control {
+            padding-right: 4rem;
+        }
+    }
+}
+
+.textCount {
+    font-size: 0.875rem;
+    position: absolute;
+    color: var(--c-placeholder-dark);
+    right: 0.5rem;
+    bottom: 0.37rem;
 }
 
 // div editor

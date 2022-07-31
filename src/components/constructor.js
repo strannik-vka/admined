@@ -41,7 +41,7 @@ class Constructor extends React.Component {
             {
                 type: 'video',
                 placeholder: 'Видео',
-                description: 'Ссылка из YouTube или Vimeo',
+                description: 'Ссылка YouTube или iframe код',
                 src: imgConstVideo
             },
             {

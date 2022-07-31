@@ -40,23 +40,27 @@ class Textarea extends React.Component {
     }
 
     render() {
-        return (
-            <>
-                <textarea
-                    name={this.props.name}
-                    className={this.props.errors ? 'form-control is-invalid' : 'form-control'}
-                    onKeyDown={this.onKeyPress}
-                    onKeyUp={this.onKeyPress}
-                    onInput={this.onInput}
-                    value={this.state.value}
-                ></textarea>
-                {
-                    this.props.errors
-                        ? <div className="invalid-feedback">{this.props.errors[0]}</div>
-                        : ''
-                }
-            </>
-        );
+        return <>
+            <textarea
+                name={this.props.name}
+                className={'form-control' + (this.props.errors ? ' is-invalid' : '')}
+                onKeyDown={this.onKeyPress}
+                onKeyUp={this.onKeyPress}
+                onInput={this.onInput}
+                value={this.state.value}
+                maxLength={this.props.max}
+            ></textarea>
+            {
+                this.props.max
+                    ? <div className="textCount">{textCount(this.state.value)}/{this.props.max}</div>
+                    : ''
+            }
+            {
+                this.props.errors
+                    ? <div className="invalid-feedback">{this.props.errors[0]}</div>
+                    : ''
+            }
+        </>;
     }
 
 }

@@ -23,19 +23,25 @@ window.setCursorPosition = (parent, position) => {
     }
 }
 
-window.dateFormat = (value) => {
+window.dateFormat = (value, format) => {
     if (value) {
-        var date = new Date(value);
+        if (format == 'H:i') {
+            if (value.lastIndexOf(':') == 5) {
+                value = value.substr(0, 5);
+            }
+        } else {
+            var date = new Date(value);
 
-        if (date != 'Invalid Date') {
-            var month = date.getMonth() + 1,
-                day = date.getDate();
+            if (date != 'Invalid Date') {
+                var month = date.getMonth() + 1,
+                    day = date.getDate();
 
-            value = '';
-            value += date.getFullYear() + '-';
-            value += (month < 10 ? '0' + month : month) + '-';
-            value += (day < 10 ? '0' + day : day) + ' ';
-            value += date.toLocaleTimeString().slice(0, -3);
+                value = '';
+                value += date.getFullYear() + '-';
+                value += (month < 10 ? '0' + month : month) + '-';
+                value += (day < 10 ? '0' + day : day) + ' ';
+                value += date.toLocaleTimeString().slice(0, -3);
+            }
         }
     }
 
@@ -193,4 +199,15 @@ window.removeClass = (ele, cls) => {
         var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
         ele.className = ele.className.replace(reg, ' ');
     }
+}
+
+window.textCount = (elem) => {
+    let value = typeof elem === 'string' ? elem : elem.value;
+
+    if (value) {
+        value = value.trim();
+        value = value.replace(/\n/g, '\n\r');
+    }
+
+    return value.length;
 }

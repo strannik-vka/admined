@@ -147,15 +147,13 @@ class Items extends React.Component {
             value = withObj[input.text_key];
         }
 
-        return (
-            <DivInput
-                type="string"
-                readonly={input.readonly}
-                center={input.center}
-                value={dateFormat(value)}
-                onInput={(value, callback) => this.props.onItemChange(item.id, input.name, value, callback)}
-            />
-        );
+        return <DivInput
+            type="string"
+            readonly={input.readonly}
+            center={input.center}
+            value={dateFormat(value, input.format)}
+            onInput={(value, callback) => this.props.onItemChange(item.id, input.name, value, callback)}
+        />;
     }
 
     text(item, input) {
@@ -225,7 +223,7 @@ class Items extends React.Component {
                 <tr key={item.id}>
                     {this.actions(item)}
                     {
-                        this.props.page.form.map((input) => {
+                        this.props.page.form.map(input => {
                             if (typeof input.value === 'function') {
                                 item = input.value(Object.assign({}, item));
                             }
