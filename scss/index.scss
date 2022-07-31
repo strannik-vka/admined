@@ -46,6 +46,7 @@ a {
 }
 
 @import "./layouts/preview.scss";
+@import "./layouts/form.scss";
 
 @import "./components/scrollbar.scss";
 @import "./components/header.scss";
@@ -58,6 +59,7 @@ a {
 @import "./components/react-select.scss";
 @import "./components/popover.scss";
 @import "./components/constructor.scss";
+@import "./components/SVGpreloader";
 
 .content {
     margin-top: 88px;
@@ -66,9 +68,4 @@ a {
 // cursor: pointer;
 .pointer {
     cursor: pointer;
-}
-
-.SVGpreloader {
-    position: relative;
-    bottom: -3px;
 }
