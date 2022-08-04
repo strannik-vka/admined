@@ -385,6 +385,19 @@ fieldset {
         vertical-align: bottom;
         max-width: 100%;
     }
+
+    .filePreviewAudio {
+        display: inline-flex;
+        overflow: hidden;
+        border-radius: 8px;
+
+        audio {
+            height: 31px;
+            width: 324px;
+            margin-left: -12px;
+            margin-right: -12px;
+        }
+    }
 }
 
 // is-invalid

@@ -6,7 +6,7 @@ class File extends React.Component {
         super(props);
 
         this.state = {
-            files: []
+            selectedFiles: []
         }
     }
 
@@ -16,27 +16,29 @@ class File extends React.Component {
         }
 
         this.setState({
-            files: event.target.files
+            selectedFiles: event.target.files
         });
     }
 
-    files() {
-        let result = [],
-            files = Array.isArray(this.props.value) ? this.props.value : (this.props.value ? [this.props.value] : []),
-            isImages = isImage(files[0]);
+    getOtherPreview(url, key, filesCount) {
+        return <a key={'other_preview_' + key} href={url} target="_blank" className="download_file">Посмотреть файл {filesCount ? (key + 1) : ''}</a>
+    }
 
-        if (isImages) {
-            result = this.preview(files, true);
-        } else {
-            files.forEach((file, i) => {
-                result.push(<a key={i} href={file} target="_blank" className="download_file">Посмотреть файл {i + 1}</a>);
-            });
-        }
+    getImagePreview(url, key) {
+        return <img key={'image_preview_' + key} className="filePreviewImage" src={url} />
+    }
 
-        return result;
+    getAudioPreview(url, key) {
+        return <div key={'audio_preview_' + key} className="filePreviewAudio">
+            <audio controls src={url}></audio>
+        </div>
     }
 
     preview(files, isUrls) {
+        if (isUrls) {
+            files = Array.isArray(files) ? files : (files ? [files] : []);
+        }
+
         let result = [],
             filesCount = files.length,
             count = 0;
@@ -65,10 +67,18 @@ class File extends React.Component {
             let file = files[i];
 
             if (isUrls) {
-                result.push(<img className="filePreviewImage" key={'preview_' + i} src={file} />);
+                if (isImage(file)) {
+                    result.push(this.getImagePreview(file, i));
+                } else if (isAudio(file)) {
+                    result.push(this.getAudioPreview(file, i));
+                } else {
+                    result.push(this.getOtherPreview(file, i, filesCount));
+                }
             } else {
                 if (file.type.includes('image')) {
-                    result.push(<img className="filePreviewImage" key={'preview_' + i} src={URL.createObjectURL(file)} />);
+                    result.push(this.getImagePreview(URL.createObjectURL(file), i));
+                } else if (file.type.includes('audio')) {
+                    result.push(this.getAudioPreview(URL.createObjectURL(file), i));
                 }
             }
         }
@@ -77,23 +87,24 @@ class File extends React.Component {
     }
 
     render() {
-        return (
-            <>
-                {this.state.files.length ? this.preview(this.state.files) : this.files()}
-                <input
-                    className={this.props.errors ? 'form-control is-invalid' : 'form-control'}
-                    onChange={this.onChange}
-                    type="file"
-                    name={this.props.name}
-                    multiple={this.props.multiple}
-                />
-                {
-                    this.props.errors
-                        ? <div className="invalid-feedback">{this.props.errors[0]}</div>
-                        : ''
-                }
-            </>
-        );
+        return <>
+            {this.state.selectedFiles.length
+                ? this.preview(this.state.selectedFiles)
+                : this.preview(this.props.value, true)
+            }
+            <input
+                className={this.props.errors ? 'form-control is-invalid' : 'form-control'}
+                onChange={this.onChange}
+                type="file"
+                name={this.props.name}
+                multiple={this.props.multiple}
+            />
+            {
+                this.props.errors
+                    ? <div className="invalid-feedback">{this.props.errors[0]}</div>
+                    : ''
+            }
+        </>
     }
 
 }

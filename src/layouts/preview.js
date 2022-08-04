@@ -16,6 +16,19 @@ const getFormData = (userFunction, callback) => {
             result[key] = formData.getAll(key).filter(item => item !== '');
         } else {
             result[key] = formData.get(key);
+
+            let previewElem = document.querySelector('[data-preview="' + key + '"] [src]');
+            if (previewElem) {
+                let src = previewElem.getAttribute('src');
+                formData.set(key, src)
+                result[key] = src;
+            } else {
+                if (typeof result[key] === 'object' && result[key] != null) {
+                    if (!result[key].name) {
+                        delete result[key];
+                    }
+                }
+            }
         }
 
         return result;
@@ -149,7 +162,7 @@ const getUrlData = (options, callback) => {
 
         let selectorElem = options.selector
             ? htmlElem.querySelector(options.selector)
-            : htmlElem.getElementsByTagName('body');
+            : htmlElem.querySelector('body');
 
         getFormData(options.data, formData => {
             selectorElem = dataInHtml(selectorElem, formData);
@@ -230,7 +243,7 @@ export default ({ options, show, previewVisible }) => {
             <button className="adm-btn" onClick={onPreviewHide}>Закрыть просмотр</button>
         </div>
         {
-            preloader ? <div className="adm-preloader" dangerouslySetInnerHTML={{ __html: '<svg  xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="64px" height="64px" viewBox="0 0 128 128" xml:space="preserve"><rect x="0" y="0" width="100%" height="100%" fill="none" /><g><path d="M64 9.75A54.25 54.25 0 0 0 9.75 64H0a64 64 0 0 1 128 0h-9.75A54.25 54.25 0 0 0 64 9.75z" fill="#000000"/><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1800ms" repeatCount="indefinite"></animateTransform></g></svg>' }}></div> : ''
+            preloader ? <div className="adm-preloader" dangerouslySetInnerHTML={{ __html: '<svg  xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="32px" height="32px" viewBox="0 0 128 128" xml:space="preserve"><rect x="0" y="0" width="100%" height="100%" fill="none" /><g><path d="M64 9.75A54.25 54.25 0 0 0 9.75 64H0a64 64 0 0 1 128 0h-9.75A54.25 54.25 0 0 0 64 9.75z" fill="#000000"/><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1800ms" repeatCount="indefinite"></animateTransform></g></svg>' }}></div> : ''
         }
     </div >
 }

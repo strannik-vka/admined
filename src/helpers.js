@@ -48,6 +48,21 @@ window.dateFormat = (value, format) => {
     return value;
 }
 
+window.isAudio = (url) => {
+    if (url) {
+        var ext = url.split('.'),
+            ext = ext[ext.length - 1],
+            ext = ext.toLowerCase(),
+            ext = ext.split('?'),
+            ext = ext[0],
+            images = ['mp3', 'wav', 'ogg', 'wma', 'aac', 'flac'];
+
+        return images.indexOf(ext) > -1;
+    }
+
+    return false;
+}
+
 window.isImage = (url) => {
     if (url) {
         var ext = url.split('.'),
