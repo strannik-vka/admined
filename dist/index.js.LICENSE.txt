@@ -17,13 +17,6 @@ object-assign
  * Released under the MIT License
  */
 
-/*!
- * isobject <https://github.com/jonschlinkert/isobject>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
-
 /*!@license
  * UAParser.js v0.7.28
  * Lightweight JavaScript-based User-Agent string parser

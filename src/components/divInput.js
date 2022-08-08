@@ -1,4 +1,3 @@
-import isObject from "isobject";
 import React from "react";
 
 class DivInput extends React.Component {

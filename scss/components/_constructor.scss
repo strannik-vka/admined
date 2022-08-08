@@ -15,7 +15,7 @@
         margin-right: 4px;
         margin-top: 1px;
         align-self: flex-start;
-        background: #ffff;
+        background: var(--white);
 
         img {
             display: block;
@@ -25,7 +25,7 @@
             height: 46px;
             flex-grow: 0;
             flex-shrink: 0;
-            box-shadow: rgb(15 15 15 / 20%) 0px 0px 0px 1px;
+            box-shadow: var(--constructor-img-shadow) 0px 0px 0px 1px;
         }
     }
 
@@ -51,7 +51,7 @@
 
     &:hover {
         cursor: pointer;
-        background: rgba(0, 0, 0, 0.055);
+        background: var(--constructor-field-hover);
 
         .screen {
             display: block;
@@ -73,11 +73,11 @@
     z-index: 99999;
     left: 100%;
     padding: 5px;
-    background: #fff;
+    background: var(--white);
     border-radius: 4px;
     top: 50%;
     transform: translateY(-50%);
-    box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+    box-shadow: 0 0.5rem 1rem var(--c-shadow);
 
     img {
         max-height: 350px;

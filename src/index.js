@@ -76,7 +76,7 @@ class Admined extends React.Component {
                 delete prevState.page.filter[name];
             }
 
-            return { ...this.stateDefault(prevState.page), ...{ page: prevState.page } }
+            return prevState;
         }, () => {
             this.historyPushState();
 
@@ -84,7 +84,9 @@ class Admined extends React.Component {
                 callback();
             }
 
-            this.getItems();
+            this.getItems({
+                reset: true
+            });
         });
     }
 
@@ -180,11 +182,11 @@ class Admined extends React.Component {
 
     itemEdit = (successData) => {
         if (successData && successData.id) {
-            var data = {
-                paginate: this.state.paginate
-            }
+            this.setState(prevState => {
+                var data = {
+                    paginate: prevState.paginate
+                }
 
-            if (this.state.editItem.id == successData.id) {
                 var itemIndex = false;
 
                 data.paginate.data.map((item, index) => {
@@ -193,13 +195,15 @@ class Admined extends React.Component {
                     }
                 });
 
-                data.paginate.data[itemIndex] = successData;
-            } else {
-                data.paginate.data.unshift(successData);
-                data.paginate.total++;
-            }
+                if (itemIndex !== false) {
+                    data.paginate.data[itemIndex] = successData;
+                } else {
+                    data.paginate.data.unshift(successData);
+                    data.paginate.total++;
+                }
 
-            this.setState(data);
+                return data;
+            })
         }
     }
 
@@ -235,9 +239,12 @@ class Admined extends React.Component {
                 ) < 300 && this.state.paginate.next_page_url
             ) {
                 this.ajaxItems = true;
-                this.getItems(() => {
-                    this.ajaxItems = false;
-                }, this.state.paginate.next_page_url);
+                this.getItems({
+                    callback: () => {
+                        this.ajaxItems = false;
+                    },
+                    next_page_url: this.state.paginate.next_page_url
+                });
             }
         }
     }
@@ -284,7 +291,7 @@ class Admined extends React.Component {
 
         this.setState(stateDefault, () => {
             this.historyPushState();
-            this.getItems();
+            this.getItems({});
             this.itemsUpdateStart();
         });
     }
@@ -367,7 +374,7 @@ class Admined extends React.Component {
         }
     }
 
-    getItems(callback, next_page_url) {
+    getItems({ callback, next_page_url, reset }) {
         this.CancelTokenSource.cancel();
         this.UpdateCancelTokenSource.cancel();
 
@@ -400,7 +407,7 @@ class Admined extends React.Component {
                 }
 
                 this.setState(prevState => {
-                    return {
+                    let newState = {
                         paginate: {
                             enabled: isPaginate,
                             data: isPaginate
@@ -411,18 +418,44 @@ class Admined extends React.Component {
                                 ? response.data.paginate.next_page_url
                                 : prevState.paginate.next_page_url,
                             prev_page_url: isPaginate
-                                ? response.data.paginate.next_page_url
-                                : prevState.paginate.next_page_url,
+                                ? response.data.paginate.prev_page_url
+                                : prevState.paginate.prev_page_url,
                         },
                         page: { ...prevState.page, ...{ vars: vars } },
                         saveStatus: ''
                     }
+
+                    if (reset) {
+                        newState.paginate.data = response.data.paginate.data;
+                        newState.paginate.next_page_url = response.data.paginate.next_page_url;
+                        newState.paginate.prev_page_url = response.data.paginate.prev_page_url;
+
+                        newState = {
+                            ...this.stateDefault(prevState.page),
+                            ...newState
+                        }
+                    }
+
+                    return newState;
                 }, () => {
                     if (callback) callback();
                 });
             }).catch(() => {
-                this.setState({
-                    saveStatus: 'Ошибка загрузки списка, попробуйте еще раз..'
+                this.setState(prevState => {
+                    let newState = {
+                        saveStatus: 'Ошибка загрузки списка, попробуйте еще раз..'
+                    }
+
+                    if (reset) {
+                        newState = {
+                            ...this.stateDefault(prevState.page),
+                            ...newState
+                        }
+
+                        newState.page = prevState.page;
+                    }
+
+                    return newState;
                 }, () => {
                     if (callback) callback();
                 });

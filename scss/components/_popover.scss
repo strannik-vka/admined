@@ -1,0 +1,34 @@
+.popover {
+    line-height: 1.2;
+    box-shadow: 0 0.5rem 1rem var(--c-shadow);
+    border: 1px solid var(--c-border-dark);
+    background-color: var(--white);
+
+    &.bs-popover-end > .popover-arrow::after,
+    &.bs-popover-auto[data-popper-placement^="right"] > .popover-arrow::after {
+        border-right-color: var(--white);
+    }
+
+    &.bs-popover-end > .popover-arrow::before,
+    &.bs-popover-auto[data-popper-placement^="right"] > .popover-arrow::before {
+        border-right-color: hsl(var(--primary-hs), var(--l-75));
+    }
+
+    .popover-header {
+        margin-top: 0;
+        font-size: 15px;
+        padding: 6px 14px;
+        border-color: var(--c-border-dark);
+        background-color: var(--popover-head);
+        border-bottom: 1px solid hls(var(--dark-hs, var(--l-80)));
+    }
+
+    .popover-body {
+        padding: 6px 14px;
+        max-height: 350px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background-color: var(--white);
+        color: hsl(var(--dark-hs), var(--l-15));
+    }
+}

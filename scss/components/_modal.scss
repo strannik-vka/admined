@@ -2,6 +2,7 @@
     .modal-content {
         border-radius: 8px;
         border: 0;
+        background-color: var(--white);
 
         .btn-close {
             position: absolute;
@@ -11,6 +12,11 @@
             outline: 0;
             box-shadow: none;
             cursor: pointer;
+            background: none;
+
+            svg {
+                fill: var(--modal-close);
+            }
         }
     }
 }
@@ -20,4 +26,5 @@
     bottom: 0;
     width: auto;
     height: auto;
+    background-color: var(--modal-back);
 }

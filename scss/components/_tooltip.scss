@@ -1,0 +1,9 @@
+.bs-tooltip-top .tooltip-arrow::before,
+.bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before {
+    border-top-color: var(--black);
+}
+
+.tooltip-inner {
+    background-color: var(--black);
+    color: var(--white);
+}

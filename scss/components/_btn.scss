@@ -9,7 +9,7 @@
     display: inline-block;
     font-weight: 500;
     color: var(--c-primary-dark);
-    background: #e0e0e0;
+    background: var(--btn-bg);
     text-decoration: none;
     cursor: pointer;
     vertical-align: middle;
@@ -17,8 +17,8 @@
         "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
     &:hover {
-        background: #d6d5d5;
-        border-color: #d6d5d5;
+        background: var(--btn-bg-hover);
+        border-color: var(--btn-bg-hover);
     }
 
     &.btn-disabled {

@@ -5,7 +5,7 @@
     tr {
         th {
             position: sticky;
-            background: #fff;
+            background: var(--white);
             z-index: 1020;
             border-top: 0;
             top: 88px;
@@ -45,7 +45,7 @@
                 z-index: 1;
 
                 path {
-                    stroke: #495057;
+                    stroke: var(--c-primary-dark);
                 }
             }
 
@@ -62,6 +62,10 @@
                     height: 18px;
                     display: block;
                     cursor: pointer;
+
+                    path {
+                        stroke: hsl(var(--dark-hs), var(--l-15));
+                    }
                 }
             }
 

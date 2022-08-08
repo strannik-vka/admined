@@ -14,7 +14,7 @@
     font-weight: 400;
 
     color: var(--c-primary-dark);
-    background-color: #fff;
+    background-color: var(--white);
     background-clip: padding-box;
     resize: none;
 
@@ -33,7 +33,7 @@
 
     &:disabled,
     &[readonly] {
-        background-color: #fff;
+        background-color: var(--white);
         opacity: 1;
         cursor: default;
     }
@@ -61,8 +61,8 @@
         margin: -0.375rem -0.75rem;
         -webkit-margin-end: 0.75rem;
         margin-inline-end: 0.75rem;
-        color: #212529;
-        background-color: #e9ecef;
+        color: var(--file-upload-c);
+        background-color: var(--file-upload-bg);
         pointer-events: none;
         border: 0 solid;
         border-color: inherit;
@@ -100,7 +100,7 @@ select.form-control {
 .editor-btns {
     position: sticky;
     top: 0px;
-    background: #fff;
+    background: var(--white);
     padding-top: 4px;
 
     .btn {
@@ -119,7 +119,7 @@ select.form-control {
         display: block;
         margin-bottom: 0.5rem;
         font-weight: 700;
-        color: #6c757d;
+        color: var(--label);
     }
 
     .description {
@@ -176,16 +176,23 @@ div[type="text"] {
     }
 }
 
-div[type="string"][placeholder]:empty:before,
-div[type="text"][placeholder]:empty:before {
+div[type="string"][placeholder]:before,
+div[type="text"][placeholder]:before {
     content: attr(placeholder);
     color: var(--c-placeholder-dark);
     cursor: text;
+    display: none;
 }
 
-div[type="string"][placeholder]:empty:focus:before,
-div[type="text"][placeholder]:empty:focus:before {
-    content: "";
+div[type="string"][placeholder]:empty:before,
+div[type="text"][placeholder]:empty:before {
+    display: inline-flex;
+}
+
+div[type="string"][placeholder]:focus:before,
+div[type="text"][placeholder]:focus:before {
+    overflow: hidden;
+    height: 0;
 }
 
 // switch
@@ -202,7 +209,7 @@ div[type="text"][placeholder]:empty:focus:before {
     }
 
     .form-check-input:focus {
-        border-color: rgba(0, 0, 0, 0.25);
+        border-color: hsl(0, 0%, var(--l-75));
         box-shadow: none;
     }
 
@@ -212,7 +219,7 @@ div[type="text"][placeholder]:empty:focus:before {
 
     .form-check-input:checked {
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
-        border-color: #0d6efd;
+        border-color: var(--switch-checked);
     }
 
     &.not-placeholder {
@@ -234,6 +241,8 @@ div[type="text"][placeholder]:empty:focus:before {
         height: 18px;
         box-shadow: none;
         outline: 0;
+        background-color: var(--white);
+        border: 1px solid hsl(0, 0%, var(--l-75));
     }
 
     &.not-label {
@@ -249,7 +258,7 @@ fieldset {
 
     legend {
         font-weight: 700;
-        color: #6c757d;
+        color: var(--label);
     }
 
     .form-group:last-child {
@@ -277,18 +286,18 @@ fieldset {
     height: 24px;
     width: 24px;
     margin-right: 4px;
-    background: rgba(55, 53, 47, 0.08);
+    background: var(--multiple-icon-bg);
     vertical-align: middle;
 
     &:hover {
-        background: rgba(55, 53, 47, 0.13);
+        background: var(--multiple-icon-hover-bg);
     }
 
     svg {
         width: 14px;
         height: 14px;
         display: block;
-        fill: rgba(55, 53, 47, 0.4);
+        fill: var(--multiple-icon-svg);
         flex-shrink: 0;
         backface-visibility: hidden;
     }
@@ -308,7 +317,7 @@ fieldset {
         background-color: var(--c-bg-dark);
 
         &:focus {
-            background-color: #fff;
+            background-color: var(--white);
         }
 
         &.readonly {
@@ -404,5 +413,5 @@ fieldset {
 .is-invalid {
     border: none;
     border-radius: 8px;
-    box-shadow: 0 0 0 0.2rem #ff6868;
+    box-shadow: 0 0 0 0.2rem var(--invalid-shadow);
 }

@@ -45,6 +45,7 @@ class Filter extends React.Component {
             }
 
             result = <Select
+                key={value + '_' + JSON.stringify(options)}
                 name={key.replace('[]', '')}
                 options={options}
                 placeholder={input.placeholder}
@@ -86,28 +87,26 @@ class Filter extends React.Component {
     }
 
     render() {
-        return (
-            <>
-                {this.actions()}
-                {
-                    this.props.page.form.map(input => {
-                        var key = input.name;
+        return <>
+            {this.actions()}
+            {
+                this.props.page.form.map(input => {
+                    var key = input.name;
 
-                        if (typeof input.text_key !== 'undefined' && typeof input.with !== 'undefined') {
-                            key = input.with + '_' + input.text_key;
-                        }
+                    if (typeof input.text_key !== 'undefined' && typeof input.with !== 'undefined') {
+                        key = input.with + '_' + input.text_key;
+                    }
 
-                        return (
-                            input.filter === false
-                                ? false
-                                : <th key={key} className="filter-item">{
-                                    this.getInputHtml(input, key, this.props.page.filter[key])
-                                }</th>
-                        )
-                    })
-                }
-            </>
-        );
+                    return (
+                        input.filter === false
+                            ? false
+                            : <th key={key} className="filter-item">{
+                                this.getInputHtml(input, key, this.props.page.filter[key])
+                            }</th>
+                    )
+                })
+            }
+        </>
     }
 
 }

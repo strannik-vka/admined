@@ -19,13 +19,13 @@ $primary: #adb5bd;
 @import "../node_modules/bootstrap/scss/popover";
 
 // Admined
-@import "./components/colors.scss";
+@import "./components/colors";
 
 body {
     margin: 0;
     font-size: 15px;
     color: var(--c-primary-dark);
-    background-color: #f2f2f2;
+    background-color: var(--c-bg-dark);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
         "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     overflow-y: scroll;
@@ -48,18 +48,19 @@ a {
 @import "./layouts/preview.scss";
 @import "./layouts/form.scss";
 
-@import "./components/scrollbar.scss";
-@import "./components/header.scss";
-@import "./components/form.scss";
-@import "./components/items.scss";
-@import "./components/modal.scss";
-@import "./components/btn.scss";
-@import "./components/chart.scss";
-@import "./components/divider.scss";
-@import "./components/react-select.scss";
-@import "./components/popover.scss";
-@import "./components/constructor.scss";
-@import "./components/SVGpreloader";
+@import "./components/scrollbar";
+@import "./components/header";
+@import "./components/form";
+@import "./components/items";
+@import "./components/modal";
+@import "./components/btn";
+@import "./components/chart";
+@import "./components/divider";
+@import "./components/react-select";
+@import "./components/popover";
+@import "./components/constructor";
+@import "./components/preloader";
+@import "./components/tooltip";
 
 .content {
     margin-top: 88px;

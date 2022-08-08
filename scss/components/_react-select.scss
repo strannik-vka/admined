@@ -10,6 +10,7 @@
 
     .react-select__control {
         border: 1px solid var(--c-border-light);
+        background-color: var(--white);
         min-height: 31px;
         border-radius: 8px;
         width: 100%;
@@ -24,9 +25,14 @@
         }
     }
 
+    .react-select__indicator-separator {
+        background-color: var(--select-separator);
+    }
+
     .react-select__indicator {
         padding: 4px;
         cursor: pointer;
+        color: var(--select-drop-svg);
     }
 
     .react-select__value-container {
@@ -46,6 +52,11 @@
 
         .react-select__multi-value {
             border-radius: 8px;
+            background-color: var(--select-value);
+
+            .react-select__multi-value__label {
+                color: var(--select-label);
+            }
         }
 
         .react-select__multi-value__remove {
@@ -59,7 +70,8 @@
     }
 
     .react-select__menu {
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0.5rem 1rem var(--c-shadow);
+        background-color: var(--select-bg);
 
         .react-select__option {
             text-align: left;
