@@ -243,6 +243,11 @@ div[type="text"][placeholder]:focus:before {
         outline: 0;
         background-color: var(--white);
         border: 1px solid hsl(0, 0%, var(--l-75));
+
+        &:checked {
+            background-color: var(--switch-checked);
+            border-color: var(--switch-checked);
+        }
     }
 
     &.not-label {
