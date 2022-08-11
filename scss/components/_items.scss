@@ -25,6 +25,7 @@
         td:first-child {
             > *:first-child {
                 margin-left: 11px;
+                margin-right: 11px;
             }
         }
 
@@ -52,10 +53,8 @@
             .actions {
                 display: flex;
                 align-items: center;
-
-                .form-check {
-                    margin-right: 15px;
-                }
+                justify-content: space-between;
+                column-gap: 15px;
 
                 .edit-icon {
                     width: 18px;
@@ -64,7 +63,7 @@
                     cursor: pointer;
 
                     path {
-                        stroke: hsl(var(--dark-hs), var(--l-15));
+                        fill: hsl(var(--primary-hs), var(--l-30));
                     }
                 }
             }

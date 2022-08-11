@@ -311,7 +311,7 @@ class Constructor extends React.Component {
         } else if (field.type == 'image') {
             result = <File name={field.name} value={field.value} />
         } else if (field.type == 'video') {
-            result = <Input name={field.name} value={field.value} />
+            result = <Input name={field.name} value={field.value} type="video" />
         } else if (field.type == 'audio') {
             result = <File name={field.name} value={field.value} />
         } else if (field.type == 'file') {

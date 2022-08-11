@@ -414,6 +414,20 @@ fieldset {
     }
 }
 
+.videoPreview {
+    background: hsl(0, 0%, var(--l-50));
+    display: inline-flex;
+    height: 250px;
+    width: 300px;
+    overflow: hidden;
+    border-radius: 8px;
+
+    iframe {
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
+
 // is-invalid
 .is-invalid {
     border: none;
