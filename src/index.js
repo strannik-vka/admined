@@ -364,12 +364,14 @@ class Admined extends React.Component {
             selector: '[data-item-id]',
             attr: 'data-item-id'
         }, items => {
-            let params = this.state.page.filter;
+            let params = Object.assign({}, this.state.page.filter),
+                isTop = true;
 
             if (items.length) {
                 if (this.state.paginate.data.length) {
                     if (items.indexOf(this.state.paginate.data[0].id) == -1) {
-                        params.items = items;;
+                        params.items = items;
+                        isTop = false;
                     }
                 }
             }
@@ -418,11 +420,13 @@ class Admined extends React.Component {
 
                         this.setState(prevState => {
                             let prevData = prevState.paginate.data,
-                                itemsSelected = prevState.itemsSelected;
+                                itemsSelected = prevState.itemsSelected,
+                                prevTotal = prevState.paginate.total;
 
                             if (removeItems.length) {
                                 prevData = prevData.filter(item => removeItems.indexOf(item.id) == -1);
                                 itemsSelected = itemsSelected.filter(itemId => removeItems.indexOf(itemId) == -1);
+                                prevTotal -= removeItems.length;
                             }
 
                             if (updateItems.length) {
@@ -435,14 +439,18 @@ class Admined extends React.Component {
                                 })
                             }
 
+                            if (newItems.length) {
+                                prevTotal += newItems.length;
+                            }
+
                             let data = newItems.length ? [...newItems, ...prevData] : prevData;
 
                             return {
                                 paginate: {
                                     data: data,
-                                    total: response.data.paginate.total,
-                                    next_page_url: prevState.paginate.next_page_url,
-                                    prev_page_url: prevState.paginate.prev_page_url
+                                    total: isTop ? response.data.paginate.total : prevTotal,
+                                    next_page_url: isTop ? prevState.paginate.next_page_url : prevState.paginate.next_page_url,
+                                    prev_page_url: isTop ? prevState.paginate.prev_page_url : prevState.paginate.prev_page_url
                                 },
                                 itemsSelected: itemsSelected,
                                 editorSupport: this.getEditorSupport(data),
