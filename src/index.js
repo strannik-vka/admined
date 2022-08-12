@@ -9,6 +9,8 @@ import Items from './layouts/items';
 import Form from "./layouts/form";
 import Charts from "./layouts/charts";
 import Preview from "./layouts/preview";
+import ClientActivity from "./modules/ClientActivity";
+import VisibleItems from "./modules/VisibleItems";
 
 import '../css/index.css';
 import '../css/preview.css';
@@ -23,6 +25,7 @@ class Admined extends React.Component {
         this.UpdateCancelTokenSource = axios.CancelToken.source();
         this.CancelTokenSource = axios.CancelToken.source();
         this.ajaxItems = false;
+        this.itemsUpdateAllow = true;
         this.itemsUpdateTimeout = false;
         this.pages = [];
         this.isMiddleware = false;
@@ -34,6 +37,39 @@ class Admined extends React.Component {
         };
 
         document.addEventListener('scroll', this.scroll);
+
+        ClientActivity({
+            timeOnPause: 600000,   // 10 мин.
+            delayOnActive: 300000, // 5 мин.
+            onActive: () => {
+                if (this.state.editItem.id) {
+                    this.setEditStatus(this.state.editItem.id);
+                }
+            },
+            onPause: () => {
+                this.itemsUpdateAllow = false;
+            },
+            onStop: () => {
+                this.setEditStatus('delete');
+            },
+            onStopScroll: () => {
+                this.itemsUpdate(() => {
+                    this.itemsUpdateStart();
+                });
+            },
+            onPlay: () => {
+                this.itemsUpdateAllow = true;
+
+                if (this.state.editItem.id) {
+                    this.setEditStatus(this.state.editItem.id, ({ error }) => {
+                        if (error) {
+                            this.formVisible(false);
+                            alert(error);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     stateDefault(page) {
@@ -42,7 +78,9 @@ class Admined extends React.Component {
             preview: page.preview ? page.preview : null,
             formIsShow: null,
             itemsSelected: [],
+            itemsSelectedCountMax: 0,
             editItem: {},
+            editorSupport: false,
             page: {
                 url: false,
                 form: [],
@@ -150,12 +188,14 @@ class Admined extends React.Component {
         });
     }
 
-    itemSelectAll = (event) => {
+    itemsSelectAll = (event) => {
         var ids = [];
 
         if (event.target.checked) {
-            this.state.paginate.data.map((item) => {
-                ids.push(item.id);
+            this.state.paginate.data.forEach(item => {
+                if (!item.editor_user_id) {
+                    ids.push(item.id);
+                }
             });
         }
 
@@ -189,7 +229,7 @@ class Admined extends React.Component {
 
                 var itemIndex = false;
 
-                data.paginate.data.map((item, index) => {
+                data.paginate.data.forEach((item, index) => {
                     if (item.id == successData.id) {
                         itemIndex = index;
                     }
@@ -207,17 +247,21 @@ class Admined extends React.Component {
         }
     }
 
-    formVisible = (val) => {
-        if (this.state.formIsShow !== val) {
+    formVisible = (status) => {
+        if (this.state.formIsShow !== status) {
             let data = {
-                formIsShow: val
+                formIsShow: status
             }
 
-            if (!val) {
+            if (status == false) {
                 data.editItem = {};
-            }
 
-            this.setState(data);
+                this.setEditStatus('delete', () => {
+                    this.setState(data);
+                });
+            } else {
+                this.setState(data);
+            }
         }
     }
 
@@ -302,63 +346,109 @@ class Admined extends React.Component {
         }
 
         this.itemsUpdateTimeout = setTimeout(() => {
-            this.itemsUpdate(() => {
+            if (this.ajaxItems || this.itemsUpdateAllow == false) {
                 this.itemsUpdateStart();
-            });
+            } else {
+                this.itemsUpdate(() => {
+                    this.itemsUpdateStart();
+                });
+            }
         }, 5000);
     }
 
     itemsUpdate(callback) {
-        if (this.ajaxItems) {
-            if (callback) callback();
-        } else {
-            this.UpdateCancelTokenSource.cancel();
-            this.UpdateCancelTokenSource = axios.CancelToken.source();
+        this.UpdateCancelTokenSource.cancel();
+        this.UpdateCancelTokenSource = axios.CancelToken.source();
+
+        VisibleItems({
+            selector: '[data-item-id]',
+            attr: 'data-item-id'
+        }, items => {
+            let params = this.state.page.filter;
+
+            if (items.length) {
+                if (this.state.paginate.data.length) {
+                    if (items.indexOf(this.state.paginate.data[0].id) == -1) {
+                        params.items = items;;
+                    }
+                }
+            }
 
             axios.get(location.pathname + '/' + this.state.page.url, {
                 cancelToken: this.UpdateCancelTokenSource.token,
-                params: this.state.page.filter
-            }).then((response) => {
-                var isPaginate = typeof response.data.paginate !== 'undefined',
-                    vars = Object.assign({}, response.data);
+                params: params
+            }).then(response => {
+                window.vars = Object.assign({}, response.data);
 
-                window.vars = vars;
-
-                if (typeof vars.paginate !== 'undefined') {
-                    delete vars.paginate;
-                }
-
-                let paginateData = {
-                    enabled: isPaginate,
-                    total: isPaginate ? response.data.paginate.total : 0
-                }
-
-                if (isPaginate) {
-                    let itemLast = this.state.paginate.data.length ? this.state.paginate.data[0] : null,
-                        newItems = [];
-
-                    if (itemLast) {
-                        let prevDataIds = this.state.paginate.data.map(item => {
+                if (typeof response.data.paginate !== 'undefined') {
+                    let newItems = [],
+                        removeItems = [],
+                        updateItems = [],
+                        responseItemsIds = [],
+                        prevItemsIds = this.state.paginate.data.map(item => {
                             return item.id;
                         });
 
-                        response.data.paginate.data.forEach(item => {
-                            if (prevDataIds.indexOf(item.id) == -1) {
-                                newItems.push(item);
+                    response.data.paginate.data.forEach(item => {
+                        if (prevItemsIds.indexOf(item.id) == -1) {
+                            newItems.push(item);
+                        }
+
+                        updateItems[item.id] = item;
+
+                        responseItemsIds.push(item.id);
+                    });
+
+                    for (let i = 0; i < items.length; i++) {
+                        if (response.data.paginate.per_page) {
+                            if (i == (response.data.paginate.per_page - 1)) {
+                                break;
                             }
-                        });
-                    } else {
-                        newItems = response.data.paginate.data;
+                        }
+
+                        if (responseItemsIds.indexOf(items[i]) == -1) {
+                            removeItems.push(items[i]);
+                        }
                     }
 
-                    if (newItems.length) {
-                        paginateData.data = [...newItems, ...this.state.paginate.data];
-                        paginateData.next_page_url = this.state.paginate.next_page_url;
-                        paginateData.prev_page_url = this.state.paginate.prev_page_url;
+                    if (newItems.length || removeItems.length || updateItems.length) {
+                        if (typeof vars.paginate !== 'undefined') {
+                            delete vars.paginate;
+                        }
 
-                        this.setState({
-                            paginate: paginateData,
-                            page: { ...this.state.page, ...{ vars: vars } }
+                        this.setState(prevState => {
+                            let prevData = prevState.paginate.data,
+                                itemsSelected = prevState.itemsSelected;
+
+                            if (removeItems.length) {
+                                prevData = prevData.filter(item => removeItems.indexOf(item.id) == -1);
+                                itemsSelected = itemsSelected.filter(itemId => removeItems.indexOf(itemId) == -1);
+                            }
+
+                            if (updateItems.length) {
+                                prevData = prevData.map(item => {
+                                    if (typeof updateItems[item.id] === 'object' && updateItems[item.id] != null) {
+                                        item = updateItems[item.id];
+                                    }
+
+                                    return item;
+                                })
+                            }
+
+                            let data = newItems.length ? [...newItems, ...prevData] : prevData;
+
+                            return {
+                                paginate: {
+                                    data: data,
+                                    total: response.data.paginate.total,
+                                    next_page_url: prevState.paginate.next_page_url,
+                                    prev_page_url: prevState.paginate.prev_page_url
+                                },
+                                itemsSelected: itemsSelected,
+                                editorSupport: this.getEditorSupport(data),
+                                itemsSelectedCountMax: this.getItemsSelectedCountMax(data),
+                                page: { ...prevState.page, ...{ vars: vars } }
+                            }
                         }, () => {
                             callback();
                         })
@@ -371,7 +461,23 @@ class Admined extends React.Component {
             }).catch(() => {
                 callback();
             });
-        }
+        });
+    }
+
+    getEditorSupport(items) {
+        return items.length ? typeof items[0].editor_user_id !== 'undefined' : false;
+    }
+
+    getItemsSelectedCountMax(items) {
+        let result = 0;
+
+        items.forEach(item => {
+            if (!item.editor_user_id) {
+                result++;
+            }
+        });
+
+        return result;
     }
 
     getItems({ callback, next_page_url, reset }) {
@@ -409,7 +515,6 @@ class Admined extends React.Component {
                 this.setState(prevState => {
                     let newState = {
                         paginate: {
-                            enabled: isPaginate,
                             data: isPaginate
                                 ? [...prevState.paginate.data, ...response.data.paginate.data]
                                 : prevState.paginate.data,
@@ -424,6 +529,9 @@ class Admined extends React.Component {
                         page: { ...prevState.page, ...{ vars: vars } },
                         saveStatus: ''
                     }
+
+                    newState.editorSupport = this.getEditorSupport(newState.paginate.data);
+                    newState.itemsSelectedCountMax = this.getItemsSelectedCountMax(newState.paginate.data);
 
                     if (reset) {
                         newState.paginate.data = response.data.paginate.data;
@@ -610,79 +718,122 @@ class Admined extends React.Component {
         }
     }
 
+    setEditStatus = (id, callback) => {
+        if (this.state.editorSupport) {
+            axios.get(location.pathname + '/' + this.state.page.url + '?editor_item_id=' + id)
+                .then(response => {
+                    if (callback && id != 'delete') {
+                        callback(response.data);
+                    }
+                });
+
+            if (id == 'delete' && this.state.editItem.id && callback) {
+                this.setState(prevState => {
+                    let paginateData = prevState.paginate;
+
+                    paginateData.data = prevState.paginate.data.map(item => {
+                        if (item.id == this.state.editItem.id) {
+                            item.editor_user_id = null;
+                            item.editor_user = null;
+                        }
+
+                        return item;
+                    })
+
+                    return {
+                        paginate: paginateData
+                    }
+                }, () => {
+                    callback();
+                });
+            }
+        } else {
+            if (callback) {
+                callback({
+                    success: true
+                });
+            }
+        }
+    }
+
     setItemEdit = (id) => {
-        axios.get(location.pathname + '/' + this.state.page.url + '/' + id + '/edit').then(response => {
-            this.setState({
-                editItem: response.data,
-                formIsShow: true
-            }, () => {
-                this.itemEdit(response.data);
-            });
+        this.setEditStatus(id, ({ success, error }) => {
+            if (success || typeof error === 'undefined') {
+                axios.get(location.pathname + '/' + this.state.page.url + '/' + id + '/edit')
+                    .then(response => {
+                        this.setState({
+                            editItem: response.data,
+                            formIsShow: true
+                        }, () => {
+                            this.itemEdit(response.data);
+                        });
+                    });
+            } else {
+                alert(error);
+            }
         });
     }
 
     render() {
-        return (
-            <>
-                <Header
-                    isDomRender={this.state.isDomRender}
-                    pages={this.state.pages}
+        return <>
+            <Header
+                isDomRender={this.state.isDomRender}
+                pages={this.state.pages}
+                page={this.state.page}
+                changePage={this.changePage}
+                to={this.state.paginate.data.length}
+                total={this.state.paginate.total}
+                saveStatus={this.state.saveStatus}
+                itemsSelected={this.state.itemsSelected}
+                itemsDelete={this.itemsDelete}
+                formVisible={this.formVisible}
+            />
+            <div className="content">
+                <Charts
                     page={this.state.page}
-                    changePage={this.changePage}
-                    to={this.state.paginate.data.length}
-                    total={this.state.paginate.total}
-                    saveStatus={this.state.saveStatus}
-                    itemsSelected={this.state.itemsSelected}
-                    itemsDelete={this.itemsDelete}
-                    formVisible={this.formVisible}
                 />
-                <div className="content">
-                    <Charts
-                        page={this.state.page}
-                    />
-                    <table
-                        className="items"
-                        style={this.state.page.form.length ? { display: 'table' } : { display: 'none' }}
-                    >
-                        <thead className="form-reverse">
-                            <tr>
-                                <Filter
-                                    itemsToCount={this.state.paginate.data.length}
-                                    itemsSelectedCount={this.state.itemsSelected.length}
-                                    itemSelectAll={this.itemSelectAll}
-                                    onChange={this.onFilterChange}
-                                    page={this.state.page}
-                                />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <Items
-                                itemsSelected={this.state.itemsSelected}
-                                setItemEdit={this.setItemEdit}
+                <table
+                    className="items"
+                    style={this.state.page.form.length ? { display: 'table' } : { display: 'none' }}
+                >
+                    <thead className="form-reverse">
+                        <tr>
+                            <Filter
+                                itemsSelectedCountMax={this.state.itemsSelectedCountMax}
+                                itemsSelectedCount={this.state.itemsSelected.length}
+                                itemsSelectAll={this.itemsSelectAll}
+                                onChange={this.onFilterChange}
                                 page={this.state.page}
-                                paginate={this.state.paginate}
-                                itemSelect={this.itemSelect}
-                                onItemChange={this.onItemChange}
                             />
-                        </tbody>
-                    </table>
-                </div>
-                <Form
-                    page={this.state.page}
-                    show={this.state.formIsShow}
-                    editItem={this.state.editItem}
-                    itemEdit={this.itemEdit}
-                    formVisible={this.formVisible}
-                    isPreview={isObject(this.state.preview)}
-                    previewVisible={this.previewVisible}
-                />
-                <Preview
-                    show={this.state.previewIsShow}
-                    options={this.state.preview}
-                    previewVisible={this.previewVisible}
-                />
-            </>
-        );
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <Items
+                            itemsSelected={this.state.itemsSelected}
+                            setItemEdit={this.setItemEdit}
+                            page={this.state.page}
+                            paginate={this.state.paginate}
+                            itemSelect={this.itemSelect}
+                            onItemChange={this.onItemChange}
+                        />
+                    </tbody>
+                </table>
+            </div>
+            <Form
+                page={this.state.page}
+                show={this.state.formIsShow}
+                editItem={this.state.editItem}
+                itemEdit={this.itemEdit}
+                formVisible={this.formVisible}
+                isPreview={isObject(this.state.preview)}
+                previewVisible={this.previewVisible}
+            />
+            <Preview
+                show={this.state.previewIsShow}
+                options={this.state.preview}
+                previewVisible={this.previewVisible}
+            />
+        </>
     }
 
 }

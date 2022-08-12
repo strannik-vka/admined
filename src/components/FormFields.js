@@ -176,14 +176,23 @@ class FormFields extends React.Component {
 
     render() {
         return this.props.inputs.map(input => {
-            return (
-                input.readonly ? false :
-                    <div key={input.name} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
-                        {input.type !== 'switch' && input.placeholder ? <label>{input.placeholder}</label> : ''}
-                        {input.description ? <div className="description" dangerouslySetInnerHTML={{ __html: input.description }}></div> : ''}
-                        {this[input.type](input)}
-                    </div>
-            );
+            if (input.readonly) {
+                return false
+            } else {
+                let element = null;
+
+                if (typeof this[input.type] !== 'undefined') {
+                    element = this[input.type](input);
+                } else {
+                    element = this.string(input);
+                }
+
+                return <div key={input.name} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
+                    {input.type !== 'switch' && input.placeholder ? <label>{input.placeholder}</label> : ''}
+                    {input.description ? <div className="description" dangerouslySetInnerHTML={{ __html: input.description }}></div> : ''}
+                    {element}
+                </div>
+            }
         });
     }
 

@@ -186,55 +186,94 @@ class Items extends React.Component {
         );
     }
 
-    actions(item) {
-        var isActions = this.props.page.config('deleteAction', true) || this.props.page.config('editAction', true);
+    actions(item, isChecked) {
+        let actions = [];
 
-        if (isActions) {
-            return (
-                <td>
-                    <div className="actions">
-                        {
-                            this.props.page.config('deleteAction', true)
-                                ? <Checkbox checked={this.props.itemsSelected.indexOf(item.id) > -1} onChange={() => this.props.itemSelect(item.id)} />
-                                : ''
-                        }
-                        {
-                            this.props.page.config('editAction', true)
-                                ? <OverlayTrigger
-                                    key="top"
-                                    placement="top"
-                                    overlay={
-                                        <Tooltip id="tooltip-top">Редактировать</Tooltip>
-                                    }
-                                >
-                                    <svg onClick={() => this.props.setItemEdit(item.id)} className="edit-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M16.5368 0.251576C16.2017 -0.0838586 15.6592 -0.0838586 15.325 0.251576C15.2401 0.336507 15.1107 0.357115 14.9993 0.313362C14.0797 -0.0400879 12.9981 0.153809 12.2568 0.895882L2.9374 10.2245C2.80285 10.3584 2.80285 10.5763 2.9374 10.7101L7.30057 15.0776C7.43427 15.2115 7.6511 15.2115 7.7848 15.0776L17.1042 5.74894C17.8464 5.00687 18.0401 3.9242 17.6861 3.00369C17.6433 2.89131 17.6638 2.76262 17.7487 2.67769C18.0838 2.34225 18.0838 1.79921 17.7487 1.46463L16.5368 0.251576ZM16.0989 3.84357C16.2326 3.9774 16.2326 4.19528 16.0989 4.32911L7.7848 12.6515C7.6511 12.7854 7.43427 12.7854 7.30057 12.6515L5.3611 10.7101C5.2274 10.5763 5.2274 10.3584 5.3611 10.2245L13.6752 1.90305C13.8089 1.76836 14.0257 1.76836 14.1594 1.90305L16.0989 3.84357Z" fill="#1672EC"></path><path d="M0.43314 17.9876C0.177744 18.0571 -0.0570812 17.8221 0.0123386 17.5664L1.51729 12.0433C1.58671 11.7885 1.90466 11.7045 2.09064 11.8906L6.10328 15.9081C6.28926 16.0943 6.20527 16.4117 5.95073 16.4812L0.43314 17.9876Z" fill="#1672EC"></path></svg>
-                                </OverlayTrigger>
-                                : ''
-                        }
-                    </div>
-                </td>
+        if (isObject(item.editor_user)) {
+            let avatar = item.editor_user.name.split(' ');
+
+            avatar = avatar.length > 1
+                ? avatar[0][0] + avatar[1][0]
+                : avatar[0][0];
+
+            actions.push(
+                <OverlayTrigger
+                    key={'editor_' + item.id}
+                    placement="top"
+                    overlay={
+                        <Tooltip>Редактирует<br />{item.editor_user.name}</Tooltip>
+                    }
+                ><div className="editor">{avatar}</div></OverlayTrigger>
             )
+        } else {
+            if (this.props.page.config('deleteAction', true)) {
+                actions.push(
+                    <Checkbox
+                        key={'del_' + item.id}
+                        checked={isChecked}
+                        onChange={() => this.props.itemSelect(item.id)}
+                    />
+                )
+            }
+
+            if (this.props.page.config('editAction', true)) {
+                actions.push(
+                    <OverlayTrigger
+                        key={'edit_' + item.id}
+                        placement="top"
+                        overlay={
+                            <Tooltip>Редактировать</Tooltip>
+                        }
+                    >
+                        <svg onClick={() => this.props.setItemEdit(item.id)} className="edit-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M16.5368 0.251576C16.2017 -0.0838586 15.6592 -0.0838586 15.325 0.251576C15.2401 0.336507 15.1107 0.357115 14.9993 0.313362C14.0797 -0.0400879 12.9981 0.153809 12.2568 0.895882L2.9374 10.2245C2.80285 10.3584 2.80285 10.5763 2.9374 10.7101L7.30057 15.0776C7.43427 15.2115 7.6511 15.2115 7.7848 15.0776L17.1042 5.74894C17.8464 5.00687 18.0401 3.9242 17.6861 3.00369C17.6433 2.89131 17.6638 2.76262 17.7487 2.67769C18.0838 2.34225 18.0838 1.79921 17.7487 1.46463L16.5368 0.251576ZM16.0989 3.84357C16.2326 3.9774 16.2326 4.19528 16.0989 4.32911L7.7848 12.6515C7.6511 12.7854 7.43427 12.7854 7.30057 12.6515L5.3611 10.7101C5.2274 10.5763 5.2274 10.3584 5.3611 10.2245L13.6752 1.90305C13.8089 1.76836 14.0257 1.76836 14.1594 1.90305L16.0989 3.84357Z" fill="#1672EC"></path><path d="M0.43314 17.9876C0.177744 18.0571 -0.0570812 17.8221 0.0123386 17.5664L1.51729 12.0433C1.58671 11.7885 1.90466 11.7045 2.09064 11.8906L6.10328 15.9081C6.28926 16.0943 6.20527 16.4117 5.95073 16.4812L0.43314 17.9876Z" fill="#1672EC"></path></svg>
+                    </OverlayTrigger>
+                )
+            }
+        }
+
+        if (actions.length) {
+            return <td>
+                <div className="actions">
+                    {actions}
+                </div>
+            </td>
         }
     }
 
     render() {
         return this.props.paginate.data.length
-            ? this.props.paginate.data.map((item) =>
-                <tr key={item.id}>
-                    {this.actions(item)}
+            ? this.props.paginate.data.map((item) => {
+                let isChecked = this.props.itemsSelected.indexOf(item.id) > -1;
+
+                return <tr data-item-id={item.id} key={item.id} className={(item.editor_user_id ? 'editing' : '') + (isChecked ? ' checked' : '')}>
+                    {this.actions(item, isChecked)}
                     {
                         this.props.page.form.map(input => {
-                            if (typeof input.value === 'function') {
-                                item = input.value(Object.assign({}, item));
-                            }
+                            if (input.filter === false) {
+                                return false;
+                            } else {
+                                if (typeof input.value === 'function') {
+                                    item = input.value(Object.assign({}, item));
+                                }
 
-                            return input.filter === false ? false :
-                                <td key={item.id + '_' + input.name} className={input.center ? 'text-center' : ''}>
-                                    {this[!input.readonly && input.type ? input.type : 'string'](item, input)}
-                                </td>
+                                let element = null;
+
+                                if (input.type) {
+                                    if (typeof this[input.type] !== 'undefined') {
+                                        element = this[input.type](item, input);
+                                    } else {
+                                        element = this.string(item, input);
+                                    }
+                                } else {
+                                    element = this.string(item, input);
+                                }
+
+                                return <td key={item.id + '_' + input.name} className={input.center ? 'text-center' : ''}>{element}</td>
+                            }
                         })
                     }
                 </tr>
+            }
             )
             : <tr className="empty text-center"><td colSpan="100%">Ничего не найдено</td></tr>;
     }

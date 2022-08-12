@@ -13,12 +13,12 @@ class Filter extends React.Component {
     actions() {
         var actions = [];
 
-        if (this.props.page.config('deleteAction', true) && this.props.itemsToCount) {
+        if (this.props.page.config('deleteAction', true) && this.props.itemsSelectedCountMax) {
             actions.push(
                 <Checkbox
                     key="deleteAction"
-                    checked={(this.props.itemsToCount == this.props.itemsSelectedCount) && this.props.itemsSelectedCount}
-                    onChange={this.props.itemSelectAll}
+                    checked={(this.props.itemsSelectedCountMax == this.props.itemsSelectedCount) && this.props.itemsSelectedCount}
+                    onChange={this.props.itemsSelectAll}
                 />
             );
         }

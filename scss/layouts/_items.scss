@@ -3,6 +3,23 @@
     width: 100%;
 
     tr {
+        &.checked,
+        &:hover {
+            background-color: hsl(var(--primary-hs), var(--l-90));
+        }
+
+        &.editing {
+            background-color: hsl(var(--primary-hs), var(--l-80));
+
+            td {
+                pointer-events: none;
+                cursor: default;
+            }
+            td:first-child {
+                pointer-events: auto;
+            }
+        }
+
         th {
             position: sticky;
             background: var(--white);
@@ -54,7 +71,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                column-gap: 15px;
+                column-gap: 8px;
 
                 .edit-icon {
                     width: 18px;
@@ -65,6 +82,18 @@
                     path {
                         fill: hsl(var(--primary-hs), var(--l-30));
                     }
+                }
+
+                .editor {
+                    width: 31px;
+                    height: 31px;
+                    border-radius: 100%;
+                    overflow: hidden;
+                    background-color: hsl(var(--primary-hs), var(--l-30));
+                    color: var(--white);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
             }
 
