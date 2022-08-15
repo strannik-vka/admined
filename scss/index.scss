@@ -48,9 +48,10 @@ a {
 @import "./layouts/preview.scss";
 @import "./layouts/form";
 @import "./layouts/items";
+@import "./layouts/header";
 
+@import "./components/avatar";
 @import "./components/scrollbar";
-@import "./components/header";
 @import "./components/form";
 @import "./components/modal";
 @import "./components/btn";

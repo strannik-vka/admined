@@ -203,7 +203,7 @@ class Items extends React.Component {
                     overlay={
                         <Tooltip>Редактирует<br />{item.editor_user.name}</Tooltip>
                     }
-                ><div className="editor">{avatar}</div></OverlayTrigger>
+                ><div className="avatar">{avatar}</div></OverlayTrigger>
             )
         } else {
             if (this.props.page.config('deleteAction', true)) {

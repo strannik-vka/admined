@@ -11,6 +11,66 @@
     border-bottom: 1px solid var(--c-border-light);
     font-weight: 500;
 
+    .siteName {
+        text-decoration: none;
+        text-transform: uppercase;
+        left: 15px;
+        top: 7px;
+        position: absolute;
+        font-weight: bold;
+        display: inline-block;
+        z-index: 2001;
+    }
+
+    .user {
+        position: absolute;
+        right: 15px;
+        top: 3.5px;
+        z-index: 2001;
+
+        .avatar {
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .links {
+            display: none;
+            border-radius: 4px;
+            background: var(--white);
+            border: 1px solid var(--c-border-dark);
+            position: relative;
+            top: 5px;
+            right: 0;
+
+            .name {
+                padding: 0.7rem 1rem 0.5rem;
+            }
+
+            a {
+                display: block;
+                padding: 0.5rem 1rem;
+                font-weight: normal;
+                color: var(--c-primary);
+                text-decoration: none;
+                white-space: nowrap;
+
+                &:last-child {
+                    padding-bottom: 0.7rem;
+                }
+
+                &:hover {
+                    color: var(--c-primary-dark);
+                }
+            }
+        }
+
+        &:hover {
+            .links {
+                display: block;
+            }
+        }
+    }
+
     .menu {
         display: flex;
         justify-content: center;

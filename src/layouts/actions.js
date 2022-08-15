@@ -1,3 +1,5 @@
+import Switch from "../components/switch";
+
 export default (props) => {
     const selectedCount = () => {
         if (props.itemsSelected.length) {

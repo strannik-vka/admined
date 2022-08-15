@@ -83,18 +83,6 @@
                         fill: hsl(var(--primary-hs), var(--l-30));
                     }
                 }
-
-                .editor {
-                    width: 31px;
-                    height: 31px;
-                    border-radius: 100%;
-                    overflow: hidden;
-                    background-color: hsl(var(--primary-hs), var(--l-30));
-                    color: var(--white);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
             }
 
             .image {

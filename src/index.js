@@ -34,7 +34,9 @@ class Admined extends React.Component {
             isDomRender: false,
             pages: [],
             ...this.stateDefault({})
-        };
+        }
+
+        this.getUserInfo();
 
         document.addEventListener('scroll', this.scroll);
 
@@ -69,6 +71,18 @@ class Admined extends React.Component {
                     });
                 }
             }
+        });
+    }
+
+    getUserInfo() {
+        axios.get(location.pathname + '/user_info').then(response => {
+            if (isObject(response.data)) {
+                this.setState({
+                    user: response.data
+                })
+            }
+        }).catch(() => {
+            console.log('По пути: ' + location.pathname + '/user_info нет информации о юзере: {name: "ФИО"}');
         });
     }
 
@@ -795,6 +809,7 @@ class Admined extends React.Component {
                 itemsSelected={this.state.itemsSelected}
                 itemsDelete={this.itemsDelete}
                 formVisible={this.formVisible}
+                user={this.state.user}
             />
             <div className="content">
                 <Charts

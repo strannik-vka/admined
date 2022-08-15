@@ -47,8 +47,17 @@ export default (props) => {
     }
 
     const getOtherItemsUrls = () => {
+        let siteNameElem = document.querySelector('#header .siteName'),
+            minusWidth = 150;
+
+        if (siteNameElem) {
+            if (siteNameElem.clientWidth > 31) {
+                minusWidth += siteNameElem.clientWidth;
+            }
+        }
+
         let result = [],
-            headerWidth = document.querySelector('#header').clientWidth - 150,
+            headerWidth = document.querySelector('#header').clientWidth - minusWidth,
             menuItems = document.querySelector('.menu').childNodes,
             menuWidth = 0;
 
