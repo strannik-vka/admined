@@ -760,25 +760,29 @@ class Admined extends React.Component {
                     }
                 });
 
-            if (id == 'delete' && this.state.editItem.id && callback) {
-                this.setState(prevState => {
-                    let paginateData = prevState.paginate;
+            if (id == 'delete' && callback) {
+                if (this.state.editItem.id) {
+                    this.setState(prevState => {
+                        let paginateData = prevState.paginate;
 
-                    paginateData.data = prevState.paginate.data.map(item => {
-                        if (item.id == this.state.editItem.id) {
-                            item.editor_user_id = null;
-                            item.editor_user = null;
+                        paginateData.data = prevState.paginate.data.map(item => {
+                            if (item.id == this.state.editItem.id) {
+                                item.editor_user_id = null;
+                                item.editor_user = null;
+                            }
+
+                            return item;
+                        })
+
+                        return {
+                            paginate: paginateData
                         }
-
-                        return item;
-                    })
-
-                    return {
-                        paginate: paginateData
-                    }
-                }, () => {
+                    }, () => {
+                        callback();
+                    });
+                } else {
                     callback();
-                });
+                }
             }
         } else {
             if (callback) {
