@@ -1,4 +1,8 @@
 .SVGpreloader {
     position: relative;
     bottom: -3px;
+
+    path {
+        fill: var(--black);
+    }
 }

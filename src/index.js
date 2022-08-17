@@ -29,6 +29,7 @@ class Admined extends React.Component {
         this.itemsUpdateTimeout = false;
         this.pages = [];
         this.isMiddleware = false;
+        this.lastFastEdit = {};
 
         this.state = {
             isDomRender: false,
@@ -143,24 +144,27 @@ class Admined extends React.Component {
     }
 
     onItemChange = (id, name, value, callback) => {
-        var data = {
-            paginate: this.state.paginate,
-            saveStatus: '<svg class="SVGpreloader" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="16px" height="16px" viewBox="0 0 128 128" xml:space="preserve"><rect x="0" y="0" width="100%" height="100%" fill="none" /><g><path d="M64 9.75A54.25 54.25 0 0 0 9.75 64H0a64 64 0 0 1 128 0h-9.75A54.25 54.25 0 0 0 64 9.75z" fill="#000000"/><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1800ms" repeatCount="indefinite"></animateTransform></g></svg>'
-        }
+        this.setState(prevState => {
+            let itemIndex = false;
 
-        var itemIndex = false;
-
-        data.paginate.data.map((item, index) => {
-            if (item.id == id) {
-                itemIndex = index;
+            for (let i = 0; i < prevState.paginate.data.length; i++) {
+                if (prevState.paginate.data[i].id == id) {
+                    itemIndex = i;
+                    break;
+                }
             }
-        });
 
-        data.paginate.data[itemIndex][name] = value;
+            prevState.paginate.data[itemIndex][name] = value;
 
-        this.setState(data, callback);
+            this.lastFastEdit[id] = { name: name, value: value };
 
-        var formData = new FormData();
+            return {
+                paginate: prevState.paginate,
+                saveStatus: '<svg class="SVGpreloader" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="16px" height="16px" viewBox="0 0 128 128" xml:space="preserve"><rect x="0" y="0" width="100%" height="100%" fill="none" /><g><path d="M64 9.75A54.25 54.25 0 0 0 9.75 64H0a64 64 0 0 1 128 0h-9.75A54.25 54.25 0 0 0 64 9.75z"/><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1800ms" repeatCount="indefinite"></animateTransform></g></svg>'
+            }
+        }, callback);
+
+        let formData = new FormData();
 
         formData.append('_method', 'PUT');
 
@@ -180,19 +184,19 @@ class Admined extends React.Component {
             contentType: false,
             headers: { 'Content-Type': 'multipart/form-data' },
         }).then((response) => {
+            let statusText = '';
+
             if (response.data.success) {
-                this.setState({
-                    saveStatus: 'Сохранено'
-                });
+                statusText = 'Сохранено';
             } else if (response.data.errors) {
-                this.setState({
-                    saveStatus: 'Ошибка: ' + response.data.errors[name][0]
-                });
+                statusText = 'Ошибка: ' + response.data.errors[name][0];
             } else if (response.data.error) {
-                this.setState({
-                    saveStatus: 'Ошибка: ' + response.data.error
-                });
+                statusText = 'Ошибка: ' + response.data.error;
             }
+
+            this.setState({
+                saveStatus: statusText
+            });
 
             setTimeout(() => {
                 this.setState({
@@ -347,6 +351,8 @@ class Admined extends React.Component {
             stateDefault.isDomRender = true;
         }
 
+        this.lastFastEdit = {};
+
         this.setState(stateDefault, () => {
             this.historyPushState();
             this.getItems({});
@@ -408,6 +414,11 @@ class Admined extends React.Component {
                     response.data.paginate.data.forEach(item => {
                         if (prevItemsIds.indexOf(item.id) == -1) {
                             newItems.push(item);
+                        }
+
+                        if (this.lastFastEdit[item.id]) {
+                            item[this.lastFastEdit[item.id].name] = this.lastFastEdit[item.id].value;
+                            delete this.lastFastEdit[item.id];
                         }
 
                         updateItems[item.id] = item;
