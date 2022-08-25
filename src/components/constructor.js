@@ -59,7 +59,7 @@ class Constructor extends React.Component {
             {
                 type: 'poll',
                 placeholder: 'Опрос',
-                description: 'Создать голосование',
+                description: 'Создать опрос',
                 src: imgConstPoll
             }
         ];
@@ -343,7 +343,7 @@ class Constructor extends React.Component {
     }
 
     render() {
-        return <fieldset>
+        return <fieldset className="notLegend">
             {
                 this.state.fields.map((field, index) => {
                     return <div

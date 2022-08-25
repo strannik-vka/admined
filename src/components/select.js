@@ -132,7 +132,7 @@ class Select extends React.Component {
     }
 
     isMultiple = () => {
-        return this.props.name.indexOf('[]') > -1;
+        return this.props.name ? this.props.name.indexOf('[]') > -1 || this.props.multiple : this.props.multiple;
     }
 
     getPlaceholder = () => {

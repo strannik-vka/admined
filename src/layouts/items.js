@@ -241,8 +241,8 @@ class Items extends React.Component {
     }
 
     render() {
-        return this.props.paginate.data.length
-            ? this.props.paginate.data.map((item) => {
+        if (this.props.paginate.data.length) {
+            return this.props.paginate.data.map((item) => {
                 let isChecked = this.props.itemsSelected.indexOf(item.id) > -1;
 
                 return <tr data-item-id={item.id} key={item.id} className={(item.editor_user_id ? 'editing' : '') + (isChecked ? ' checked' : '')}>
@@ -273,9 +273,10 @@ class Items extends React.Component {
                         })
                     }
                 </tr>
-            }
-            )
-            : <tr className="empty text-center"><td colSpan="100%">Ничего не найдено</td></tr>;
+            })
+        }
+
+        return <tr className="empty text-center"><td colSpan="100%">Ничего не найдено</td></tr>
     }
 
 }

@@ -30,6 +30,7 @@ class Admined extends React.Component {
         this.pages = [];
         this.isMiddleware = false;
         this.lastFastEdit = {};
+        this.itemsUpdateSupports = {};
 
         this.state = {
             isDomRender: false,
@@ -376,123 +377,161 @@ class Admined extends React.Component {
         }, 5000);
     }
 
-    itemsUpdate(callback) {
-        this.UpdateCancelTokenSource.cancel();
-        this.UpdateCancelTokenSource = axios.CancelToken.source();
-
-        VisibleItems({
-            selector: '[data-item-id]',
-            attr: 'data-item-id'
-        }, items => {
-            let params = Object.assign({}, this.state.page.filter),
-                isTop = true;
-
-            if (items.length) {
-                if (this.state.paginate.data.length) {
-                    if (items.indexOf(this.state.paginate.data[0].id) == -1) {
-                        params.items = items;
-                        isTop = false;
-                    }
-                }
+    itemsUpdateSupport(callback) {
+        if (
+            typeof this.itemsUpdateSupports[location.pathname] !== 'undefined' &&
+            this.itemsUpdateSupports[location.pathname] !== null
+        ) {
+            callback(this.itemsUpdateSupports[location.pathname]);
+        } else {
+            const result = (status) => {
+                this.itemsUpdateSupports[location.pathname] = status;
+                callback(status);
             }
 
-            axios.get(location.pathname + '/' + this.state.page.url, {
-                cancelToken: this.UpdateCancelTokenSource.token,
-                params: params
-            }).then(response => {
-                window.vars = Object.assign({}, response.data);
+            if (this.state.paginate.data.length) {
+                let lastItem = this.state.paginate.data[this.state.paginate.data.length - 1];
 
-                if (typeof response.data.paginate !== 'undefined') {
-                    let newItems = [],
-                        removeItems = [],
-                        updateItems = [],
-                        responseItemsIds = [],
-                        prevItemsIds = this.state.paginate.data.map(item => {
-                            return item.id;
-                        });
+                axios.get(location.pathname + '/' + this.state.page.url, {
+                    params: {
+                        items: [lastItem.id]
+                    }
+                }).then(response => {
+                    if (response.data.paginate.data.length == 1) {
+                        result(response.data.paginate.data[0].id == lastItem.id);
+                    } else {
+                        result(false);
+                    }
+                }).catch(() => {
+                    result(false);
+                });
+            } else {
+                result(null);
+            }
+        }
+    }
 
-                    response.data.paginate.data.forEach(item => {
-                        if (prevItemsIds.indexOf(item.id) == -1) {
-                            newItems.push(item);
-                        }
+    itemsUpdate(callback) {
+        this.itemsUpdateSupport(updateSupport => {
+            this.UpdateCancelTokenSource.cancel();
+            this.UpdateCancelTokenSource = axios.CancelToken.source();
 
-                        if (this.lastFastEdit[item.id]) {
-                            item[this.lastFastEdit[item.id].name] = this.lastFastEdit[item.id].value;
-                            delete this.lastFastEdit[item.id];
-                        }
+            VisibleItems({
+                selector: '[data-item-id]',
+                attr: 'data-item-id'
+            }, items => {
+                let params = Object.assign({}, this.state.page.filter),
+                    isTop = true;
 
-                        updateItems[item.id] = item;
-
-                        responseItemsIds.push(item.id);
-                    });
-
-                    for (let i = 0; i < items.length; i++) {
-                        if (response.data.paginate.per_page) {
-                            if (i == (response.data.paginate.per_page - 1)) {
-                                break;
-                            }
-                        }
-
-                        if (responseItemsIds.indexOf(items[i]) == -1) {
-                            removeItems.push(items[i]);
+                if (items.length) {
+                    if (this.state.paginate.data.length) {
+                        if (items.indexOf(this.state.paginate.data[0].id) == -1) {
+                            params.items = items;
+                            isTop = false;
                         }
                     }
+                }
 
-                    if (newItems.length || removeItems.length || updateItems.length) {
-                        if (typeof vars.paginate !== 'undefined') {
-                            delete vars.paginate;
+                axios.get(location.pathname + '/' + this.state.page.url, {
+                    cancelToken: this.UpdateCancelTokenSource.token,
+                    params: params
+                }).then(response => {
+                    window.vars = Object.assign({}, response.data);
+
+                    if (typeof response.data.paginate !== 'undefined') {
+                        let newItems = [],
+                            removeItems = [],
+                            updateItems = [],
+                            responseItemsIds = [],
+                            prevItemsIds = this.state.paginate.data.map(item => {
+                                return item.id;
+                            });
+
+                        response.data.paginate.data.forEach(item => {
+                            if (prevItemsIds.indexOf(item.id) == -1) {
+                                newItems.push(item);
+                            }
+
+                            if (this.lastFastEdit[item.id]) {
+                                item[this.lastFastEdit[item.id].name] = this.lastFastEdit[item.id].value;
+                                delete this.lastFastEdit[item.id];
+                            }
+
+                            updateItems[item.id] = item;
+
+                            responseItemsIds.push(item.id);
+                        });
+
+                        if (updateSupport) {
+                            for (let i = 0; i < items.length; i++) {
+                                if (response.data.paginate.per_page) {
+                                    if (i == (response.data.paginate.per_page - 1)) {
+                                        break;
+                                    }
+                                }
+
+                                if (responseItemsIds.indexOf(items[i]) == -1) {
+                                    removeItems.push(items[i]);
+                                }
+                            }
                         }
 
-                        this.setState(prevState => {
-                            let prevData = prevState.paginate.data,
-                                itemsSelected = prevState.itemsSelected,
-                                prevTotal = prevState.paginate.total;
-
-                            if (removeItems.length) {
-                                prevData = prevData.filter(item => removeItems.indexOf(item.id) == -1);
-                                itemsSelected = itemsSelected.filter(itemId => removeItems.indexOf(itemId) == -1);
-                                prevTotal -= removeItems.length;
+                        if (newItems.length || removeItems.length || updateItems.length) {
+                            if (typeof vars.paginate !== 'undefined') {
+                                delete vars.paginate;
                             }
 
-                            if (updateItems.length) {
-                                prevData = prevData.map(item => {
-                                    if (typeof updateItems[item.id] === 'object' && updateItems[item.id] != null) {
-                                        item = updateItems[item.id];
-                                    }
+                            this.setState(prevState => {
+                                let prevData = prevState.paginate.data,
+                                    itemsSelected = prevState.itemsSelected,
+                                    prevTotal = prevState.paginate.total;
 
-                                    return item;
-                                })
-                            }
+                                if (removeItems.length) {
+                                    prevData = prevData.filter(item => removeItems.indexOf(item.id) == -1);
+                                    itemsSelected = itemsSelected.filter(itemId => removeItems.indexOf(itemId) == -1);
+                                    prevTotal -= removeItems.length;
+                                }
 
-                            if (newItems.length) {
-                                prevTotal += newItems.length;
-                            }
+                                if (updateItems.length) {
+                                    prevData = prevData.map(item => {
+                                        if (typeof updateItems[item.id] === 'object' && updateItems[item.id] != null) {
+                                            item = updateItems[item.id];
+                                        }
 
-                            let data = newItems.length ? [...newItems, ...prevData] : prevData;
+                                        return item;
+                                    })
+                                }
 
-                            return {
-                                paginate: {
-                                    data: data,
-                                    total: isTop ? response.data.paginate.total : prevTotal,
-                                    next_page_url: isTop ? prevState.paginate.next_page_url : prevState.paginate.next_page_url,
-                                    prev_page_url: isTop ? prevState.paginate.prev_page_url : prevState.paginate.prev_page_url
-                                },
-                                itemsSelected: itemsSelected,
-                                editorSupport: this.getEditorSupport(data),
-                                itemsSelectedCountMax: this.getItemsSelectedCountMax(data),
-                                page: { ...prevState.page, ...{ vars: vars } }
-                            }
-                        }, () => {
+                                if (newItems.length) {
+                                    prevTotal += newItems.length;
+                                }
+
+                                let data = newItems.length ? [...newItems, ...prevData] : prevData;
+
+                                return {
+                                    paginate: {
+                                        data: data,
+                                        total: isTop ? response.data.paginate.total : prevTotal,
+                                        next_page_url: isTop ? prevState.paginate.next_page_url : prevState.paginate.next_page_url,
+                                        prev_page_url: isTop ? prevState.paginate.prev_page_url : prevState.paginate.prev_page_url
+                                    },
+                                    itemsSelected: itemsSelected,
+                                    editorSupport: this.getEditorSupport(data),
+                                    itemsSelectedCountMax: this.getItemsSelectedCountMax(data),
+                                    page: { ...prevState.page, ...{ vars: vars } }
+                                }
+                            }, () => {
+                                callback();
+                            })
+                        } else {
                             callback();
-                        })
+                        }
                     } else {
                         callback();
                     }
-                } else {
+                }).catch(() => {
                     callback();
-                }
-            }).catch(() => {
-                callback();
+                });
             });
         });
     }

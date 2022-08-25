@@ -107,9 +107,16 @@ class CustomField extends React.Component {
 
         if (isObject(userField)) {
             if (userField.type == 'fields') {
-                result = <FormFields inputs={userField.fields} fields={this.getFields(userField.fields[0])} editItem={this.getEditItem()} />
+                result = <FormFields
+                    inputs={userField.fields}
+                    fields={this.getFields(userField.fields[0])}
+                    editItem={this.getEditItem()}
+                />
             } else {
-                result = <FormFields inputs={[userField]} fields={this.getFields(userField)} />
+                result = <FormFields
+                    inputs={[userField]}
+                    fields={this.getFields(userField)}
+                />
             }
         } else {
             result = <Input name={this.props.field.name} value={this.props.field.value} />

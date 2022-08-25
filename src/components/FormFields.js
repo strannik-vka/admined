@@ -17,14 +17,12 @@ class FormFields extends React.Component {
     switch(input) {
         let value = this.getValue(input);
 
-        return (
-            <Switch
-                name={input.name}
-                checked={(value ? value : input.checked) === 1}
-                placeholder={input.placeholder}
-                value="1"
-            />
-        );
+        return <Switch
+            name={input.name}
+            checked={(value ? value : input.checked) === 1}
+            placeholder={input.placeholder}
+            value="1"
+        />
     }
 
     select(input) {
@@ -43,17 +41,15 @@ class FormFields extends React.Component {
             }
         }
 
-        return (
-            <Select
-                name={input.name}
-                value={this.getValue(input)}
-                options={options}
-                text_key={input.text_key}
-                url={input.url}
-                errors={this.getError(input.name)}
-                onChange={() => this.errorHide(input.name)}
-            />
-        );
+        return <Select
+            name={input.name}
+            value={this.getValue(input)}
+            options={options}
+            text_key={input.text_key}
+            url={input.url}
+            errors={this.getError(input.name)}
+            onChange={() => this.errorHide(input.name)}
+        />
     }
 
     file(input) {
@@ -65,64 +61,62 @@ class FormFields extends React.Component {
             }
         }
 
-        return (
-            <File
-                multiple={input.multiple}
-                name={name}
-                errors={this.getError(input.name)}
-                onInput={() => this.errorHide(input.name)}
-                value={this.getValue(input)}
-            />
-        );
+        return <File
+            multiple={input.multiple}
+            name={name}
+            errors={this.getError(input.name)}
+            onInput={() => this.errorHide(input.name)}
+            value={this.getValue(input)}
+        />
     }
 
     text(input) {
-        return (
-            <Textarea
-                name={input.name}
-                errors={this.getError(input.name)}
-                onInput={() => this.errorHide(input.name)}
-                value={this.getValue(input)}
-                max={input.max}
-            />
-        );
+        return <Textarea
+            name={input.name}
+            errors={this.getError(input.name)}
+            onInput={() => this.errorHide(input.name)}
+            value={this.getValue(input)}
+            max={input.max}
+        />
     }
 
     texteditor(input) {
-        return (
-            <TextEditor
-                name={input.name}
-                errors={this.getError(input.name)}
-                onInput={() => this.errorHide(input.name)}
-                value={this.getValue(input)}
-            />
-        );
+        return <TextEditor
+            name={input.name}
+            errors={this.getError(input.name)}
+            onInput={() => this.errorHide(input.name)}
+            value={this.getValue(input)}
+        />
+    }
+
+    hidden(input) {
+        return <Input
+            type={input.type}
+            name={input.name}
+            value={this.getValue(input)}
+        />
     }
 
     string(input) {
-        return (
-            <Input
-                type={input.type}
-                name={input.name}
-                errors={this.getError(input.name)}
-                onInput={() => this.errorHide(input.name)}
-                value={this.getValue(input)}
-                max={input.max}
-            />
-        );
+        return <Input
+            type={input.type}
+            name={input.name}
+            errors={this.getError(input.name)}
+            onInput={() => this.errorHide(input.name)}
+            value={this.getValue(input)}
+            max={input.max}
+        />
     }
 
     datetime(input) {
-        return (
-            <Input
-                type={input.type}
-                format={input.format}
-                name={input.name}
-                errors={this.getError(input.name)}
-                onInput={() => this.errorHide(input.name)}
-                value={this.getValue(input)}
-            />
-        );
+        return <Input
+            type={input.type}
+            format={input.format}
+            name={input.name}
+            errors={this.getError(input.name)}
+            onInput={() => this.errorHide(input.name)}
+            value={this.getValue(input)}
+        />
     }
 
     _constructor(input) {
@@ -164,8 +158,8 @@ class FormFields extends React.Component {
     }
 
     getError(name) {
-        let inputName = name.replace('[]', '');
-        return this.props.errors && this.props.errors[inputName] ? this.props.errors[inputName] : null;
+        name = name.replace('[]', '');
+        return this.props.errors && this.props.errors[name] ? this.props.errors[name] : null;
     }
 
     errorHide(name) {
@@ -176,24 +170,31 @@ class FormFields extends React.Component {
 
     render() {
         return this.props.inputs.map(input => {
-            if (input.readonly) {
-                return false
-            } else {
-                let element = null;
+            if (!input.readonly) {
+                let label = null,
+                    description = null,
+                    element = typeof this[input.type] !== 'undefined'
+                        ? this[input.type](input)
+                        : this.string(input);
 
-                if (typeof this[input.type] !== 'undefined') {
-                    element = this[input.type](input);
-                } else {
-                    element = this.string(input);
+                if (input.type !== 'switch' && input.placeholder) {
+                    label = <label>{input.placeholder}</label>
+                }
+
+                if (input.description) {
+                    description = <div
+                        className="description"
+                        dangerouslySetInnerHTML={{ __html: input.description }}
+                    ></div>
                 }
 
                 return <div key={input.name} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
-                    {input.type !== 'switch' && input.placeholder ? <label>{input.placeholder}</label> : ''}
-                    {input.description ? <div className="description" dangerouslySetInnerHTML={{ __html: input.description }}></div> : ''}
+                    {label}
+                    {description}
                     {element}
                 </div>
             }
-        });
+        })
     }
 
 }

@@ -82,7 +82,7 @@ class Input extends React.Component {
             {this.getPreview()}
             <input
                 name={this.props.name}
-                type="text"
+                type={this.props.type == 'hidden' ? 'hidden' : 'text'}
                 className={this.isErrors() ? 'form-control is-invalid' : 'form-control'}
                 onInput={this.onInput}
                 value={value}

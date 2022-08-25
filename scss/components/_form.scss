@@ -19,7 +19,7 @@
     resize: none;
 
     &:focus {
-        box-shadow: 0 0 0 0.2rem var(--c-shadow);
+        box-shadow: 0 0 0 0.1rem var(--c-shadow);
 
         &.readonly {
             color: transparent;
@@ -101,14 +101,30 @@ select.form-control {
     position: sticky;
     top: 0px;
     background: var(--white);
-    padding-top: 4px;
 
     .btn {
-        margin-right: 3px;
+        margin-right: 4px;
         margin-bottom: 4px;
-        padding: 3px 10px;
+        padding: 3px 6px;
+        min-width: 24px;
+        min-height: 24px;
         height: auto;
         font-size: 12px;
+        color: var(--black);
+
+        &.svg {
+            line-height: 0;
+        }
+
+        svg {
+            height: 10px;
+            width: auto;
+
+            line,
+            path {
+                stroke: var(--black);
+            }
+        }
     }
 }
 
@@ -117,7 +133,7 @@ select.form-control {
 
     label {
         display: block;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.3rem;
         font-weight: 700;
         color: var(--label);
     }
@@ -198,8 +214,8 @@ div[type="text"][placeholder]:focus:before {
 // switch
 .form-switch {
     cursor: pointer;
-    font-size: 0.875rem;
     display: flex;
+    line-height: 19px;
 
     .form-check-input {
         width: 28px;
@@ -229,7 +245,9 @@ div[type="text"][placeholder]:focus:before {
 
     .form-check-label {
         display: inline-block;
-        margin-left: 8px;
+        margin-left: 4px;
+        white-space: nowrap;
+        font-weight: normal;
     }
 }
 
@@ -258,12 +276,17 @@ div[type="text"][placeholder]:focus:before {
 // fieldset
 fieldset {
     border: 1px solid var(--c-border-dark);
-    padding: 15px;
+    padding: 4px 0.5rem 0.5rem;
     border-radius: 8px;
+
+    &.notLegend {
+        padding: 0.5rem;
+    }
 
     legend {
         font-weight: 700;
         color: var(--label);
+        margin-left: -3px;
     }
 
     .form-group:last-child {
@@ -287,7 +310,7 @@ fieldset {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    border-radius: 3px;
+    border-radius: 8px;
     height: 24px;
     width: 24px;
     margin-right: 4px;
@@ -432,5 +455,5 @@ fieldset {
 .is-invalid {
     border: none;
     border-radius: 8px;
-    box-shadow: 0 0 0 0.2rem var(--invalid-shadow);
+    box-shadow: 0 0 0 0.1rem var(--invalid-shadow);
 }
