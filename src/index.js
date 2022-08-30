@@ -569,6 +569,10 @@ class Admined extends React.Component {
                 if (url.indexOf(location.pathname) == -1) {
                     url = location.pathname + '/' + this.state.page.url + url;
                 }
+
+                if (url.indexOf('/?') > -1) {
+                    url = url.replace('/?', '?');
+                }
             }
 
             axios.get(url, {
