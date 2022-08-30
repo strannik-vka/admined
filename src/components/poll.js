@@ -8,10 +8,15 @@ class Poll extends React.Component {
     constructor(props) {
         super(props);
 
-        this.question = this.props.value && this.props.value.question ? this.props.value.question : null;
+        this.question =
+            this.props.value && this.props.value.question
+                ? this.props.value.question : null;
 
-        let is_user_variant = this.props.value && this.props.value.is_user_variant ? parseInt(this.props.value.is_user_variant) : 0,
-            is_multi = this.props.value && this.props.value.is_multi ? parseInt(this.props.value.is_multi) : 0;
+        let
+            is_user_variant = this.props.value && this.props.value.is_user_variant
+                ? parseInt(this.props.value.is_user_variant) : 0,
+            is_multi = this.props.value && this.props.value.is_multi
+                ? parseInt(this.props.value.is_multi) : 0;
 
         this.state = {
             is_user_variant: is_user_variant,
@@ -23,6 +28,12 @@ class Poll extends React.Component {
         return {
             name: this.props.name + '[variant][]',
             placeholder: 'Вариант ответа',
+            switcher: {
+                name: this.props.name + '[switched][]',
+                label: 'Верный',
+                isMulti: this.state.is_multi,
+                value: this.props.value && this.props.value.switched ? this.props.value.switched : null
+            },
             type: 'array',
             fields: [
                 {
@@ -56,6 +67,12 @@ class Poll extends React.Component {
     userVariantToggle = (checked) => {
         this.setState({
             is_user_variant: checked
+        })
+    }
+
+    isMultiToggle = (checked) => {
+        this.setState({
+            is_multi: checked
         })
     }
 
@@ -94,6 +111,7 @@ class Poll extends React.Component {
             <div className="poll-switch-group">
                 <Switch
                     checked={this.state.is_multi}
+                    onChange={this.isMultiToggle}
                     name={this.props.name + '[is_multi]'}
                     placeholder="Выбор нескольких вариантов"
                     value="1"

@@ -287,6 +287,13 @@ fieldset {
         font-weight: 700;
         color: var(--label);
         margin-left: -3px;
+
+        .form-switch {
+            margin: 0;
+            position: relative;
+            top: 2px;
+            display: inline-block;
+        }
     }
 
     .form-group:last-child {
