@@ -317,7 +317,7 @@ class Constructor extends React.Component {
         } else if (field.type == 'file') {
             result = <File name={field.name} value={field.value} />
         } else if (field.type == 'poll') {
-            result = <Poll name={field.name} value={field.value} />
+            result = <Poll name={field.name} value={field.value} {...(this.props.options && this.props.options.poll ? this.props.options.poll : null)} />
         } else {
             result = <CustomField field={field} fields={this.props.fields} />
         }

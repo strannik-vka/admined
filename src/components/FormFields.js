@@ -123,6 +123,7 @@ class FormFields extends React.Component {
         return <Constructor
             name={input.name}
             screen={input.screen}
+            options={input.options}
             fields={input.fields}
             defaultFields={input.defaultFields}
             value={this.getValue(input)}

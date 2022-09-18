@@ -449,7 +449,12 @@ class Admined extends React.Component {
 
                         response.data.paginate.data.forEach(item => {
                             if (prevItemsIds.indexOf(item.id) == -1) {
-                                newItems.push(item);
+                                newItems.push({
+                                    data: item,
+                                    prevId: responseItemsIds.length
+                                        ? responseItemsIds[responseItemsIds.length - 1]
+                                        : null
+                                });
                             }
 
                             if (this.lastFastEdit[item.id]) {
@@ -504,20 +509,38 @@ class Admined extends React.Component {
 
                                 if (newItems.length) {
                                     prevTotal += newItems.length;
-                                }
 
-                                let data = newItems.length ? [...newItems, ...prevData] : prevData;
+                                    newItems.forEach(item => {
+                                        if (item.prevId) {
+                                            let isSplice = false;
+
+                                            for (let i = 0; i < prevData.length; i++) {
+                                                if (prevData[i].id == item.prevId) {
+                                                    prevData.splice(i + 1, 0, item.data);
+                                                    isSplice = true;
+                                                    break;
+                                                }
+                                            }
+
+                                            if (isSplice == false) {
+                                                prevData.unshift(item.data);
+                                            }
+                                        } else {
+                                            prevData.unshift(item.data);
+                                        }
+                                    });
+                                }
 
                                 return {
                                     paginate: {
-                                        data: data,
+                                        data: prevData,
                                         total: isTop ? response.data.paginate.total : prevTotal,
                                         next_page_url: isTop ? prevState.paginate.next_page_url : prevState.paginate.next_page_url,
                                         prev_page_url: isTop ? prevState.paginate.prev_page_url : prevState.paginate.prev_page_url
                                     },
                                     itemsSelected: itemsSelected,
-                                    editorSupport: this.getEditorSupport(data),
-                                    itemsSelectedCountMax: this.getItemsSelectedCountMax(data),
+                                    editorSupport: this.getEditorSupport(prevData),
+                                    itemsSelectedCountMax: this.getItemsSelectedCountMax(prevData),
                                     page: { ...prevState.page, ...{ vars: vars } }
                                 }
                             }, () => {

@@ -25,15 +25,9 @@ class Poll extends React.Component {
     }
 
     getFieldsetsInput() {
-        return {
+        let data = {
             name: this.props.name + '[variant][]',
             placeholder: 'Вариант ответа',
-            switcher: {
-                name: this.props.name + '[switched][]',
-                label: 'Верный',
-                isMulti: this.state.is_multi,
-                value: this.props.value && this.props.value.switched ? this.props.value.switched : null
-            },
             type: 'array',
             fields: [
                 {
@@ -46,6 +40,17 @@ class Poll extends React.Component {
                 }
             ]
         }
+
+        if (this.props.correctVariant) {
+            data.switcher = {
+                name: this.props.name + '[switched][]',
+                label: 'Верный',
+                isMulti: this.state.is_multi,
+                value: this.props.value && this.props.value.switched ? this.props.value.switched : null
+            }
+        }
+
+        return data;
     }
 
     getFields() {
@@ -93,6 +98,8 @@ class Poll extends React.Component {
     }
 
     render() {
+        let switchGroup = this.props.multiVariant || this.props.userVariant;
+
         return <>
             <div className="form-group mb-2">
                 <label>Вопрос</label>
@@ -108,21 +115,25 @@ class Poll extends React.Component {
                 fields={this.getFields()}
             />
             {this.getUserField(this.state.is_user_variant)}
-            <div className="poll-switch-group">
-                <Switch
-                    checked={this.state.is_multi}
-                    onChange={this.isMultiToggle}
-                    name={this.props.name + '[is_multi]'}
-                    placeholder="Выбор нескольких вариантов"
-                    value="1"
-                />
-                <Switch
-                    checked={this.state.is_user_variant}
-                    onChange={this.userVariantToggle}
-                    name={this.props.name + '[is_user_variant]'}
-                    placeholder="Свой вариант ответа"
-                    value="1"
-                />
+            <div className="poll-switch-group" style={switchGroup ? {} : { display: 'none' }}>
+                {
+                    this.props.multiVariant ? <Switch
+                        checked={this.state.is_multi}
+                        onChange={this.isMultiToggle}
+                        name={this.props.name + '[is_multi]'}
+                        placeholder="Выбор нескольких вариантов"
+                        value="1"
+                    /> : null
+                }
+                {
+                    this.props.userVariant ? <Switch
+                        checked={this.state.is_user_variant}
+                        onChange={this.userVariantToggle}
+                        name={this.props.name + '[is_user_variant]'}
+                        placeholder="Свой вариант ответа"
+                        value="1"
+                    /> : null
+                }
             </div>
         </>
     }
