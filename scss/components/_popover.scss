@@ -11,11 +11,13 @@
 
     &.bs-popover-end > .popover-arrow::before,
     &.bs-popover-auto[data-popper-placement^="right"] > .popover-arrow::before {
-        border-right-color: hsl(var(--primary-hs), var(--l-75));
+        border-right-color: var(--c-border-dark);
     }
 
     .popover-header {
         margin-top: 0;
+        color: var(--label);
+        font-weight: 700;
         font-size: 15px;
         padding: 6px 14px;
         border-color: var(--c-border-dark);

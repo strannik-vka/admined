@@ -12,8 +12,8 @@
     --l-94: 94%;
     --l-100: 100%;
 
-    --white: hsl(var(--primary-hs), var(--l-100));
-    --black: hsl(var(--primary-hs), var(--l-0));
+    --white: hsl(0, 0%, var(--l-100));
+    --black: hsl(0, 0%, var(--l-0));
 
     --c-nav-link: #8b8b8b;
     --c-nav-bg: #f8f9fa;
@@ -30,13 +30,13 @@
     --c-placeholder-light: #c0c8d0;
     --c-placeholder-dark: #8b8b8b;
 
-    --c-shadow: hsl(var(--primary-hs), 85%);
+    --c-shadow: hsl(0, 0%, 85%);
 
     --btn-bg: #e0e0e0;
     --btn-bg-hover: #d6d5d5;
 
-    --constructor-img-shadow: hsl(var(--primary-hs), 81%);
-    --constructor-field-hover: hsl(var(--primary-hs), 95%);
+    --constructor-img-shadow: hsl(0, 0%, 81%);
+    --constructor-field-hover: hsl(0, 0%, 95%);
 
     --file-upload-c: #212529;
     --file-upload-bg: #e9ecef;
@@ -47,16 +47,16 @@
     --multiple-icon-svg: hsl(40, 2%, 68%);
     --invalid-shadow: #ff6868;
 
-    --select-value: hsl(var(--primary-hs), 90%);
-    --select-label: hsl(var(--primary-hs), 20%);
-    --select-drop-svg: hsl(var(--primary-hs), 80%);
-    --select-separator: hsl(var(--primary-hs), 80%);
-    --select-bg: hsl(var(--primary-hs), var(--l-100));
+    --select-value: hsl(0, 0%, 90%);
+    --select-label: hsl(0, 0%, 20%);
+    --select-drop-svg: hsl(0, 0%, 80%);
+    --select-separator: hsl(0, 0%, 80%);
+    --select-bg: hsl(0, 0%, var(--l-100));
 
-    --modal-back: hsl(var(--primary-hs), 20%);
-    --modal-close: hsl(var(--primary-hs), var(--l-50));
+    --modal-back: hsl(0, 0%, 20%);
+    --modal-close: hsl(0, 0%, var(--l-50));
 
-    --popover-head: hsl(var(--primary-hs), var(--l-94));
+    --popover-head: hsl(0, 0%, var(--l-94));
 }
 
 @media (prefers-color-scheme: dark) {
@@ -85,13 +85,13 @@
         --c-placeholder-light: #3f372f;
         --c-placeholder-dark: #747474;
 
-        --c-shadow: hsl(var(--primary-hs), 15%);
+        --c-shadow: hsl(0, 0%, 15%);
 
         --btn-bg: #1f1f1f;
         --btn-bg-hover: #292a2a;
 
-        --constructor-img-shadow: hsl(var(--primary-hs), 19%);
-        --constructor-field-hover: hsl(var(--primary-hs), 5%);
+        --constructor-img-shadow: hsl(0, 0%, 19%);
+        --constructor-field-hover: hsl(0, 0%, 5%);
 
         --file-upload-c: #dedad6;
         --file-upload-bg: #161310;
@@ -102,9 +102,9 @@
         --multiple-icon-svg: hsl(40, 2%, 42%);
         --invalid-shadow: #ff6868;
 
-        --select-value: hsl(var(--primary-hs), 10%);
-        --select-label: hsl(var(--primary-hs), 80%);
-        --select-drop-svg: hsl(var(--primary-hs), 20%);
-        --select-separator: hsl(var(--primary-hs), 20%);
+        --select-value: hsl(0, 0%, 10%);
+        --select-label: hsl(0, 0%, 80%);
+        --select-drop-svg: hsl(0, 0%, 20%);
+        --select-separator: hsl(0, 0%, 20%);
     }
 }
