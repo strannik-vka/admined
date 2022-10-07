@@ -703,7 +703,7 @@ class Admined extends React.Component {
                     }
 
                     return fields;
-                };
+                }
 
                 data.form = setDefaultProps(data.form);
             }
@@ -721,18 +721,23 @@ class Admined extends React.Component {
 
         this.changePageTimer = setTimeout(() => {
             this.middlewarePages(() => {
-                let url = URLParam('url'),
-                    pageData = this.state.pages.filter((pageData, index) => {
-                        if (url) {
-                            if (url == pageData.url) {
-                                return pageData;
-                            }
-                        } else if (index == 0) {
-                            return pageData;
-                        }
-                    });
+                if (this.state.pages.length) {
+                    let url = URLParam('url'),
+                        pageData = null;
 
-                this.changePage(pageData[0]);
+                    if (url) {
+                        for (let i = 0; i < this.state.pages.length; i++) {
+                            if (url == this.state.pages[i].url) {
+                                pageData = this.state.pages[i];
+                                break;
+                            }
+                        }
+                    } else {
+                        pageData = this.state.pages[0];
+                    }
+
+                    this.changePage(pageData);
+                }
             });
         }, 100);
     }
@@ -740,30 +745,53 @@ class Admined extends React.Component {
     middlewarePages(callback) {
         if (this.isMiddleware) {
             axios.get(location.pathname + '/middleware').then(response => {
-                let url = URLParam('url'),
-                    pages = this.pages.filter(page => {
-                        let access = false;
+                if (response.data) {
+                    let url = URLParam('url'),
+                        pages = this.pages.filter(page => {
+                            let access = false;
 
-                        if (Array.isArray(page.middleware)) {
-                            access = page.middleware.indexOf(response.data) > -1;
-                        } else {
-                            access = page.middleware === response.data;
-                        }
-
-                        if (access) {
-                            return page;
-                        } else {
-                            if (page.url == url) {
-                                history.pushState(null, page.name, location.pathname);
+                            if (Array.isArray(page.middleware)) {
+                                access = page.middleware.indexOf(response.data) > -1;
+                            } else {
+                                access = page.middleware === response.data;
                             }
-                        }
-                    });
 
-                this.setState({
-                    pages: pages
-                }, () => {
-                    callback();
-                });
+                            if (access) {
+                                if (Array.isArray(page.form)) {
+                                    page.form = page.form.filter(field => {
+                                        if (field.middleware) {
+                                            let fieldMiddlewares = Array.isArray(field.middleware)
+                                                ? field.middleware : [field.middleware];
+
+                                            if (fieldMiddlewares.indexOf(response.data) > -1) {
+                                                return field;
+                                            }
+                                        } else {
+                                            return field;
+                                        }
+                                    })
+                                }
+
+                                return page;
+                            } else {
+                                if (page.url == url) {
+                                    history.pushState(null, page.name, location.pathname);
+                                }
+                            }
+                        });
+
+                    this.setState({
+                        pages: pages
+                    }, () => {
+                        callback();
+                    });
+                } else {
+                    this.setState({
+                        pages: this.pages
+                    }, () => {
+                        callback();
+                    });
+                }
             });
         } else {
             this.setState({
