@@ -89,11 +89,72 @@ class Form extends React.Component {
             data.append(uploadQueueName.replace('[]', ''), uploadQueueElem.files[this.state.upload_queue_success]);
         }
 
-        this.ajaxSend({
-            uploadQueueName: uploadQueueName,
-            data: data,
-            event: e
+        this.getGalleryData(data, data => {
+            this.ajaxSend({
+                uploadQueueName: uploadQueueName,
+                data: data,
+                event: e
+            });
         });
+    }
+
+    getGalleryData(FormData, callback) {
+        let galleries = document.querySelectorAll('#itemsForm .gallery'),
+            images = [];
+
+        galleries.forEach(gallery => {
+            gallery.querySelectorAll('.image').forEach((image, i) => {
+                let name = image.getAttribute('data-name'),
+                    extension = image.getAttribute('data-extension');
+
+                images.push({
+                    index: i,
+                    id: gallery.getAttribute('id'),
+                    url: image.getAttribute('src'),
+                    name: name,
+                    extension: extension
+                });
+            })
+        })
+
+        const FormDataFill = (index) => {
+            let image = typeof images[index] !== 'undefined' ? images[index] : null;
+
+            if (image) {
+                if (image.name && image.extension) {
+                    axios({
+                        url: image.url,
+                        method: 'get',
+                        responseType: 'blob'
+                    }).then(response => {
+                        if (response.data) {
+                            FormData.append(
+                                image.id + '[' + image.index + ']',
+                                response.data,
+                                image.name + '.' + image.extension
+                            );
+                        }
+
+                        setTimeout(() => {
+                            FormDataFill(index + 1);
+                        }, 0);
+                    })
+                } else {
+                    FormData.append(
+                        image.id + '[' + image.index + ']',
+                        image.url
+                    );
+
+                    setTimeout(() => {
+                        FormDataFill(index + 1);
+                    }, 0);
+                }
+            } else {
+                callback(FormData);
+            }
+        }
+
+        FormDataFill(0);
     }
 
     ajaxSend(obj) {

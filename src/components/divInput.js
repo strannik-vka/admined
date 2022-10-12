@@ -176,7 +176,7 @@ class DivInput extends React.Component {
                 {
                     this.props.href
                         ? <svg className="icon_href" width="16" viewBox="0 0 416 368" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M400 184L224 16V112C55.57 112 16 232.77 16 352C64.61 289.76 107.6 256 224 256V352L400 184Z" stroke="black" stroke-width="32" stroke-linejoin="round" />
+                            <path d="M400 184L224 16V112C55.57 112 16 232.77 16 352C64.61 289.76 107.6 256 224 256V352L400 184Z" stroke="black" strokeWidth="32" strokeLinejoin="round" />
                         </svg>
                         : ''
                 }
