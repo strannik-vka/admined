@@ -47,6 +47,15 @@ export default (props) => {
     for (let i = 0; i < images.length; i += 5) {
         imagesChanks.push(images.slice(i, i + 5));
     }
+    if (imagesChanks.length) {
+        if (imagesChanks[imagesChanks.length - 1].length < 5) {
+            imagesChanks[imagesChanks.length - 1].push({});
+        } else {
+            imagesChanks.push([{}]);
+        }
+    } else {
+        imagesChanks.push([{}]);
+    }
 
     useEffect(() => {
         const draggable = new Swappable(document.querySelectorAll('.gallery .grid'), {
@@ -102,28 +111,29 @@ export default (props) => {
                     return <div key={JSON.stringify(chankImages)} className="row">
                         {
                             chankImages.map((image, imageIndex) =>
-                                <div key={chankIndex + '_' + imageIndex} className="col-20">
-                                    <div className="imageDelete" onClick={() => deleteImage(image.url)}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#fff"><path d="M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z"></path></svg>
+                                image.url
+                                    ? <div key={chankIndex + '_' + imageIndex} className="col-20">
+                                        <div className="imageDelete" onClick={() => deleteImage(image.url)}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#fff"><path d="M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z"></path></svg>
+                                        </div>
+                                        <div className="imageParent draggable">
+                                            <img
+                                                src={image.url}
+                                                data-name={image.name}
+                                                data-extension={image.extension}
+                                                className="image" />
+                                        </div>
                                     </div>
-                                    <div className="imageParent draggable">
-                                        <img
-                                            src={image.url}
-                                            data-name={image.name}
-                                            data-extension={image.extension}
-                                            className="image" />
+                                    : <div className="col-20">
+                                        <div className="imageParent imageAdd" onClick={addImages}>
+                                            <div>
+                                                <svg viewBox="0 0 16 16"><path d="M7.977 14.963c.407 0 .747-.324.747-.723V8.72h5.362c.399 0 .74-.34.74-.747a.746.746 0 00-.74-.738H8.724V1.706c0-.398-.34-.722-.747-.722a.732.732 0 00-.739.722v5.529h-5.37a.746.746 0 00-.74.738c0 .407.341.747.74.747h5.37v5.52c0 .399.332.723.739.723z" fill="currentColor"></path></svg>
+                                                Добавить ещё
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
                             )
                         }
-                        <div className="col-20">
-                            <div className="imageParent imageAdd" onClick={addImages}>
-                                <div>
-                                    <svg viewBox="0 0 16 16"><path d="M7.977 14.963c.407 0 .747-.324.747-.723V8.72h5.362c.399 0 .74-.34.74-.747a.746.746 0 00-.74-.738H8.724V1.706c0-.398-.34-.722-.747-.722a.732.732 0 00-.739.722v5.529h-5.37a.746.746 0 00-.74.738c0 .407.341.747.74.747h5.37v5.52c0 .399.332.723.739.723z" fill="currentColor"></path></svg>
-                                    Добавить ещё
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 })
             }
