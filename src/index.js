@@ -840,6 +840,10 @@ class Admined extends React.Component {
                     });
 
                     this.setState(data);
+                } else {
+                    if(response.data.error) {
+                        alert(response.data.error);
+                    }
                 }
             });
         }
