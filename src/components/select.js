@@ -202,6 +202,16 @@ class Select extends React.Component {
             return result;
         }) : [];
 
+        options.map(option => {
+            option.label = option.label
+                .replace(/&nbsp;/g, ' ')
+                .replace(/<br>/g, ' ')
+                .replace(/<br\/>/g, ' ')
+                .replace(/<br \/>/g, ' ');
+
+            return option;
+        });
+
         return {
             defaultValue: defaultValue,
             options: options
