@@ -41,8 +41,8 @@ export default (props) => {
             total={props.total}
             saveStatus={props.saveStatus}
             itemsSelected={props.itemsSelected}
-            itemsDelete={props.itemsDelete}
             showForm={() => props.formVisible(true)}
+            items={props.items}
         />
     </header>
 }

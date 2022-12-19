@@ -8,6 +8,84 @@
             background-color: hsl(var(--primary-hs), var(--l-90));
         }
 
+        &.deletedTr {
+            background-color: unset;
+            opacity: 0.5;
+
+            td {
+                padding: 6px 19px;
+                font-size: 90%;
+
+                > * {
+                    margin: 0 !important;
+                }
+
+                .deletedText {
+                    position: relative;
+                    display: inline-block;
+                    border-top: 1px solid hsl(var(--primary-hs), var(--l-30));
+
+                    svg {
+                        position: absolute;
+                        top: -6.5px;
+                        left: 30px;
+
+                        path {
+                            stroke: hsl(var(--primary-hs), var(--l-30));
+                        }
+                    }
+
+                    &:before {
+                        content: "";
+                        display: block;
+                        height: 1px;
+                        width: 9.5px;
+                        background: var(--c-bg-dark);
+                        position: relative;
+                        top: -1px;
+                        left: 31.5px;
+                    }
+                }
+            }
+        }
+
+        &.isTimerDelete {
+            td {
+                border-bottom: 0;
+                padding-bottom: 0;
+            }
+        }
+
+        &.deleted {
+            background-color: unset;
+
+            td > * {
+                opacity: 0.3;
+                pointer-events: none;
+                cursor: default;
+            }
+
+            td {
+                .actions {
+                    pointer-events: auto;
+                    opacity: 1;
+
+                    .form-check,
+                    .icon {
+                        opacity: 0.3;
+                        pointer-events: none;
+                        cursor: default;
+
+                        &.restore-icon {
+                            pointer-events: auto;
+                            cursor: pointer;
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
+        }
+
         &.editing {
             background-color: hsl(var(--primary-hs), var(--l-80));
 
@@ -67,24 +145,6 @@
                 }
             }
 
-            .actions {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                column-gap: 8px;
-
-                .edit-icon {
-                    width: 18px;
-                    height: 18px;
-                    display: block;
-                    cursor: pointer;
-
-                    path {
-                        fill: hsl(var(--primary-hs), var(--l-30));
-                    }
-                }
-            }
-
             .image {
                 height: 31px;
                 width: 31px;
@@ -101,6 +161,25 @@
             vertical-align: middle;
             border-bottom: 1px solid var(--c-border-dark);
             padding: 6px 3px;
+
+            .actions {
+                display: inline-flex;
+                align-items: center;
+                vertical-align: middle;
+                column-gap: 8px;
+
+                .icon {
+                    display: inline-flex;
+                    position: relative;
+                    cursor: pointer;
+                    margin-right: 4px;
+
+                    line,
+                    path {
+                        stroke: hsl(var(--primary-hs), var(--l-30));
+                    }
+                }
+            }
         }
     }
 }

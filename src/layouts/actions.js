@@ -1,5 +1,3 @@
-import Switch from "../components/switch";
-
 export default (props) => {
     const selectedCount = () => {
         if (props.itemsSelected.length) {
@@ -42,12 +40,6 @@ export default (props) => {
         }
     }
 
-    const deleteAction = () => {
-        if (props.page.config('deleteAction', true)) {
-            return <a className={props.itemsSelected.length ? "btn action-item" : "btn btn-disabled action-item"} onClick={props.itemsDelete}>Удалить{selectedCount()}</a>
-        }
-    }
-
     const addAction = () => {
         if (props.page.config('addAction', true)) {
             return <a className="btn action-item" onClick={props.showForm}>Добавить</a>
@@ -64,7 +56,6 @@ export default (props) => {
         </div>
         <div>
             {actions()}
-            {deleteAction()}
             {addAction()}
         </div>
     </div>

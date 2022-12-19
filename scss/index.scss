@@ -47,8 +47,9 @@ a {
 
 @import "./layouts/preview.scss";
 @import "./layouts/form";
-@import "./layouts/items";
 @import "./layouts/header";
+@import "./layouts/filter";
+@import "./layouts/items";
 
 @import "./components/avatar";
 @import "./components/scrollbar";
@@ -64,6 +65,7 @@ a {
 @import "./components/tooltip";
 @import "./components/poll";
 @import "./components/gallery";
+@import "./components/selectedCount";
 
 .content {
     margin-top: 88px;
@@ -72,4 +74,9 @@ a {
 // cursor: pointer;
 .pointer {
     cursor: pointer;
+}
+
+.hr {
+    border: 0;
+    border-bottom: 1px solid var(--c-border-light);
 }

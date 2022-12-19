@@ -32,5 +32,9 @@
         overflow-x: hidden;
         background-color: var(--white);
         color: hsl(var(--dark-hs), var(--l-15));
+
+        &.smooth {
+            padding: 14px;
+        }
     }
 }

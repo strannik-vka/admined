@@ -30,7 +30,7 @@ export default (props) => {
         return result;
     }
 
-    const getMenuItem = ({ page, isChildrens, getOthers }) => {
+    const getMenuItem = ({ page, isChildrens }) => {
         let active = props.page.url == page.url;
 
 
@@ -43,7 +43,7 @@ export default (props) => {
             href={page.href ? page.href : '/admin?url=' + page.url}
             key={page.url}
             onClick={(e) => menuItemClick(e, page)}
-        >{page.name}{isChildrens ? <svg fill="none" height="8" viewBox="0 0 12 8" width="12" xmlns="http://www.w3.org/2000/svg"><path clipRule="evenodd" d="M2.16 2.3a.75.75 0 011.05-.14L6 4.3l2.8-2.15a.75.75 0 11.9 1.19l-3.24 2.5c-.27.2-.65.2-.92 0L2.3 3.35a.75.75 0 01-.13-1.05z" fill="currentColor"></path></svg> : ''}</a>;
+        >{page.name}{isChildrens ? <svg className="arrow-down" fill="none" height="8" viewBox="0 0 12 8" width="12" xmlns="http://www.w3.org/2000/svg"><path clipRule="evenodd" d="M2.16 2.3a.75.75 0 011.05-.14L6 4.3l2.8-2.15a.75.75 0 11.9 1.19l-3.24 2.5c-.27.2-.65.2-.92 0L2.3 3.35a.75.75 0 01-.13-1.05z" fill="currentColor"></path></svg> : ''}{active ? <div className="arrow-up"><svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 6L6 1L11 6" stroke="black" strokeWidth="0.8" /></svg></div> : ''}</a>;
     }
 
     const getOtherItemsUrls = () => {

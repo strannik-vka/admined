@@ -206,7 +206,7 @@ class Items extends React.Component {
                 ><div className="avatar">{avatar}</div></OverlayTrigger>
             )
         } else {
-            if (this.props.page.config('deleteAction', true)) {
+            if (this.props.items.checkbox) {
                 actions.push(
                     <Checkbox
                         key={'del_' + item.id}
@@ -216,7 +216,37 @@ class Items extends React.Component {
                 )
             }
 
-            if (this.props.page.config('editAction', true)) {
+            if (item.deleted_at) {
+                if (this.props.items.softDeletes) {
+                    actions.push(
+                        <OverlayTrigger
+                            key={'recover_' + item.id}
+                            placement="top"
+                            overlay={
+                                <Tooltip>Восстановить</Tooltip>
+                            }
+                        >
+                            <svg onClick={() => this.props.itemRestore(item.id)} className="icon restore-icon" width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.0849 4.22427C16.0849 4.22427 14.1127 0.920807 9.44753 0.920807C7.77677 0.920807 6.14352 1.40695 4.75434 2.31776C3.36515 3.22858 2.28241 4.52315 1.64303 6.03778C1.00366 7.55241 0.836371 9.21906 1.16232 10.827C1.48827 12.4349 2.29282 13.9119 3.47423 15.0711C4.65563 16.2304 6.16084 17.0198 7.7995 17.3397C9.43816 17.6595 11.1367 17.4953 12.6803 16.868C14.2238 16.2406 15.5432 15.1781 16.4714 13.815C17.3996 12.4519 17.8951 10.8493 17.8951 9.20987" stroke="black" strokeWidth="0.8" strokeMiterlimit="10" strokeLinecap="round" /><path d="M16.2978 0.899994V4.30444H12.8933" stroke="black" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        </OverlayTrigger>
+                    );
+                }
+            } else {
+                if (this.props.items.delete || (this.props.items.softDeletes && this.props.page.config('deleteAction', true))) {
+                    actions.push(
+                        <OverlayTrigger
+                            key={'delete_' + item.id}
+                            placement="top"
+                            overlay={
+                                <Tooltip>Удалить</Tooltip>
+                            }
+                        >
+                            <svg onClick={() => this.props.itemDelete(item.id)} className="icon delete-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.5 7V14.5C0.5 16.1569 1.84315 17.5 3.5 17.5H14.5C16.1569 17.5 17.5 16.1569 17.5 14.5V7" stroke="black" strokeWidth="0.8" strokeLinecap="round" /><line x1="4.9" y1="7.4" x2="4.9" y2="14.6" stroke="black" strokeWidth="0.8" strokeLinecap="round" /><line x1="8.9" y1="7.4" x2="8.9" y2="14.6" stroke="black" strokeWidth="0.8" strokeLinecap="round" /><line x1="12.9" y1="7.4" x2="12.9" y2="14.6" stroke="black" strokeWidth="0.8" strokeLinecap="round" /><path d="M0.5 5.5V5.5C0.5 3.84315 1.84315 2.5 3.5 2.5H14.5C16.1569 2.5 17.5 3.84315 17.5 5.5V5.5" stroke="black" strokeWidth="0.8" strokeLinecap="round" /><path d="M17.5 5.5H0.5" stroke="black" strokeWidth="0.8" strokeLinecap="round" /><path d="M6.5 2.5V2.5C6.5 1.39543 7.39543 0.5 8.5 0.5H9.5C10.6046 0.5 11.5 1.39543 11.5 2.5V2.5" stroke="black" strokeWidth="0.8" strokeLinecap="round" /></svg>
+                        </OverlayTrigger>
+                    );
+                }
+            }
+
+            if (this.props.items.edit) {
                 actions.push(
                     <OverlayTrigger
                         key={'edit_' + item.id}
@@ -225,7 +255,7 @@ class Items extends React.Component {
                             <Tooltip>Редактировать</Tooltip>
                         }
                     >
-                        <svg onClick={() => this.props.setItemEdit(item.id)} className="edit-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M16.5368 0.251576C16.2017 -0.0838586 15.6592 -0.0838586 15.325 0.251576C15.2401 0.336507 15.1107 0.357115 14.9993 0.313362C14.0797 -0.0400879 12.9981 0.153809 12.2568 0.895882L2.9374 10.2245C2.80285 10.3584 2.80285 10.5763 2.9374 10.7101L7.30057 15.0776C7.43427 15.2115 7.6511 15.2115 7.7848 15.0776L17.1042 5.74894C17.8464 5.00687 18.0401 3.9242 17.6861 3.00369C17.6433 2.89131 17.6638 2.76262 17.7487 2.67769C18.0838 2.34225 18.0838 1.79921 17.7487 1.46463L16.5368 0.251576ZM16.0989 3.84357C16.2326 3.9774 16.2326 4.19528 16.0989 4.32911L7.7848 12.6515C7.6511 12.7854 7.43427 12.7854 7.30057 12.6515L5.3611 10.7101C5.2274 10.5763 5.2274 10.3584 5.3611 10.2245L13.6752 1.90305C13.8089 1.76836 14.0257 1.76836 14.1594 1.90305L16.0989 3.84357Z" fill="#1672EC"></path><path d="M0.43314 17.9876C0.177744 18.0571 -0.0570812 17.8221 0.0123386 17.5664L1.51729 12.0433C1.58671 11.7885 1.90466 11.7045 2.09064 11.8906L6.10328 15.9081C6.28926 16.0943 6.20527 16.4117 5.95073 16.4812L0.43314 17.9876Z" fill="#1672EC"></path></svg>
+                        <svg onClick={() => this.props.setItemEdit(item.id)} className="icon edit-icon" width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.5 0.5H4C2.34315 0.5 1 1.84315 1 3.5V14.5C1 16.1569 2.34315 17.5 4 17.5H15C16.6569 17.5 18 16.1569 18 14.5V9" stroke="black" strokeWidth="0.8" strokeLinecap="round" /><path d="M17.2929 2.50123L15.9988 1.20711C15.6082 0.816583 14.9751 0.816582 14.5846 1.20711L6.26656 9.5251C6.14639 9.64527 6.05883 9.79408 6.01215 9.95749L5.54167 11.6042L5.4945 11.7693C5.27897 12.5236 5.97639 13.221 6.73074 13.0055L8.54251 12.4879C8.70592 12.4412 8.85473 12.3536 8.9749 12.2334L17.2929 3.91544C17.6834 3.52492 17.6834 2.89175 17.2929 2.50123Z" stroke="black" strokeWidth="0.8" /></svg>
                     </OverlayTrigger>
                 )
             }
@@ -242,16 +272,50 @@ class Items extends React.Component {
 
     render() {
         if (this.props.paginate.data.length) {
-            return this.props.paginate.data.map((item) => {
-                let isChecked = this.props.itemsSelected.indexOf(item.id) > -1;
+            return this.props.paginate.data.map(item => {
+                let dataDeleted = '',
+                    isChecked = this.props.itemsSelected.indexOf(item.id) > -1,
+                    isTimerDelete = this.props.items.dateForcedDelete && item.deleted_at ? true : false,
+                    className = (item.editor_user_id ? 'editing' : '') +
+                        (isChecked ? ' checked' : '') +
+                        (item.deleted_at ? ' deleted' : '') +
+                        (isTimerDelete ? ' isTimerDelete' : '');
 
-                return <tr data-item-id={item.id} key={item.id} className={(item.editor_user_id ? 'editing' : '') + (isChecked ? ' checked' : '')}>
-                    {this.actions(item, isChecked)}
-                    {
-                        this.props.page.form.map(input => {
-                            if (input.filter === false) {
-                                return false;
-                            } else {
+                if (isTimerDelete) {
+                    let dateForcedDelete = new Date(this.props.items.dateForcedDelete),
+                        deletedDate = new Date(item.deleted_at),
+                        diff = deletedDate - dateForcedDelete;
+
+                    let days = diff > 0 ? Math.floor(diff / 1000 / 60 / 60 / 24) : 0,
+                        hours = diff > 0 ? Math.floor(diff / 1000 / 60 / 60) % 24 : 0,
+                        minutes = diff > 0 ? Math.floor(diff / 1000 / 60) % 60 : 0;
+
+                    days = days < 10 ? '0' + days : days;
+                    hours = hours < 10 ? '0' + hours : hours;
+                    minutes = minutes < 10 ? '0' + minutes : minutes;
+
+                    dataDeleted = 'Удалится навсегда через ' + days + 'д. ' + hours + 'ч. ' + minutes + 'м.';
+                }
+
+                return <React.Fragment key={item.id}>
+                    <tr data-item-id={item.id} className={className}>
+                        {this.actions(item, isChecked)}
+                        {
+                            this.props.page.form.map((inputOriginal, i) => {
+                                let input = Object.assign({}, inputOriginal);
+
+                                if (this.props.items.columns[i] === 0) {
+                                    return false;
+                                }
+
+                                if (input.filter === false) {
+                                    return false;
+                                }
+
+                                if (this.props.items.fastEdit === 0) {
+                                    input.readonly = true;
+                                }
+
                                 if (typeof input.value === 'function') {
                                     item = input.value(Object.assign({}, item));
                                 }
@@ -269,10 +333,19 @@ class Items extends React.Component {
                                 }
 
                                 return <td key={item.id + '_' + input.name} className={input.center ? 'text-center' : ''}>{element}</td>
-                            }
-                        })
+                            })
+                        }
+                    </tr>
+                    {
+                        dataDeleted ? <tr data-item-deleted-id={item.id} className="deletedTr">
+                            <td colSpan="100%">
+                                <div className="deletedText"><svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 6L6 1L11 6" stroke="black" strokeWidth="0.8" /></svg>
+                                    {dataDeleted}
+                                </div>
+                            </td>
+                        </tr> : <></>
                     }
-                </tr>
+                </React.Fragment>
             })
         }
 

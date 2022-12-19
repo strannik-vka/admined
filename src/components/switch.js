@@ -13,12 +13,14 @@ class Switch extends React.Component {
     }
 
     onChange = (event) => {
-        if (this.isOnChange) {
-            this.props.onChange(event.target.checked ? 1 : 0);
-        } else {
-            this.setState({
-                checked: event.target.checked
-            });
+        if (!this.props.readonly) {
+            if (this.isOnChange) {
+                this.props.onChange(event.target.checked ? 1 : 0);
+            } else {
+                this.setState({
+                    checked: event.target.checked
+                });
+            }
         }
     }
 
