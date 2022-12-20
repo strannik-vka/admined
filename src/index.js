@@ -112,9 +112,6 @@ class Admined extends React.Component {
             isItemsEdit = page.editAction;
         }
 
-        let sortActiveName = URLParam('sortDesc') ? URLParam('sortDesc') : URLParam('sortAsc'),
-            sortActiveUp = sortActiveName ? (URLParam('sortAsc') ? true : false) : null;
-
         return {
             previewShow: null,
             preview: page.preview ? page.preview : null,
@@ -126,8 +123,8 @@ class Admined extends React.Component {
             sort: {
                 columns: null,
                 active: {
-                    name: sortActiveName ? sortActiveName : null,
-                    up: sortActiveUp,
+                    name: null,
+                    up: null,
                 }
             },
             items: {
@@ -656,14 +653,19 @@ class Admined extends React.Component {
                 urlParams = urlParams.split('&');
 
                 urlParams.forEach(urlParam => {
-                    var urlParamArr = urlParam.split('=');
+                    let urlParamArr = urlParam.split('=');
 
                     if (
-                        ['url', 'sortDesc', 'sortAsc'].indexOf(urlParamArr[0]) == -1 &&
+                        urlParamArr[0] != 'url' &&
                         urlParamArr[0] &&
                         urlParamArr[1]
                     ) {
-                        stateDefault.page.filter[urlParamArr[0]] = decodeURIComponent(urlParamArr[1]);
+                        if (['sortAsc', 'sortDesc'].indexOf(urlParamArr[0]) > -1) {
+                            stateDefault.sort.active.name = urlParamArr[1];
+                            stateDefault.sort.active.up = urlParamArr[0] == 'sortAsc';
+                        } else {
+                            stateDefault.page.filter[urlParamArr[0]] = decodeURIComponent(urlParamArr[1]);
+                        }
                     }
                 });
             }

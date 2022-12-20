@@ -159,7 +159,7 @@ class Filter extends React.Component {
         }
 
         if (this.isSortField(input.name)) {
-            result = this.sortRender(result, key);
+            result = <>{result}{this.sortRender(key)}</>;
         }
 
         if (typeof input.description !== 'undefined') {
@@ -175,24 +175,35 @@ class Filter extends React.Component {
         return result;
     }
 
-    sortRender(result, name) {
-        let isActive = this.props.sort.active.name === name;
+    sortRender(name) {
+        let isActive = this.props.sort.active.name === name,
+            className = 'svgWrap',
+            setUp = true;
 
-        return <>
-            {result}
-            <div className="sort">
-                <div className={'svgWrap up' + (isActive && this.props.sort.active.up ? ' active' : '')} onClick={() => this.props.onSortChange(name, true)}>
-                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9.82152 4.874L5.55564 0.238117C5.48688 0.163433 5.40159 0.103483 5.30561 0.0623818C5.20963 0.0212805 5.10524 0 4.9996 0C4.89396 0 4.78957 0.0212805 4.69359 0.0623818C4.59761 0.103483 4.51231 0.163433 4.44355 0.238117L0.177679 4.874C-0.229438 5.3165 0.108096 6 0.733725 6H9.26669C9.89232 6 10.2299 5.3165 9.82152 4.874V4.874Z" fill="currentColor" />
-                    </svg>
-                </div>
-                <div className={'svgWrap up' + (isActive && !this.props.sort.active.up ? ' active' : '')} onClick={() => this.props.onSortChange(name, false)}>
-                    <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0.178483 1.126L4.44436 5.76188C4.51312 5.83657 4.59841 5.89652 4.69439 5.93762C4.79037 5.97872 4.89476 6 5.0004 6C5.10604 6 5.21043 5.97872 5.30641 5.93762C5.40239 5.89652 5.48769 5.83657 5.55645 5.76188L9.82232 1.126C10.2294 0.683502 9.8919 0 9.26627 0H0.733309C0.10768 0 -0.229854 0.683502 0.178483 1.126V1.126Z" fill="currentColor" />
-                    </svg>
-                </div>
+        if (isActive) {
+            className += ' active';
+
+            if (this.props.sort.active.up) {
+                className += ' up';
+            } else {
+                className += ' down';
+            }
+
+            setUp = !this.props.sort.active.up;
+        }
+
+        return <div className="sort">
+            <div className={className} onClick={() => this.props.onSortChange(name, setUp)}>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line className="up" x1="13" y1="5.91421" x2="11.4142" y2="7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <line className="up" x1="14.5858" y1="7.5" x2="13" y2="5.91421" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <line className="up" x1="13" y1="7" x2="13" y2="14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <line className="down" x1="7" y1="14.0858" x2="8.58579" y2="12.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <line className="down" x1="5.41421" y1="12.5" x2="7" y2="14.0858" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <line className="down" x1="7" y1="13" x2="7" y2="6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
             </div>
-        </>
+        </div>
     }
 
     isSortField(name) {

@@ -1,5 +1,5 @@
 import React from "react";
-import ReactSelect from 'react-select';
+import ReactSelect, { components } from 'react-select';
 
 const axios = require('axios').default;
 
@@ -163,14 +163,16 @@ class Select extends React.Component {
         return result;
     }
 
-    isSelected(value, result) {
+    getDefaultValue(value, result) {
         const childOptions = (value, result) => {
             if (Array.isArray(result.options)) {
                 let childResult = false;
 
                 for (let i = 0; i < result.options.length; i++) {
-                    if (this.isSelected(value, result.options[i])) {
-                        childResult = true;
+                    let defaultValue = this.getDefaultValue(value, result.options[i]);
+
+                    if (defaultValue !== false) {
+                        childResult = defaultValue;
                         break;
                     }
                 }
@@ -184,7 +186,7 @@ class Select extends React.Component {
         if (typeof value !== 'undefined') {
             if (Array.isArray(value)) {
                 if (value.indexOf('' + result.value + '') > -1 || value.indexOf(result.value) > -1) {
-                    return true;
+                    return result;
                 }
 
                 return childOptions(value, result);
@@ -193,7 +195,7 @@ class Select extends React.Component {
                     val2 = !isNaN(result.value) ? parseFloat(result.value) : result.value;
 
                 if (val1 === val2) {
-                    return true;
+                    return result;
                 }
 
                 return childOptions(value, result);
@@ -206,30 +208,32 @@ class Select extends React.Component {
     formatOptions = ({ options, labelKey, value }) => {
         let defaultValue = Array.isArray(value) ? [] : null;
 
-        options = Array.isArray(options) ? options.map(option => {
-            let result = {};
+        options = Array.isArray(options) ?
+            options.map(option => {
+                let result = {};
 
-            if (option.options) {
-                result.options = option.options;
-            }
+                if (option.options) {
+                    result.options = option.options;
+                }
 
-            if (typeof option === 'string') {
-                result.value = option;
-                result.label = option;
-            } else {
-                result.value = typeof option.id !== 'undefined' ? option.id : (
-                    typeof option.value !== 'undefined' ? option.value : ''
-                );
+                if (typeof option === 'string') {
+                    result.value = option;
+                    result.label = option;
+                } else {
+                    result.value = typeof option.id !== 'undefined' ? option.id : (
+                        typeof option.value !== 'undefined' ? option.value : ''
+                    );
 
-                result.label = labelKey ? option[labelKey] : option.name
-            }
+                    result.label = labelKey ? option[labelKey] : option.name
+                }
 
-            if (this.isSelected(value, result)) {
-                defaultValue = result;
-            }
+                let optionDefaultValue = this.getDefaultValue(value, result);
+                if (optionDefaultValue !== false) {
+                    defaultValue = optionDefaultValue;
+                }
 
-            return result;
-        }) : [];
+                return result;
+            }) : [];
 
         options.map(option => {
             option.label = option.label
@@ -280,6 +284,23 @@ class Select extends React.Component {
                 isLoading={this.state.isLoading}
                 loadingMessage={() => 'Загрузка..'}
                 noOptionsMessage={() => 'Пусто..'}
+                components={{
+                    ClearIndicator: ({ ...props }) => (
+                        <components.ClearIndicator {...props} >
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 10L6 14M10 10L14 6M10 10L14 14M10 10L6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                        </components.ClearIndicator>
+                    ),
+                    DropdownIndicator: ({ ...props }) => (
+                        <components.DropdownIndicator {...props}>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <line x1="10" y1="12.0858" x2="14.5858" y2="7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                <line x1="5.41421" y1="7.5" x2="10" y2="12.0858" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                            </svg>
+                        </components.DropdownIndicator>
+                    )
+                }}
             />
             {
                 this.isErrors() ? <div className="invalid-feedback">{this.props.errors[0]}</div> : ''

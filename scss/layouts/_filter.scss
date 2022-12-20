@@ -15,6 +15,7 @@
     &.isSort {
         .react-select__control,
         .form-control {
+            border-right: 0 !important;
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
         }
@@ -31,22 +32,26 @@
         justify-content: center;
 
         .svgWrap {
+            transition: color 150ms;
             cursor: pointer;
-            color: var(--select-separator);
+            color: var(--select-drop-svg);
+            padding: 4px 3px;
 
             &.active,
             &:hover {
-                color: hsl(var(--primary-hs), var(--l-30));
+                color: hsl(0, 0%, 60%);
             }
 
             &.up {
-                border-radius: 0 8px 0 0;
-                padding: 0.35rem 0.5rem 0.2rem;
+                line.up {
+                    color: var(--c-primary-dark);
+                }
             }
 
             &.down {
-                border-radius: 0 0 8px 0;
-                padding: 0.2rem 0.5rem 0.35rem;
+                line.down {
+                    color: var(--c-primary-dark);
+                }
             }
 
             svg {
