@@ -1,3 +1,58 @@
 .filter-item {
     text-align: left;
+
+    .filter-wrap {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .react-select-container,
+        .form-control {
+            width: 100%;
+        }
+    }
+
+    &.isSort {
+        .react-select__control,
+        .form-control {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
+
+    .sort {
+        background-color: var(--c-bg-dark);
+        border-radius: 0 8px 8px 0;
+        border: 1px solid var(--c-border-light);
+        border-left: 1px solid var(--select-separator);
+        height: calc(1.5em + 0.5rem + 0.5px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .svgWrap {
+            cursor: pointer;
+            color: var(--select-separator);
+
+            &.active,
+            &:hover {
+                color: hsl(var(--primary-hs), var(--l-30));
+            }
+
+            &.up {
+                border-radius: 0 8px 0 0;
+                padding: 0.35rem 0.5rem 0.2rem;
+            }
+
+            &.down {
+                border-radius: 0 0 8px 0;
+                padding: 0.2rem 0.5rem 0.35rem;
+            }
+
+            svg {
+                vertical-align: top;
+                display: block;
+            }
+        }
+    }
 }

@@ -163,11 +163,55 @@ class Select extends React.Component {
         return result;
     }
 
+    isSelected(value, result) {
+        const childOptions = (value, result) => {
+            if (Array.isArray(result.options)) {
+                let childResult = false;
+
+                for (let i = 0; i < result.options.length; i++) {
+                    if (this.isSelected(value, result.options[i])) {
+                        childResult = true;
+                        break;
+                    }
+                }
+
+                return childResult;
+            }
+
+            return false;
+        }
+
+        if (typeof value !== 'undefined') {
+            if (Array.isArray(value)) {
+                if (value.indexOf('' + result.value + '') > -1 || value.indexOf(result.value) > -1) {
+                    return true;
+                }
+
+                return childOptions(value, result);
+            } else {
+                let val1 = !isNaN(value) ? parseFloat(value) : value,
+                    val2 = !isNaN(result.value) ? parseFloat(result.value) : result.value;
+
+                if (val1 === val2) {
+                    return true;
+                }
+
+                return childOptions(value, result);
+            }
+        }
+
+        return false;
+    }
+
     formatOptions = ({ options, labelKey, value }) => {
         let defaultValue = Array.isArray(value) ? [] : null;
 
         options = Array.isArray(options) ? options.map(option => {
             let result = {};
+
+            if (option.options) {
+                result.options = option.options;
+            }
 
             if (typeof option === 'string') {
                 result.value = option;
@@ -180,23 +224,8 @@ class Select extends React.Component {
                 result.label = labelKey ? option[labelKey] : option.name
             }
 
-            if (typeof value !== 'undefined') {
-                if (Array.isArray(value)) {
-                    if (value.indexOf('' + result.value + '') > -1 || value.indexOf(result.value) > -1) {
-                        defaultValue.push(result);
-                    }
-                } else {
-                    let val1 = !isNaN(value) ? parseFloat(value) : value,
-                        val2 = !isNaN(result.value) ? parseFloat(result.value) : result.value;
-
-                    if (val1 === val2) {
-                        defaultValue = result;
-                    }
-                }
-            }
-
-            if (option.options) {
-                result.options = option.options;
+            if (this.isSelected(value, result)) {
+                defaultValue = result;
             }
 
             return result;

@@ -112,6 +112,9 @@ class Admined extends React.Component {
             isItemsEdit = page.editAction;
         }
 
+        let sortActiveName = URLParam('sortDesc') ? URLParam('sortDesc') : URLParam('sortAsc'),
+            sortActiveUp = sortActiveName ? (URLParam('sortAsc') ? true : false) : null;
+
         return {
             previewShow: null,
             preview: page.preview ? page.preview : null,
@@ -120,6 +123,13 @@ class Admined extends React.Component {
             itemsSelectedCountMax: 0,
             editItem: {},
             editorSupport: false,
+            sort: {
+                columns: null,
+                active: {
+                    name: sortActiveName ? sortActiveName : null,
+                    up: sortActiveUp,
+                }
+            },
             items: {
                 edit: isItemsEdit,
                 softDeletes: softDeletes,
@@ -202,6 +212,32 @@ class Admined extends React.Component {
                 }
             }
         });
+    }
+
+    onSortChange = (name, up) => {
+        this.setState(prevState => {
+            if (prevState.sort.active.name === name && prevState.sort.active.up === up) {
+                name = null;
+                up = null;
+            }
+
+            return {
+                sort: {
+                    ...prevState.sort,
+                    ...{
+                        active: {
+                            name: name,
+                            up: up
+                        }
+                    }
+                }
+            }
+        }, () => {
+            this.historyPushState();
+            this.getItems({
+                reset: true
+            });
+        })
     }
 
     onFilterChange = (value, name, callback) => {
@@ -597,6 +633,10 @@ class Admined extends React.Component {
             urlParams.push(filterKey + '=' + this.state.page.filter[filterKey]);
         });
 
+        if (this.state.sort.active.name) {
+            urlParams.push((this.state.sort.active.up ? 'sortAsc' : 'sortDesc') + '=' + this.state.sort.active.name);
+        }
+
         urlParams = urlParams.join('&');
 
         history.pushState(null, this.state.page.name, location.pathname + '?url=' + this.state.page.url + (urlParams ? '&' + urlParams : ''));
@@ -618,7 +658,11 @@ class Admined extends React.Component {
                 urlParams.forEach(urlParam => {
                     var urlParamArr = urlParam.split('=');
 
-                    if (urlParamArr[0] != 'url' && urlParamArr[0] && urlParamArr[1]) {
+                    if (
+                        ['url', 'sortDesc', 'sortAsc'].indexOf(urlParamArr[0]) == -1 &&
+                        urlParamArr[0] &&
+                        urlParamArr[1]
+                    ) {
                         stateDefault.page.filter[urlParamArr[0]] = decodeURIComponent(urlParamArr[1]);
                     }
                 });
@@ -706,7 +750,7 @@ class Admined extends React.Component {
                 selector: '[data-item-id]',
                 attr: 'data-item-id'
             }, items => {
-                let params = Object.assign({}, this.state.page.filter),
+                let params = this.getItemsParams(),
                     isTop = true,
                     url = location.pathname + '/' + this.state.page.url;
 
@@ -717,14 +761,6 @@ class Admined extends React.Component {
                             isTop = false;
                         }
                     }
-                }
-
-                if (this.state.items.displayMethod === 2) {
-                    params.withTrashed = 0;
-                }
-
-                if (this.state.items.displayMethod === 3) {
-                    params.onlyTrashed = 1;
                 }
 
                 axios.get(url, {
@@ -888,6 +924,24 @@ class Admined extends React.Component {
         return result;
     }
 
+    getItemsParams() {
+        let params = Object.assign({}, this.state.page.filter);
+
+        if (this.state.items.displayMethod === 2) {
+            params.withTrashed = 0;
+        }
+
+        if (this.state.items.displayMethod === 3) {
+            params.onlyTrashed = 1;
+        }
+
+        if (this.state.sort.active.name) {
+            params[this.state.sort.active.up ? 'sortAsc' : 'sortDesc'] = this.state.sort.active.name;
+        }
+
+        return params;
+    }
+
     getItems({ callback, next_page_url, reset }) {
         this.CancelTokenSource.cancel();
         this.UpdateCancelTokenSource.cancel();
@@ -898,7 +952,7 @@ class Admined extends React.Component {
             saveStatus: '<svg class="SVGpreloader" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="16px" height="16px" viewBox="0 0 128 128" xml:space="preserve"><rect x="0" y="0" width="100%" height="100%" fill="none" /><g><path d="M64 9.75A54.25 54.25 0 0 0 9.75 64H0a64 64 0 0 1 128 0h-9.75A54.25 54.25 0 0 0 64 9.75z" fill="#000000"/><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1800ms" repeatCount="indefinite"></animateTransform></g></svg>'
         }, () => {
             let url = location.pathname + '/' + this.state.page.url,
-                params = Object.assign({}, this.state.page.filter);
+                params = this.getItemsParams();
 
             if (next_page_url) {
                 url = next_page_url;
@@ -910,14 +964,6 @@ class Admined extends React.Component {
                 if (url.indexOf('/?') > -1) {
                     url = url.replace('/?', '?');
                 }
-            }
-
-            if (this.state.items.displayMethod === 2) {
-                params.withTrashed = 0;
-            }
-
-            if (this.state.items.displayMethod === 3) {
-                params.onlyTrashed = 1;
             }
 
             axios.get(url, {
@@ -963,7 +1009,16 @@ class Admined extends React.Component {
                         ...prevState.items,
                         ...{
                             softDeletes: softDeletes,
-                            dateForcedDelete: response.data.dateForcedDelete
+                            dateForcedDelete: response.data.dateForcedDelete,
+                        }
+                    }
+
+                    if (typeof response.data.sort !== 'undefined') {
+                        newState.sort = {
+                            ...prevState.sort,
+                            ...{
+                                columns: response.data.sort
+                            }
                         }
                     }
 
@@ -1256,6 +1311,8 @@ class Admined extends React.Component {
                                 setDisplayMethod={this.setDisplayMethod}
                                 setItemColumns={this.setItemColumns}
                                 fastEditToggle={this.fastEditToggle}
+                                onSortChange={this.onSortChange}
+                                sort={this.state.sort}
                             />
                         </tr>
                     </thead>
