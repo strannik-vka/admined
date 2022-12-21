@@ -177,12 +177,10 @@ class Filter extends React.Component {
 
     sortRender(name) {
         let isActive = this.props.sort.active.name === name,
-            className = 'svgWrap',
+            className = 'sortSvgWrap',
             setUp = true;
 
         if (isActive) {
-            className += ' active';
-
             if (this.props.sort.active.up) {
                 className += ' up';
             } else {
@@ -193,6 +191,11 @@ class Filter extends React.Component {
         }
 
         return <div className="sort">
+            <div className="clearSvgWrap" onClick={() => this.props.onSortChange(name, !setUp)}>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 10L6 14M10 10L14 6M10 10L14 14M10 10L6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+            </div>
             <div className={className} onClick={() => this.props.onSortChange(name, setUp)}>
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <line className="up" x1="13" y1="5.91421" x2="11.4142" y2="7.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -232,7 +235,7 @@ class Filter extends React.Component {
                             ? false
                             : <th
                                 key={key}
-                                className={'filter-item' + (this.isSortField(input.name) ? ' isSort' : '')}
+                                className={'filter-item' + (this.isSortField(input.name) ? ' isSort' : '') + (this.props.sort.active.name === key ? ' isActiveSort' : '')}
                             >
                                 <div className="filter-wrap">
                                     {

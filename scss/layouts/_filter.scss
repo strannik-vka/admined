@@ -30,14 +30,36 @@
         display: flex;
         flex-direction: column;
         justify-content: center;
+        position: relative;
 
-        .svgWrap {
-            transition: color 150ms;
+        .clearSvgWrap {
+            display: none;
             cursor: pointer;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(50%, -50%);
+            border: 1px solid var(--select-separator);
+            background-color: var(--c-bg-dark);
+            border-radius: 100%;
+            transition: transform 400ms;
+
+            svg {
+                width: 11px;
+                height: 11px;
+            }
+
+            &:hover {
+                transform: translate(50%, -50%) scale(1.3);
+            }
+        }
+
+        .sortSvgWrap {
+            cursor: pointer;
+            transition: color 150ms;
             color: var(--select-drop-svg);
             padding: 4px 3px;
 
-            &.active,
             &:hover {
                 color: hsl(0, 0%, 60%);
             }
@@ -53,11 +75,23 @@
                     color: var(--c-primary-dark);
                 }
             }
-
-            svg {
-                vertical-align: top;
-                display: block;
-            }
         }
+
+        svg {
+            vertical-align: top;
+            display: block;
+        }
+    }
+
+    &.isActiveSort {
+        .sortSvgWrap {
+            color: hsl(0, 0%, 60%);
+        }
+
+        .clearSvgWrap {
+            display: block;
+        }
+
+        z-index: 1021;
     }
 }
