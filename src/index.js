@@ -586,7 +586,9 @@ class Admined extends React.Component {
                 data.editItem = {};
 
                 this.setEditStatus('delete', () => {
-                    this.setState(data);
+                    this.setState(data, () => {
+                        this.historyPushState();
+                    });
                 });
             } else {
                 this.setState(data);
@@ -634,9 +636,17 @@ class Admined extends React.Component {
             urlParams.push((this.state.sort.active.up ? 'sortAsc' : 'sortDesc') + '=' + this.state.sort.active.name);
         }
 
-        urlParams = urlParams.join('&');
+        if (this.state.editItem.id) {
+            urlParams.push('edit_item_id=' + this.state.editItem.id);
+        }
 
-        history.pushState(null, this.state.page.name, location.pathname + '?url=' + this.state.page.url + (urlParams ? '&' + urlParams : ''));
+        let url = location.pathname + '?url=' + this.state.page.url;
+
+        if (urlParams.length) {
+            url += '&' + urlParams.join('&');
+        }
+
+        history.pushState(null, this.state.page.name, url);
     }
 
     changePage = (page, reset) => {
@@ -645,6 +655,8 @@ class Admined extends React.Component {
         const stateDefault = this.stateDefault(page);
 
         stateDefault.page = { ...stateDefault.page, ...page };
+
+        let editItemId = null
 
         if (!reset) {
             let urlParams = window.location.search.substring(1);
@@ -663,6 +675,8 @@ class Admined extends React.Component {
                         if (['sortAsc', 'sortDesc'].indexOf(urlParamArr[0]) > -1) {
                             stateDefault.sort.active.name = urlParamArr[1];
                             stateDefault.sort.active.up = urlParamArr[0] == 'sortAsc';
+                        } if (urlParamArr[0] == 'edit_item_id') {
+                            editItemId = urlParamArr[1];
                         } else {
                             stateDefault.page.filter[urlParamArr[0]] = decodeURIComponent(urlParamArr[1]);
                         }
@@ -681,6 +695,10 @@ class Admined extends React.Component {
             this.historyPushState();
             this.getItems({});
             this.itemsUpdateStart();
+
+            if (editItemId) {
+                this.setItemEdit(editItemId);
+            }
         });
     }
 
@@ -1250,12 +1268,17 @@ class Admined extends React.Component {
             if (success || typeof error === 'undefined') {
                 axios.get(location.pathname + '/' + this.state.page.url + '/' + id + '/edit')
                     .then(response => {
-                        this.setState({
-                            editItem: response.data,
-                            formIsShow: true
-                        }, () => {
-                            this.itemEdit(response.data);
-                        });
+                        if (response.data.id) {
+                            this.setState({
+                                editItem: response.data,
+                                formIsShow: true
+                            }, () => {
+                                this.itemEdit(response.data);
+                                this.historyPushState();
+                            });
+                        } else {
+                            this.historyPushState();
+                        }
                     });
             } else {
                 alert(error);
