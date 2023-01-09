@@ -693,12 +693,15 @@ class Admined extends React.Component {
 
         this.setState(stateDefault, () => {
             this.historyPushState();
-            this.getItems({});
-            this.itemsUpdateStart();
+            this.getItems({
+                callback: () => {
+                    if (editItemId) {
+                        this.setItemEdit(editItemId);
+                    }
 
-            if (editItemId) {
-                this.setItemEdit(editItemId);
-            }
+                    this.itemsUpdateStart();
+                }
+            });
         });
     }
 
