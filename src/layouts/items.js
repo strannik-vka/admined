@@ -261,13 +261,11 @@ class Items extends React.Component {
             }
         }
 
-        if (actions.length) {
-            return <td>
-                <div className="actions">
-                    {actions}
-                </div>
-            </td>
-        }
+        return <td>
+            <div className="actions">
+                {actions}
+            </div>
+        </td>
     }
 
     render() {
