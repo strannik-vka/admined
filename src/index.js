@@ -91,6 +91,7 @@ class Admined extends React.Component {
 
     stateDefault(page) {
         let items = isObject(page.items) ? page.items : {},
+            isItemsCopy = typeof items.copy === 'boolean' ? items.copy : true,
             isItemsEdit = typeof items.edit === 'boolean' ? items.edit : true,
             isItemsCheckbox = false,
             softDeletes = typeof items.softDeletes === 'boolean' ? items.softDeletes : true;
@@ -112,12 +113,17 @@ class Admined extends React.Component {
             isItemsEdit = page.editAction;
         }
 
+        if (!isItemsEdit) {
+            isItemsCopy = false;
+        }
+
         return {
             previewShow: null,
             preview: page.preview ? page.preview : null,
             formIsShow: null,
             itemsSelected: [],
             itemsSelectedCountMax: 0,
+            copyItem: {},
             editItem: {},
             editorSupport: false,
             sort: {
@@ -128,6 +134,7 @@ class Admined extends React.Component {
                 }
             },
             items: {
+                copy: isItemsCopy,
                 edit: isItemsEdit,
                 softDeletes: softDeletes,
                 checkbox: isItemsCheckbox,
@@ -576,6 +583,20 @@ class Admined extends React.Component {
         });;
     }
 
+    itemCopy = (id) => {
+        axios.get(location.pathname + '/' + this.state.page.url + '/' + id + '/edit')
+            .then(response => {
+                if (response.data.id) {
+                    this.setState({
+                        copyItem: response.data,
+                        formIsShow: true
+                    }, () => {
+                        this.itemEdit(response.data);
+                    });
+                }
+            });
+    }
+
     formVisible = (status) => {
         if (this.state.formIsShow !== status) {
             let data = {
@@ -584,6 +605,7 @@ class Admined extends React.Component {
 
             if (status == false) {
                 data.editItem = {};
+                data.copyItem = {};
 
                 this.setEditStatus('delete', () => {
                     this.setState(data, () => {
@@ -1350,6 +1372,7 @@ class Admined extends React.Component {
                             setItemEdit={this.setItemEdit}
                             itemDelete={this.itemDelete}
                             itemRestore={this.itemRestore}
+                            itemCopy={this.itemCopy}
                             page={this.state.page}
                             paginate={this.state.paginate}
                             itemSelect={this.itemSelect}
@@ -1363,6 +1386,7 @@ class Admined extends React.Component {
                 page={this.state.page}
                 show={this.state.formIsShow}
                 editItem={this.state.editItem}
+                copyItem={this.state.copyItem}
                 itemEdit={this.itemEdit}
                 formVisible={this.formVisible}
                 isPreview={isObject(this.state.preview)}

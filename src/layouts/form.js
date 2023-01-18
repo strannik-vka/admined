@@ -89,13 +89,67 @@ class Form extends React.Component {
             data.append(uploadQueueName.replace('[]', ''), uploadQueueElem.files[this.state.upload_queue_success]);
         }
 
-        this.getGalleryData(data, data => {
-            this.ajaxSend({
-                uploadQueueName: uploadQueueName,
-                data: data,
-                event: e
+        this.getCopyData(data, data => {
+            this.getGalleryData(data, data => {
+                this.ajaxSend({
+                    uploadQueueName: uploadQueueName,
+                    data: data,
+                    event: e
+                });
             });
         });
+    }
+
+    getCopyData(FormData, callback) {
+        if (this.props.copyItem.id) {
+            let fileElems = document.querySelectorAll('#itemsForm [type="file"]'),
+                files = [];
+
+            fileElems.forEach(fileElem => {
+                if (!fileElem.multiple) {
+                    let previewElem = document.querySelector('#itemsForm [data-preview="' + fileElem.name + '"] [src]');
+
+                    if (previewElem) {
+                        let urlArr = previewElem.src.split('.'),
+                            extension = urlArr[urlArr.length - 1],
+                            name = previewElem.src.replace('.' + extension, '');
+
+                        files.push({
+                            fieldName: fileElem.name,
+                            url: previewElem.src,
+                            name: name,
+                            extension: extension
+                        });
+                    }
+                }
+            });
+
+            const FormDataFill = (index) => {
+                let file = typeof files[index] !== 'undefined' ? files[index] : null;
+
+                if (file) {
+                    if (file.name && file.extension) {
+                        this.getBlob(file.url, blobData => {
+                            if (blobData) {
+                                FormData.append(
+                                    file.fieldName,
+                                    blobData,
+                                    file.name + '.' + file.extension
+                                );
+                            }
+
+                            setTimeout(() => {
+                                FormDataFill(index + 1);
+                            }, 0);
+                        });
+                    }
+                } else {
+                    callback(FormData);
+                }
+            }
+
+            FormDataFill(0);
+        }
     }
 
     getGalleryData(FormData, callback) {
@@ -122,15 +176,11 @@ class Form extends React.Component {
 
             if (image) {
                 if (image.name && image.extension) {
-                    axios({
-                        url: image.url,
-                        method: 'get',
-                        responseType: 'blob'
-                    }).then(response => {
-                        if (response.data) {
+                    this.getBlob(image.url, blobData => {
+                        if (blobData) {
                             FormData.append(
                                 image.id + '[' + image.index + ']',
-                                response.data,
+                                blobData,
                                 image.name + '.' + image.extension
                             );
                         }
@@ -138,7 +188,7 @@ class Form extends React.Component {
                         setTimeout(() => {
                             FormDataFill(index + 1);
                         }, 0);
-                    })
+                    });
                 } else {
                     FormData.append(
                         image.id + '[' + image.index + ']',
@@ -157,14 +207,29 @@ class Form extends React.Component {
         FormDataFill(0);
     }
 
+    getBlob(url, callback) {
+        axios({
+            url: url,
+            method: 'get',
+            responseType: 'blob'
+        }).then(response => {
+            callback(response.data);
+        })
+    }
+
     ajaxSend(obj) {
-        var stateData = {
-            ajaxProcess: false
+        let url = location.pathname + '/' + this.props.page.url,
+            stateData = {
+                ajaxProcess: false
+            };
+
+        if (this.props.editItem.id) {
+            url += '/' + this.props.editItem.id;
         }
 
         axios({
             method: 'post',
-            url: location.pathname + '/' + this.props.page.url + (this.props.editItem.id ? '/' + this.props.editItem.id : ''),
+            url: url,
             data: obj.data,
             processData: false,
             contentType: false,
@@ -216,17 +281,29 @@ class Form extends React.Component {
     }
 
     render() {
+        let title = this.props.editItem.id ? 'Редактирование' : 'Добавление',
+            formData = this.props.editItem.id ? this.props.editItem : this.props.copyItem;
+
+        if (this.props.copyItem.id) {
+            title = 'Дублирование';
+
+            if (formData.published) {
+                formData.published = 0;
+            }
+        }
+
         return <Modal
             show={this.props.show}
             onHide={() => this.props.formVisible(false)}
         >
-            <form id="itemsForm" key={JSON.stringify(this.props.editItem)} className="form-reverse" onSubmit={this.onSubmit}>
+            <h3 className="title">{title}</h3>
+            <form id="itemsForm" key={JSON.stringify(formData)} className="form-reverse" onSubmit={this.onSubmit}>
                 <FormFields
                     page={this.props.page}
                     inputs={this.props.page.form}
                     errors={this.state.errors}
                     errorHide={(name) => this.errorHide(name)}
-                    editItem={this.props.editItem}
+                    editItem={formData}
                 />
                 <div className="d-flex justify-content-end align-items-center">
                     {this.getUploadQueueName() && this.state.ajaxProcess ? <div className="upload_queue_text">Успешно {this.state.upload_queue_success} из {this.state.upload_queue_total}</div> : ''}

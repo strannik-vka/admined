@@ -1,4 +1,12 @@
 .modal {
+    .modal-body {
+        > .title {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            line-height: 1.17em;
+        }
+    }
+
     .modal-content {
         border-radius: 8px;
         border: 0;

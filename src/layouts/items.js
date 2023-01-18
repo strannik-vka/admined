@@ -259,6 +259,20 @@ class Items extends React.Component {
                     </OverlayTrigger>
                 )
             }
+
+            if (this.props.items.copy) {
+                actions.push(
+                    <OverlayTrigger
+                        key={'copy_' + item.id}
+                        placement="top"
+                        overlay={
+                            <Tooltip>Дублировать</Tooltip>
+                        }
+                    >
+                        <svg onClick={() => this.props.itemCopy(item.id)} className="icon edit-icon" width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.7318 2.54825C15.7318 2.03504 15.6507 1.69594 15.1849 1.23016C14.7192 0.764377 14.088 0.501874 13.4292 0.5H3.84097C3.08818 0.502225 2.36686 0.802255 1.83456 1.33456C1.30226 1.86686 1.00222 2.58818 1 3.34097V12.9292C1.00187 13.588 1.26438 14.2192 1.73016 14.6849C2.19594 15.1507 2.53504 15.2318 3.04825 15.4151" stroke="black" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" /><path d="M15.4698 2.58492H5.61514C4.21773 2.58492 3.0849 3.71774 3.0849 5.11515V14.9698C3.0849 16.3672 4.21773 17.5 5.61514 17.5H15.4698C16.8672 17.5 18 16.3672 18 14.9698V5.11515C18 3.71774 16.8672 2.58492 15.4698 2.58492Z" stroke="black" strokeWidth="0.8" strokeLinejoin="round" /></svg>
+                    </OverlayTrigger>
+                )
+            }
         }
 
         return <td>
