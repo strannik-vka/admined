@@ -149,6 +149,8 @@ class Form extends React.Component {
             }
 
             FormDataFill(0);
+        } else {
+            callback(FormData);
         }
     }
 
