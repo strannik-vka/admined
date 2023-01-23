@@ -6,7 +6,7 @@ import Menu from "./menu"
 export default (props) => {
     let user = null;
 
-    if (isObject(props.user)) {
+    if (props.user.id) {
         let avatar = props.user.name.split(' ');
 
         avatar = avatar.length > 1

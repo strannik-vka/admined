@@ -187,9 +187,15 @@ class Items extends React.Component {
     }
 
     actions(item, isChecked) {
-        let actions = [];
+        let actions = [],
+            isEditDisabled = item.editor_user_id ? true : false,
+            isMeEdit = this.props.user.id ? this.props.user.id == item.editor_user_id : false;
 
-        if (isObject(item.editor_user)) {
+        if (isMeEdit) {
+            isEditDisabled = this.props.activeTabsCount > 1;
+        }
+
+        if (isEditDisabled) {
             let avatar = item.editor_user.name.split(' ');
 
             avatar = avatar.length > 1
@@ -201,7 +207,7 @@ class Items extends React.Component {
                     key={'editor_' + item.id}
                     placement="top"
                     overlay={
-                        <Tooltip>Редактирует<br />{item.editor_user.name}</Tooltip>
+                        <Tooltip>{isMeEdit ? <>Вы уже редактируете на другой вкладке</> : <>Редактирует<br />{item.editor_user.name}</>}</Tooltip>
                     }
                 ><div className="avatar">{avatar}</div></OverlayTrigger>
             )

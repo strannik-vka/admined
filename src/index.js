@@ -15,6 +15,7 @@ import VisibleItems from "./modules/VisibleItems";
 import '../css/index.css';
 import '../css/preview.css';
 import TableTrSlideUp from "./modules/TableTrSlideUp";
+import ActiveTabsCount from "./modules/ActiveTabsCount";
 
 const axios = require('axios').default;
 
@@ -34,10 +35,24 @@ class Admined extends React.Component {
         this.itemsUpdateSupports = {};
 
         this.state = {
+            activeTabsCount: 1,
             isDomRender: false,
             pages: [],
+            user: {
+                id: null
+            },
             ...this.stateDefault({})
         }
+
+        ActiveTabsCount({
+            onChange: (count) => {
+                if (count != this.state.activeTabsCount) {
+                    this.setState({
+                        activeTabsCount: count
+                    });
+                }
+            }
+        });
 
         this.getUserInfo();
 
@@ -1378,6 +1393,8 @@ class Admined extends React.Component {
                             itemSelect={this.itemSelect}
                             onItemChange={this.onItemChange}
                             items={this.state.items}
+                            activeTabsCount={this.state.activeTabsCount}
+                            user={this.state.user}
                         />
                     </tbody>
                 </table>
