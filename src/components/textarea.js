@@ -13,10 +13,15 @@ class Textarea extends React.Component {
     }
 
     autoHeight(elem) {
-        elem.parentNode.style.minHeight = elem.style.height;
-        elem.style.height = "inherit";
-        elem.style.height = (Math.max(elem.scrollHeight, 100) + 5) + 'px';
-        elem.style.overflow = "hidden";
+        if (elem) {
+            if (elem.parentNode) {
+                elem.parentNode.style.minHeight = elem.style.height;
+            }
+
+            elem.style.height = "inherit";
+            elem.style.height = (Math.max(elem.scrollHeight, 100) + 5) + 'px';
+            elem.style.overflow = "hidden";
+        }
     }
 
     onKeyPress = (e) => {

@@ -23,7 +23,7 @@ export default (props) => {
         {props.show ? <>
             <div className="fade modal-backdrop show"></div>
             <div role="dialog" className="fade modal show" style={styles}>
-                <div className="modal-dialog modal-xl modal-dialog-centered">
+                <div className="modal-dialog modal-lg modal-dialog-centered">
                     <div className="modal-content">
                         <div className="modal-body">
                             <button type="button" className="btn-close" onClick={props.onHide}>

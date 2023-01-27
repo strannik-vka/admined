@@ -2,6 +2,8 @@
     onStopScroll  - остановился скролл   /scroll
     onStop        - закрыли вкладку
     onPause       - пропала активность
+    onShowTab     - переключились на вкладку
+    onHideTab     - ушли с вкладки
     onPlay        - появилась активность /click/mousemove/keydown
     onActive      - проявил активность   /click/mousemove/keydown
     delayOnActive - задержка в мс для onActive (по умолчанию 1 сек)
@@ -64,9 +66,12 @@ export default (options) => {
         startTimeOnPause();
     }
 
-    document.addEventListener('click', onActive);
-    document.addEventListener('mousemove', onActive);
-    document.addEventListener('keydown', onActive);
+    document.addEventListener('click', onActive)
+
+    document.addEventListener('mousemove', onActive)
+
+    document.addEventListener('keydown', onActive)
+
     window.addEventListener('scroll', () => {
         if (scrollTimer) {
             clearTimeout(scrollTimer);
@@ -79,10 +84,33 @@ export default (options) => {
                 options.onStopScroll();
             }
         }, 1000);
-    });
-    window.addEventListener('unload', () => {
+    })
+
+    window.onbeforeunload = () => {
         if (options.onStop) {
             options.onStop();
         }
-    });
+    }
+
+    window.onfocus = () => {
+        if (options.onShowTab) {
+            options.onShowTab();
+        }
+    }
+
+    window.onblur = () => {
+        if (options.onHideTab) {
+            options.onHideTab();
+        }
+    }
+
+    if (document.hasFocus()) {
+        if (options.onShowTab) {
+            options.onShowTab();
+        }
+    } else {
+        if (options.onHideTab) {
+            options.onHideTab();
+        }
+    }
 }

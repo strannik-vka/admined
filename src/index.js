@@ -15,7 +15,7 @@ import VisibleItems from "./modules/VisibleItems";
 import '../css/index.css';
 import '../css/preview.css';
 import TableTrSlideUp from "./modules/TableTrSlideUp";
-import ActiveTabsCount from "./modules/ActiveTabsCount";
+import EditingTab from "./modules/EditingTab";
 
 const axios = require('axios').default;
 
@@ -24,6 +24,7 @@ class Admined extends React.Component {
     constructor(props) {
         super(props);
 
+        this.formIsChange = false;
         this.UpdateCancelTokenSource = axios.CancelToken.source();
         this.CancelTokenSource = axios.CancelToken.source();
         this.ajaxItems = false;
@@ -35,7 +36,7 @@ class Admined extends React.Component {
         this.itemsUpdateSupports = {};
 
         this.state = {
-            activeTabsCount: 1,
+            editingTabItems: {},
             isDomRender: false,
             pages: [],
             user: {
@@ -44,19 +45,20 @@ class Admined extends React.Component {
             ...this.stateDefault({})
         }
 
-        ActiveTabsCount({
-            onChange: (count) => {
-                if (count != this.state.activeTabsCount) {
-                    this.setState({
-                        activeTabsCount: count
-                    });
-                }
-            }
-        });
-
         this.getUserInfo();
 
         document.addEventListener('scroll', this.scroll);
+        document.addEventListener('change', this.onFormChange);
+        document.addEventListener('input', this.onFormChange);
+
+        this.editingTab = new EditingTab();
+        this.editingTab.onEditing = (data) => {
+            setTimeout(() => {
+                this.setState({
+                    editingTabItems: data
+                })
+            }, 0)
+        }
 
         ClientActivity({
             timeOnPause: 600000,   // 10 мин.
@@ -66,10 +68,16 @@ class Admined extends React.Component {
                     this.setEditStatus(this.state.editItem.id);
                 }
             },
-            onPause: () => {
-                this.itemsUpdateAllow = false;
+            onHideTab: () => {
+                this.editingTab.setActive(false);
+                this.itemsUpdateOff();
+            },
+            onShowTab: () => {
+                this.editingTab.setActive(true);
+                this.itemsUpdateOn();
             },
             onStop: () => {
+                this.editingTab.close();
                 this.setEditStatus('delete');
             },
             onStopScroll: () => {
@@ -78,18 +86,22 @@ class Admined extends React.Component {
                 });
             },
             onPlay: () => {
-                this.itemsUpdateAllow = true;
-
                 if (this.state.editItem.id) {
                     this.setEditStatus(this.state.editItem.id, ({ error }) => {
                         if (error) {
-                            this.formVisible(false);
+                            this.formVisible(false, true);
                             alert(error);
                         }
                     });
                 }
             }
         });
+    }
+
+    onFormChange = (event) => {
+        if (event.target.form && event.target.form.id && event.target.form.id == 'itemsForm') {
+            this.formIsChange = true;
+        }
     }
 
     getUserInfo() {
@@ -612,13 +624,21 @@ class Admined extends React.Component {
             });
     }
 
-    formVisible = (status) => {
+    formVisible = (status, force) => {
         if (this.state.formIsShow !== status) {
             let data = {
                 formIsShow: status
             }
 
             if (status == false) {
+                if (this.formIsChange && !force) {
+                    if (!confirm('Вы уверены, что хотите выйти без изменения?')) {
+                        return false;
+                    }
+                }
+
+                this.formIsChange = false;
+
                 data.editItem = {};
                 data.copyItem = {};
 
@@ -627,6 +647,8 @@ class Admined extends React.Component {
                         this.historyPushState();
                     });
                 });
+
+                this.editingTab.hideEditing();
             } else {
                 this.setState(data);
             }
@@ -1304,26 +1326,32 @@ class Admined extends React.Component {
     }
 
     setItemEdit = (id) => {
-        this.setEditStatus(id, ({ success, error }) => {
-            if (success || typeof error === 'undefined') {
-                axios.get(location.pathname + '/' + this.state.page.url + '/' + id + '/edit')
-                    .then(response => {
-                        if (response.data.id) {
-                            this.setState({
-                                editItem: response.data,
-                                formIsShow: true
-                            }, () => {
-                                this.itemEdit(response.data);
+        if (!this.state.editingTabItems['admined-edit-' + id]) {
+            this.setEditStatus(id, ({ success, error }) => {
+                if (success || typeof error === 'undefined') {
+                    axios.get(location.pathname + '/' + this.state.page.url + '/' + id + '/edit')
+                        .then(response => {
+                            if (response.data.id) {
+                                this.setState({
+                                    editItem: response.data,
+                                    formIsShow: true
+                                }, () => {
+                                    this.itemEdit(response.data);
+                                    this.historyPushState();
+                                    this.editingTab.showEditing({
+                                        id: response.data.id,
+                                        url: this.state.page.url
+                                    });
+                                });
+                            } else {
                                 this.historyPushState();
-                            });
-                        } else {
-                            this.historyPushState();
-                        }
-                    });
-            } else {
-                alert(error);
-            }
-        });
+                            }
+                        });
+                } else {
+                    alert(error);
+                }
+            });
+        }
     }
 
     getShowItemsCount(count) {
@@ -1393,7 +1421,7 @@ class Admined extends React.Component {
                             itemSelect={this.itemSelect}
                             onItemChange={this.onItemChange}
                             items={this.state.items}
-                            activeTabsCount={this.state.activeTabsCount}
+                            editingTabItems={this.state.editingTabItems}
                             user={this.state.user}
                         />
                     </tbody>

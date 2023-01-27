@@ -186,17 +186,11 @@ class Items extends React.Component {
         );
     }
 
-    actions(item, isChecked) {
-        let actions = [],
-            isEditDisabled = item.editor_user_id ? true : false,
-            isMeEdit = this.props.user.id ? this.props.user.id == item.editor_user_id : false;
-
-        if (isMeEdit) {
-            isEditDisabled = this.props.activeTabsCount > 1;
-        }
+    actions(item, isChecked, isEditDisabled, isMeEdit) {
+        let actions = [];
 
         if (isEditDisabled) {
-            let avatar = item.editor_user.name.split(' ');
+            let avatar = item.editor_user ? item.editor_user.name.split(' ') : ['В', 'Ы'];
 
             avatar = avatar.length > 1
                 ? avatar[0][0] + avatar[1][0]
@@ -291,10 +285,26 @@ class Items extends React.Component {
     render() {
         if (this.props.paginate.data.length) {
             return this.props.paginate.data.map(item => {
+                let isEditDisabled = item.editor_user_id ? true : false,
+                    isMeEdit = this.props.user.id ? this.props.user.id == item.editor_user_id : false;
+
+                if (isMeEdit) {
+                    isEditDisabled = false;
+                }
+
+                let editTabItem = this.props.editingTabItems['admined-edit-' + item.id];
+
+                if (editTabItem) {
+                    if (editTabItem.url == this.props.page.url) {
+                        isEditDisabled = true;
+                        isMeEdit = true;
+                    }
+                }
+
                 let dataDeleted = '',
                     isChecked = this.props.itemsSelected.indexOf(item.id) > -1,
                     isTimerDelete = this.props.items.dateForcedDelete && item.deleted_at ? true : false,
-                    className = (item.editor_user_id ? 'editing' : '') +
+                    className = (isEditDisabled ? 'editing' : '') +
                         (isChecked ? ' checked' : '') +
                         (item.deleted_at ? ' deleted' : '') +
                         (isTimerDelete ? ' isTimerDelete' : '');
@@ -317,7 +327,7 @@ class Items extends React.Component {
 
                 return <React.Fragment key={item.id}>
                     <tr data-item-id={item.id} className={className}>
-                        {this.actions(item, isChecked)}
+                        {this.actions(item, isChecked, isEditDisabled, isMeEdit)}
                         {
                             this.props.page.form.map((inputOriginal, i) => {
                                 let input = Object.assign({}, inputOriginal);
