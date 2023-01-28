@@ -4,6 +4,7 @@ import DivInput from "../components/divInput";
 import Checkbox from "../components/checkbox";
 import Switch from "../components/switch";
 import Select from "../components/select";
+import ViewportList from "react-viewport-list";
 
 class Items extends React.Component {
 
@@ -186,7 +187,7 @@ class Items extends React.Component {
         );
     }
 
-    actions(item, isChecked, isEditDisabled, isMeEdit) {
+    actions(item, isChecked, isEditDisabled, isMeEdit, isTimerDelete) {
         let actions = [];
 
         if (isEditDisabled) {
@@ -229,6 +230,27 @@ class Items extends React.Component {
                             <svg onClick={() => this.props.itemRestore(item.id)} className="icon restore-icon" width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.0849 4.22427C16.0849 4.22427 14.1127 0.920807 9.44753 0.920807C7.77677 0.920807 6.14352 1.40695 4.75434 2.31776C3.36515 3.22858 2.28241 4.52315 1.64303 6.03778C1.00366 7.55241 0.836371 9.21906 1.16232 10.827C1.48827 12.4349 2.29282 13.9119 3.47423 15.0711C4.65563 16.2304 6.16084 17.0198 7.7995 17.3397C9.43816 17.6595 11.1367 17.4953 12.6803 16.868C14.2238 16.2406 15.5432 15.1781 16.4714 13.815C17.3996 12.4519 17.8951 10.8493 17.8951 9.20987" stroke="black" strokeWidth="0.8" strokeMiterlimit="10" strokeLinecap="round" /><path d="M16.2978 0.899994V4.30444H12.8933" stroke="black" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                         </OverlayTrigger>
                     );
+
+                    if (isTimerDelete) {
+                        let dateForcedDelete = new Date(this.props.items.dateForcedDelete),
+                            deletedDate = new Date(item.deleted_at),
+                            diff = deletedDate - dateForcedDelete;
+
+                        let days = diff > 0 ? Math.floor(diff / 1000 / 60 / 60 / 24) : 0,
+                            hours = diff > 0 ? Math.floor(diff / 1000 / 60 / 60) % 24 : 0,
+                            minutes = diff > 0 ? Math.floor(diff / 1000 / 60) % 60 : 0;
+
+                        days = days < 10 ? '0' + days : days;
+                        hours = hours < 10 ? '0' + hours : hours;
+                        minutes = minutes < 10 ? '0' + minutes : minutes;
+
+                        actions.push(
+                            <div className="deletedText">
+                                <svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 6L6 1L11 6" stroke="black" strokeWidth="0.8" /></svg>
+                                Удалится навсегда через {days}д. {hours}ч. {minutes}м.
+                            </div>
+                        )
+                    }
                 }
             } else {
                 if (this.props.items.delete || (this.props.items.softDeletes && this.props.page.config('deleteAction', true))) {
@@ -284,97 +306,78 @@ class Items extends React.Component {
 
     render() {
         if (this.props.paginate.data.length) {
-            return this.props.paginate.data.map(item => {
-                let isEditDisabled = item.editor_user_id ? true : false,
-                    isMeEdit = this.props.user.id ? this.props.user.id == item.editor_user_id : false;
+            return <ViewportList
+                items={this.props.paginate.data}
+                spacerElement="tr"
+                overscan={10}
+            >
+                {item => {
+                    let isEditDisabled = item.editor_user_id ? true : false,
+                        isMeEdit = this.props.user.id ? this.props.user.id == item.editor_user_id : false;
 
-                if (isMeEdit) {
-                    isEditDisabled = false;
-                }
-
-                let editTabItem = this.props.editingTabItems['admined-edit-' + item.id];
-
-                if (editTabItem) {
-                    if (editTabItem.url == this.props.page.url) {
-                        isEditDisabled = true;
-                        isMeEdit = true;
+                    if (isMeEdit) {
+                        isEditDisabled = false;
                     }
-                }
 
-                let dataDeleted = '',
-                    isChecked = this.props.itemsSelected.indexOf(item.id) > -1,
-                    isTimerDelete = this.props.items.dateForcedDelete && item.deleted_at ? true : false,
-                    className = (isEditDisabled ? 'editing' : '') +
-                        (isChecked ? ' checked' : '') +
-                        (item.deleted_at ? ' deleted' : '') +
-                        (isTimerDelete ? ' isTimerDelete' : '');
+                    let editTabItem = this.props.editingTabItems['admined-edit-' + item.id];
 
-                if (isTimerDelete) {
-                    let dateForcedDelete = new Date(this.props.items.dateForcedDelete),
-                        deletedDate = new Date(item.deleted_at),
-                        diff = deletedDate - dateForcedDelete;
+                    if (editTabItem) {
+                        if (editTabItem.url == this.props.page.url) {
+                            isEditDisabled = true;
+                            isMeEdit = true;
+                        }
+                    }
 
-                    let days = diff > 0 ? Math.floor(diff / 1000 / 60 / 60 / 24) : 0,
-                        hours = diff > 0 ? Math.floor(diff / 1000 / 60 / 60) % 24 : 0,
-                        minutes = diff > 0 ? Math.floor(diff / 1000 / 60) % 60 : 0;
+                    let isChecked = this.props.itemsSelected.indexOf(item.id) > -1,
+                        isTimerDelete = this.props.items.dateForcedDelete && item.deleted_at ? true : false,
+                        className = (isEditDisabled ? 'editing' : '') +
+                            (isChecked ? ' checked' : '') +
+                            (item.deleted_at ? ' deleted' : '') +
+                            (isTimerDelete ? ' isTimerDelete' : '');
 
-                    days = days < 10 ? '0' + days : days;
-                    hours = hours < 10 ? '0' + hours : hours;
-                    minutes = minutes < 10 ? '0' + minutes : minutes;
+                    return <React.Fragment key={item.id}>
+                        <tr data-item-id={item.id} className={className}>
+                            {this.actions(item, isChecked, isEditDisabled, isMeEdit, isTimerDelete)}
+                            {
+                                this.props.page.form.map((inputOriginal, i) => {
+                                    let input = Object.assign({}, inputOriginal);
 
-                    dataDeleted = 'Удалится навсегда через ' + days + 'д. ' + hours + 'ч. ' + minutes + 'м.';
-                }
+                                    if (this.props.items.columns[i] === 0) {
+                                        return false;
+                                    }
 
-                return <React.Fragment key={item.id}>
-                    <tr data-item-id={item.id} className={className}>
-                        {this.actions(item, isChecked, isEditDisabled, isMeEdit)}
-                        {
-                            this.props.page.form.map((inputOriginal, i) => {
-                                let input = Object.assign({}, inputOriginal);
+                                    if (input.filter === false) {
+                                        return false;
+                                    }
 
-                                if (this.props.items.columns[i] === 0) {
-                                    return false;
-                                }
+                                    if (this.props.items.fastEdit === 0) {
+                                        input.readonly = true;
+                                    }
 
-                                if (input.filter === false) {
-                                    return false;
-                                }
+                                    if (typeof input.value === 'function') {
+                                        item = input.value(Object.assign({}, item));
+                                    }
 
-                                if (this.props.items.fastEdit === 0) {
-                                    input.readonly = true;
-                                }
+                                    let element = null;
 
-                                if (typeof input.value === 'function') {
-                                    item = input.value(Object.assign({}, item));
-                                }
-
-                                let element = null;
-
-                                if (input.type) {
-                                    if (typeof this[input.type] !== 'undefined') {
-                                        element = this[input.type](item, input);
+                                    if (input.type) {
+                                        if (typeof this[input.type] !== 'undefined') {
+                                            element = this[input.type](item, input);
+                                        } else {
+                                            element = this.string(item, input);
+                                        }
                                     } else {
                                         element = this.string(item, input);
                                     }
-                                } else {
-                                    element = this.string(item, input);
-                                }
 
-                                return <td key={item.id + '_' + input.name} className={input.center ? 'text-center' : ''}>{element}</td>
-                            })
-                        }
-                    </tr>
-                    {
-                        dataDeleted ? <tr data-item-deleted-id={item.id} className="deletedTr">
-                            <td colSpan="100%">
-                                <div className="deletedText"><svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 6L6 1L11 6" stroke="black" strokeWidth="0.8" /></svg>
-                                    {dataDeleted}
-                                </div>
-                            </td>
-                        </tr> : <></>
-                    }
-                </React.Fragment>
-            })
+                                    return <td key={item.id + '_' + input.name} className={input.center ? 'text-center' : ''}>{element}</td>
+                                })
+                            }
+                        </tr>
+                    </React.Fragment>
+                }
+                }
+            </ViewportList >
         }
 
         return <tr className="empty text-center"><td colSpan="100%">Ничего не найдено</td></tr>

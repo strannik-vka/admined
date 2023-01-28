@@ -1273,6 +1273,10 @@ class Admined extends React.Component {
                         callback();
                     });
                 }
+            }).catch(() => {
+                setTimeout(() => {
+                    this.middlewarePages(callback);
+                }, 3000);
             });
         } else {
             this.setState({

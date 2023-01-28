@@ -11,7 +11,8 @@
     "react-bootstrap": "^2.2.2",
     "react-chartjs-2": "^3.3.0",
     "react-dom": "^17.0.2",
-    "react-select": "^5.2.2"
+    "react-select": "^5.2.2",
+    "react-viewport-list": "^6.3.0"
   },
   "name": "admined",
   "version": "1.0.131",

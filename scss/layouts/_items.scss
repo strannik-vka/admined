@@ -1,6 +1,7 @@
 .items {
     border-collapse: collapse;
     width: 100%;
+    will-change: transform;
 
     tr {
         &.checked,
@@ -8,51 +9,41 @@
             background-color: hsl(var(--primary-hs), var(--l-90));
         }
 
-        &.deletedTr {
-            background-color: unset;
-            opacity: 0.5;
-
-            td {
-                padding: 6px 19px;
-                font-size: 90%;
-
-                > * {
-                    margin: 0 !important;
-                }
-
-                .deletedText {
-                    position: relative;
-                    display: inline-block;
-                    border-top: 1px solid hsl(var(--primary-hs), var(--l-30));
-
-                    svg {
-                        position: absolute;
-                        top: -6.5px;
-                        left: 30px;
-
-                        path {
-                            stroke: hsl(var(--primary-hs), var(--l-30));
-                        }
-                    }
-
-                    &:before {
-                        content: "";
-                        display: block;
-                        height: 1px;
-                        width: 9.5px;
-                        background: var(--c-bg-dark);
-                        position: relative;
-                        top: -1px;
-                        left: 31.5px;
-                    }
-                }
-            }
-        }
-
         &.isTimerDelete {
             td {
-                border-bottom: 0;
-                padding-bottom: 0;
+                padding-bottom: 32px;
+            }
+
+            .deletedText {
+                opacity: 0.5;
+                position: absolute;
+                display: inline-block;
+                border-top: 1px solid hsl(var(--primary-hs), var(--l-30));
+                white-space: nowrap;
+                top: 100%;
+                margin-top: 10px;
+                font-size: 90%;
+
+                svg {
+                    position: absolute;
+                    top: -6px;
+                    left: 35px;
+
+                    path {
+                        stroke: hsl(var(--primary-hs), var(--l-30));
+                    }
+                }
+
+                &:before {
+                    content: "";
+                    display: block;
+                    height: 1px;
+                    width: 9.5px;
+                    background: var(--c-bg-dark);
+                    position: relative;
+                    top: -1px;
+                    left: 36.5px;
+                }
             }
         }
 
@@ -69,6 +60,7 @@
                 .actions {
                     pointer-events: auto;
                     opacity: 1;
+                    position: relative;
 
                     .form-check,
                     .icon {
@@ -104,11 +96,12 @@
             z-index: 1020;
             border-top: 0;
             top: 88px;
+            padding: 6px 3px 10px;
 
             &:after {
                 content: "";
                 position: absolute;
-                bottom: -4px;
+                bottom: 0;
                 display: block;
                 left: 0;
                 right: 0;
@@ -132,6 +125,7 @@
         }
 
         td {
+            padding: 6px 3px;
             position: relative;
 
             .icon_href {
@@ -160,7 +154,6 @@
             max-width: 400px;
             vertical-align: middle;
             border-bottom: 1px solid var(--c-border-dark);
-            padding: 6px 3px;
 
             .actions {
                 display: inline-flex;
