@@ -5,25 +5,23 @@ object-assign
 */
 
 /*!
-  Copyright (c) 2018 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
+	Copyright (c) 2018 Jed Watson.
+	Licensed under the MIT License (MIT), see
+	http://jedwatson.github.io/classnames
 */
 
 /*!
- * Chart.js v3.6.0
- * https://www.chartjs.org
- * (c) 2021 Chart.js Contributors
+ * @kurkle/color v0.2.1
+ * https://github.com/kurkle/color#readme
+ * (c) 2022 Jukka Kurkela
  * Released under the MIT License
  */
 
-/*!@license
- * UAParser.js v0.7.28
- * Lightweight JavaScript-based User-Agent string parser
- * https://github.com/faisalman/ua-parser-js
- *
- * Copyright © 2012-2021 Faisal Salman <f@faisalman.com>
- * Licensed under MIT License
+/*!
+ * Chart.js v3.9.1
+ * https://www.chartjs.org
+ * (c) 2022 Chart.js Contributors
+ * Released under the MIT License
  */
 
 /** @license React v0.20.2
