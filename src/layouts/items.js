@@ -306,37 +306,65 @@ class Items extends React.Component {
 
     render() {
         if (this.props.paginate.data.length) {
-            return <ViewportList
-                items={this.props.paginate.data}
-                spacerElement="tr"
-                overscan={10}
-            >
-                {item => {
-                    let isEditDisabled = item.editor_user_id ? true : false,
-                        isMeEdit = this.props.user.id ? this.props.user.id == item.editor_user_id : false;
+            let isColumnsResult = false;
 
-                    if (isMeEdit) {
-                        isEditDisabled = false;
+            if (Object.keys(this.props.items.result).length > 0) {
+                for (let i = 0; i < this.props.page.form.length; i++) {
+                    if (this.props.items.columns[i] !== 0) {
+                        isColumnsResult = true;
                     }
 
-                    let editTabItem = this.props.editingTabItems['admined-edit-' + item.id];
+                    if (this.props.page.form[i].filter !== false) {
+                        isColumnsResult = true;
+                    }
 
-                    if (editTabItem) {
-                        if (editTabItem.url == this.props.page.url) {
-                            isEditDisabled = true;
-                            isMeEdit = true;
+                    if (isColumnsResult) {
+                        break;
+                    }
+                }
+            }
+
+            return <>
+                {isColumnsResult &&
+                    <tr className="columnsResult" key="columnsResult">
+                        <td key="emptyTdColumnsResult"><div className="columnResultLabel">Итог:</div></td>
+                        {
+                            this.props.page.form.map((inputOriginal, i) => (
+                                <td key={'resultTd' + i}><div className={'columnResult' + (inputOriginal.center ? ' text-center' : '')}>{this.props.items.result[inputOriginal.name] ? this.props.items.result[inputOriginal.name] : '—'}</div></td>
+                            ))
                         }
-                    }
+                    </tr>
+                }
+                <ViewportList
+                    items={this.props.paginate.data}
+                    spacerElement="tr"
+                    overscan={10}
+                >
+                    {item => {
+                        let isEditDisabled = item.editor_user_id ? true : false,
+                            isMeEdit = this.props.user.id ? this.props.user.id == item.editor_user_id : false;
 
-                    let isChecked = this.props.itemsSelected.indexOf(item.id) > -1,
-                        isTimerDelete = this.props.items.dateForcedDelete && item.deleted_at ? true : false,
-                        className = (isEditDisabled ? 'editing' : '') +
-                            (isChecked ? ' checked' : '') +
-                            (item.deleted_at ? ' deleted' : '') +
-                            (isTimerDelete ? ' isTimerDelete' : '');
+                        if (isMeEdit) {
+                            isEditDisabled = false;
+                        }
 
-                    return <React.Fragment key={item.id}>
-                        <tr data-item-id={item.id} className={className}>
+                        let editTabItem = this.props.editingTabItems['admined-edit-' + item.id];
+
+                        if (editTabItem) {
+                            if (editTabItem.url == this.props.page.url) {
+                                isEditDisabled = true;
+                                isMeEdit = true;
+                            }
+                        }
+
+                        let isChecked = this.props.itemsSelected.indexOf(item.id) > -1,
+                            isTimerDelete = this.props.items.dateForcedDelete && item.deleted_at ? true : false,
+                            className = (isEditDisabled ? 'editing' : '') +
+                                (isChecked ? ' checked' : '') +
+                                (item.deleted_at ? ' deleted' : '') +
+                                (isTimerDelete ? ' isTimerDelete' : '');
+
+                        return <tr key={item.id} data-item-id={item.id} className={className}>
                             {this.actions(item, isChecked, isEditDisabled, isMeEdit, isTimerDelete)}
                             {
                                 this.props.page.form.map((inputOriginal, i) => {
@@ -374,10 +402,9 @@ class Items extends React.Component {
                                 })
                             }
                         </tr>
-                    </React.Fragment>
-                }
-                }
-            </ViewportList >
+                    }}
+                </ViewportList >
+            </>
         }
 
         return <tr className="empty text-center"><td colSpan="100%">Ничего не найдено</td></tr>

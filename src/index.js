@@ -170,6 +170,7 @@ class Admined extends React.Component {
                 displayMethod: softDeletes ? (hasStorage('displayMethod') ? storage('displayMethod') : 2) : 2,
                 columns: hasStorage(page.url + 'Columns') ? storage(page.url + 'Columns') : {},
                 fastEdit: hasStorage('fastEdit') ? storage('fastEdit') : true,
+                result: {},
             },
             page: {
                 url: false,
@@ -965,11 +966,20 @@ class Admined extends React.Component {
                                     softDeletes = typeof firstItem.deleted_at !== 'undefined';
                                 }
 
+                                let result = prevState.items.result;
+
+                                if (isTop && response.data.items) {
+                                    if (response.data.items.result) {
+                                        result = response.data.items.result;
+                                    }
+                                }
+
                                 newState.items = {
                                     ...prevState.items,
                                     ...{
                                         softDeletes: softDeletes,
-                                        dateForcedDelete: response.data.dateForcedDelete
+                                        dateForcedDelete: response.data.dateForcedDelete,
+                                        result: result,
                                     }
                                 }
 
@@ -1087,11 +1097,24 @@ class Admined extends React.Component {
                         softDeletes = typeof firstItem.deleted_at !== 'undefined';
                     }
 
+                    let result = {};
+
+                    if (next_page_url) {
+                        result = prevState.items.result;
+                    } else {
+                        if (response.data.items) {
+                            if (response.data.items.result) {
+                                result = response.data.items.result;
+                            }
+                        }
+                    }
+
                     newState.items = {
                         ...prevState.items,
                         ...{
                             softDeletes: softDeletes,
                             dateForcedDelete: response.data.dateForcedDelete,
+                            result: result
                         }
                     }
 
