@@ -76,16 +76,24 @@ class Input extends React.Component {
     }
 
     render() {
-        let value = this.getValue();
+        let value = this.getValue(),
+            type = this.props.type == 'hidden' ? 'hidden' : 'text';
+
+        if (this.props.password) {
+            type = 'password';
+        } else if (this.props.email) {
+            type = 'email';
+        }
 
         return <>
             {this.getPreview()}
             <input
                 name={this.props.name}
-                type={this.props.type == 'hidden' ? 'hidden' : 'text'}
+                type={type}
                 className={this.isErrors() ? 'form-control is-invalid' : 'form-control'}
                 onInput={this.onInput}
                 value={value}
+                required={this.props.required}
             />
             {
                 this.props.max

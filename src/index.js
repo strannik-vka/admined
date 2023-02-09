@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 
 import './helpers';
 
+import Login from "./layouts/login";
 import Header from "./layouts/header";
 import Filter from "./layouts/filter";
 import Items from './layouts/items';
@@ -24,6 +25,7 @@ class Admined extends React.Component {
     constructor(props) {
         super(props);
 
+        this.isAuth = location.href.indexOf('?url=login') == -1;
         this.formIsChange = false;
         this.UpdateCancelTokenSource = axios.CancelToken.source();
         this.CancelTokenSource = axios.CancelToken.source();
@@ -1169,81 +1171,83 @@ class Admined extends React.Component {
     }
 
     page(url, name, data) {
-        data = typeof data === 'object' && data != null ? data : {};
+        if (this.isAuth) {
+            data = typeof data === 'object' && data != null ? data : {};
 
-        data.url = url;
-        data.name = name;
+            data.url = url;
+            data.name = name;
 
-        if (isObject(data)) {
-            if (Array.isArray(data.form)) {
-                const setDefaultProps = (fields) => {
-                    for (let index = 0; index < fields.length; index++) {
-                        if (fields[index]) {
-                            fields[index].filter = typeof fields[index].filter !== 'undefined'
-                                ? fields[index].filter : true;
+            if (isObject(data)) {
+                if (Array.isArray(data.form)) {
+                    const setDefaultProps = (fields) => {
+                        for (let index = 0; index < fields.length; index++) {
+                            if (fields[index]) {
+                                fields[index].filter = typeof fields[index].filter !== 'undefined'
+                                    ? fields[index].filter : true;
 
-                            if (fields[index].type === undefined) {
-                                fields[index].type = 'string';
-                            } else {
-                                if (['array', 'constructor'].indexOf(fields[index].type) > -1) {
-                                    fields[index].filter = false;
+                                if (fields[index].type === undefined) {
+                                    fields[index].type = 'string';
+                                } else {
+                                    if (['array', 'constructor'].indexOf(fields[index].type) > -1) {
+                                        fields[index].filter = false;
+                                    }
+
+                                    if (fields[index].type == 'constructor') {
+                                        fields[index].type = '_constructor';
+                                    }
                                 }
 
-                                if (fields[index].type == 'constructor') {
-                                    fields[index].type = '_constructor';
-                                }
-                            }
-
-                            if (Array.isArray(fields[index].fields)) {
-                                fields[index].fields = setDefaultProps(fields[index].fields);
-                            } else {
-                                if (isObject(data.items)) {
-                                    if (data.items.readonly) {
-                                        fields[index].readonly = true;
+                                if (Array.isArray(fields[index].fields)) {
+                                    fields[index].fields = setDefaultProps(fields[index].fields);
+                                } else {
+                                    if (isObject(data.items)) {
+                                        if (data.items.readonly) {
+                                            fields[index].readonly = true;
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        return fields;
                     }
 
-                    return fields;
+                    data.form = setDefaultProps(data.form);
                 }
-
-                data.form = setDefaultProps(data.form);
             }
-        }
 
-        this.pages = [...this.pages, data];
+            this.pages = [...this.pages, data];
 
-        if (typeof data.middleware !== 'undefined') {
-            this.isMiddleware = true;
-        }
+            if (typeof data.middleware !== 'undefined') {
+                this.isMiddleware = true;
+            }
 
-        if (this.changePageTimer) {
-            clearTimeout(this.changePageTimer);
-        }
+            if (this.changePageTimer) {
+                clearTimeout(this.changePageTimer);
+            }
 
-        this.changePageTimer = setTimeout(() => {
-            this.middlewarePages(() => {
-                if (this.state.pages.length) {
-                    let url = URLParam('url'),
-                        pageData = null;
+            this.changePageTimer = setTimeout(() => {
+                this.middlewarePages(() => {
+                    if (this.state.pages.length) {
+                        let url = URLParam('url'),
+                            pageData = null;
 
-                    if (url) {
-                        for (let i = 0; i < this.state.pages.length; i++) {
-                            if (url == this.state.pages[i].url) {
-                                pageData = this.state.pages[i];
-                                break;
+                        if (url) {
+                            for (let i = 0; i < this.state.pages.length; i++) {
+                                if (url == this.state.pages[i].url) {
+                                    pageData = this.state.pages[i];
+                                    break;
+                                }
                             }
+                        } else {
+                            pageData = this.state.pages[0];
                         }
-                    } else {
-                        pageData = this.state.pages[0];
-                    }
 
-                    this.changePage(pageData);
-                }
-            });
-        }, 100);
+                        this.changePage(pageData);
+                    }
+                });
+            }, 100);
+        }
     }
 
     middlewarePages(callback) {
@@ -1396,6 +1400,10 @@ class Admined extends React.Component {
     }
 
     render() {
+        if (this.isAuth == false) {
+            return <Login />
+        }
+
         return <>
             <Header
                 isDomRender={this.state.isDomRender}

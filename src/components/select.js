@@ -236,11 +236,13 @@ class Select extends React.Component {
             }) : [];
 
         options.map(option => {
-            option.label = option.label
-                .replace(/&nbsp;/g, ' ')
-                .replace(/<br>/g, ' ')
-                .replace(/<br\/>/g, ' ')
-                .replace(/<br \/>/g, ' ');
+            if (typeof option.label == 'string') {
+                option.label = option.label
+                    .replace(/&nbsp;/g, ' ')
+                    .replace(/<br>/g, ' ')
+                    .replace(/<br\/>/g, ' ')
+                    .replace(/<br \/>/g, ' ');
+            }
 
             return option;
         });
