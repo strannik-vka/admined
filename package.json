@@ -15,7 +15,7 @@
     "react-viewport-list": "^6.3.0"
   },
   "name": "admined",
-  "version": "1.0.134",
+  "version": "1.0.135",
   "description": "Админка",
   "main": "dist/index.js",
   "scripts": {

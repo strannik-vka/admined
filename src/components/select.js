@@ -229,7 +229,11 @@ class Select extends React.Component {
 
                 let optionDefaultValue = this.getDefaultValue(value, result);
                 if (optionDefaultValue !== false) {
-                    defaultValue = optionDefaultValue;
+                    if (Array.isArray(defaultValue)) {
+                        defaultValue.push(optionDefaultValue);
+                    } else {
+                        defaultValue = optionDefaultValue;
+                    }
                 }
 
                 return result;
@@ -267,6 +271,8 @@ class Select extends React.Component {
                 options: options,
                 labelKey: this.props.text_key
             });
+
+        console.log(formatOptions, value);
 
         return <>
             <ReactSelect
