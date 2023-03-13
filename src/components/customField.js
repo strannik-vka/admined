@@ -50,7 +50,7 @@ class CustomField extends React.Component {
                         key = null;
 
                     for (let key_i = 0; keys.length; key_i++) {
-                        if (field.name.indexOf(keys[key_i]) > -1) {
+                        if (field.name.indexOf('[' + keys[key_i] + ']') > -1) {
                             key = keys[key_i];
                             break;
                         }

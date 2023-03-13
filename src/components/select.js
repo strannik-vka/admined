@@ -272,8 +272,6 @@ class Select extends React.Component {
                 labelKey: this.props.text_key
             });
 
-        console.log(formatOptions, value);
-
         return <>
             <ReactSelect
                 key={this.props.name + '_' + JSON.stringify(value)}
