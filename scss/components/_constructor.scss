@@ -17,10 +17,14 @@
         align-self: flex-start;
         background: var(--white);
 
+        img,
         svg {
             width: 46px;
             height: 46px;
+            object-fit: contain;
+        }
 
+        svg {
             line,
             circle,
             rect,
@@ -59,6 +63,7 @@
         }
 
         .left {
+            img,
             svg {
                 background: var(--constructor-field-hover);
             }
