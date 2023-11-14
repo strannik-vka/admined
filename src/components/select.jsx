@@ -1,7 +1,6 @@
+import axios from "axios";
 import React from "react";
 import ReactSelect, { components } from 'react-select';
-
-const axios = require('axios').default;
 
 class Select extends React.Component {
 

@@ -2,8 +2,7 @@ import { useState } from "react"
 import Input from "../components/input"
 import Modal from "../components/modal"
 import Switch from "../components/switch"
-
-const axios = require('axios').default;
+import axios from "axios"
 
 export default () => {
     const [ajaxProcess, setAjaxProcess] = useState(false);

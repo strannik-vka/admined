@@ -1,8 +1,7 @@
 import React from "react";
 import FormFields from "../components/formFields";
 import Modal from "../components/modal";
-
-const axios = require('axios').default;
+import axios from "axios";
 
 class Form extends React.Component {
 

@@ -1,0 +1,16 @@
+.wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: var(--c-bg-dark);
+    padding: 0.3rem 0.5rem;
+}
+
+.size {
+    font-size: small;
+}
+
+.delete {
+    cursor: pointer;
+}

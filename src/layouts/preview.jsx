@@ -1,6 +1,5 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react"
-
-const axios = require('axios').default;
 
 const getFormData = (userFunction, callback) => {
     let formData = new FormData(document.querySelector('#itemsForm'));

@@ -68,9 +68,15 @@
         border-color: inherit;
         border-inline-end-width: 1px;
         border-radius: 0;
-        -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+        -webkit-transition:
+            color 0.15s ease-in-out,
+            background-color 0.15s ease-in-out,
+            border-color 0.15s ease-in-out,
             box-shadow 0.15s ease-in-out;
-        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+        transition:
+            color 0.15s ease-in-out,
+            background-color 0.15s ease-in-out,
+            border-color 0.15s ease-in-out,
             box-shadow 0.15s ease-in-out;
     }
 
@@ -370,76 +376,86 @@ fieldset {
 
 // filePreviewImage
 .previews {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.5rem;
+    align-items: flex-end;
+
     &.count-1 {
         .filePreviewImage {
-            width: 25%;
+            width: 49%;
+        }
+    }
+
+    &.count-2 {
+        .filePreviewImage {
+            width: 49%;
         }
     }
 
     &.count-3 {
         .filePreviewImage {
-            width: 33.3%;
+            width: 32.3%;
         }
     }
 
     &.count-4 {
         .filePreviewImage {
-            width: 25%;
+            width: 24%;
         }
     }
 
     &.count-5 {
         .filePreviewImage {
-            width: 20%;
-        }
-    }
-
-    &.count-6 {
-        .filePreviewImage {
-            width: 16.6%;
-        }
-    }
-
-    &.count-7 {
-        .filePreviewImage {
-            width: 14.28%;
-        }
-    }
-
-    &.count-8 {
-        .filePreviewImage {
-            width: 12.5%;
-        }
-    }
-
-    &.count-9 {
-        .filePreviewImage {
-            width: 11.1%;
-        }
-    }
-
-    &.count-10 {
-        .filePreviewImage {
-            width: 10%;
+            width: 19%;
         }
     }
 
     .filePreviewImage {
+        width: 19%;
+
         margin-bottom: 0.5rem;
         vertical-align: bottom;
         max-width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+
+        img {
+            max-width: 100%;
+            vertical-align: bottom;
+        }
     }
 
     .filePreviewAudio {
-        display: inline-flex;
+        width: 300px;
         overflow: hidden;
         border-radius: 8px;
+        margin-bottom: 0.5rem;
 
-        audio {
-            height: 31px;
-            width: 324px;
-            margin-left: -12px;
-            margin-right: -12px;
+        .audioParent {
+            display: inline-flex;
+            vertical-align: top;
+
+            audio {
+                height: 31px;
+                width: 324px;
+                margin-left: -12px;
+                margin-right: -12px;
+            }
+        }
+    }
+
+    .filePreviewOther {
+        width: 300px;
+
+        overflow: hidden;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+
+        .otherFile {
+            background: var(--multiple-icon-bg);
+            display: block;
+            padding: 0.35rem 0.5rem;
         }
     }
 }

@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom';
 
 import './helpers';
 
+import './scss/index.scss';
+import './scss/layouts/preview.scss';
+
 import Login from "./layouts/login";
 import Header from "./layouts/header";
 import Filter from "./layouts/filter";
@@ -12,13 +15,9 @@ import Charts from "./layouts/charts";
 import Preview from "./layouts/preview";
 import ClientActivity from "./modules/ClientActivity";
 import VisibleItems from "./modules/VisibleItems";
-
-import '../css/index.css';
-import '../css/preview.css';
 import TableTrSlideUp from "./modules/TableTrSlideUp";
 import EditingTab from "./modules/EditingTab";
-
-const axios = require('axios').default;
+import axios from "axios";
 
 class Admined extends React.Component {
 

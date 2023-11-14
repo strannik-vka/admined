@@ -1,4 +1,21 @@
 {
+  "name": "admined-vite",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.jsx"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "@shopify/draggable": "^1.0.0-beta.8",
     "axios": "^0.22.0",
@@ -14,36 +31,15 @@
     "react-select": "^5.2.2",
     "react-viewport-list": "^6.3.0"
   },
-  "name": "admined",
-  "version": "1.0.138",
-  "description": "Админка",
-  "main": "dist/index.js",
-  "scripts": {
-    "development": "mix",
-    "mix-watch": "mix watch",
-    "mix-production": "mix --production"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/strannik-vka/admined.git"
-  },
-  "keywords": [
-    "admin",
-    "react-admin",
-    "adminer",
-    "laravel-admin"
-  ],
-  "author": "https://vk.com/strannik_vka",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/strannik-vka/admined/issues"
-  },
-  "homepage": "https://github.com/strannik-vka/admined#readme",
   "devDependencies": {
-    "@babel/preset-react": "^7.14.5",
-    "laravel-mix": "^6.0.42",
-    "resolve-url-loader": "^4.0.0",
-    "sass": "^1.42.1",
-    "sass-loader": "^12.1.0"
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "sass": "^1.69.5",
+    "vite": "^4.4.5"
   }
 }

@@ -1,3 +1,5 @@
+window.global ||= window;
+
 window.getCursorPosition = (parent) => {
     let selection = document.getSelection();
     let range = new Range;

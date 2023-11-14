@@ -1,6 +1,6 @@
 import React from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import File from "./file";
+import File from "./File";
 import Input from "./input";
 import TextEditor from "./texteditor";
 import CustomField from "./customField";
@@ -343,7 +343,7 @@ class Constructor extends React.Component {
         } else if (field.type == 'texteditor') {
             result = <TextEditor name={field.name} value={field.value} />
         } else if (field.type == 'image') {
-            result = <File name={field.name} value={field.value} />
+            result = <File name={field.name} value={field.value} deleteRequest={field.deleteRequest} />
         } else if (field.type == 'gallery') {
             result = <Gallery
                 name={field.name}
@@ -353,9 +353,9 @@ class Constructor extends React.Component {
         } else if (field.type == 'video') {
             result = <Input name={field.name} value={field.value} type="video" />
         } else if (field.type == 'audio') {
-            result = <File name={field.name} value={field.value} />
+            result = <File name={field.name} value={field.value} deleteRequest={field.deleteRequest} />
         } else if (field.type == 'file') {
-            result = <File name={field.name} value={field.value} />
+            result = <File name={field.name} value={field.value} deleteRequest={field.deleteRequest} />
         } else if (field.type == 'poll') {
             result = <Poll name={field.name} value={field.value} {...(this.props.options && this.props.options.poll ? this.props.options.poll : null)} />
         } else {
