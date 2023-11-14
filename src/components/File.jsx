@@ -38,20 +38,22 @@ const File = (props) => {
                 setSelectedFiles([]);
             }
         } else {
-            axios.get(location.pathname + '/' + URLParam('url'), {
-                params: {
-                    id: URLParam('edit_item_id'),
-                    name: props.name.replace('[]', ''),
-                    url: url,
-                    action: 'fileDelete'
-                }
-            }).then((response) => {
-                console.log(response);
+            if (confirm('Подтверждаете удаление, отменить будет невозможно?')) {
+                axios.get(location.pathname + '/' + URLParam('url'), {
+                    params: {
+                        id: URLParam('edit_item_id'),
+                        name: props.name.replace('[]', ''),
+                        url: url,
+                        action: 'fileDelete'
+                    }
+                }).then((response) => {
+                    console.log(response);
 
-                const mewUploadedFiles = uploadedFiles.filter(item => item !== url);
+                    const mewUploadedFiles = uploadedFiles.filter(item => item !== url);
 
-                setUploadedFiles(mewUploadedFiles);
-            });
+                    setUploadedFiles(mewUploadedFiles);
+                });
+            }
         }
     }, [props.multiple, inputRef, selectedFiles, uploadedFiles, props.name]);
 
