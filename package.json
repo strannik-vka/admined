@@ -1,6 +1,6 @@
 {
   "name": "admined",
-  "private": true,
+  "private": false,
   "version": "1.0.139",
   "type": "module",
   "main": "./dist/index.umd.js",
