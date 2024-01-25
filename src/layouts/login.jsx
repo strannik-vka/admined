@@ -3,6 +3,7 @@ import Input from "../components/input"
 import Modal from "../components/modal"
 import Switch from "../components/switch"
 import axios from "axios"
+import React from "react";
 
 export default () => {
     const [ajaxProcess, setAjaxProcess] = useState(false);
