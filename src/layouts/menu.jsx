@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-
-let otherItemsUrls = null;
+import React, { useEffect, useState } from "react";
 
 export default (props) => {
+    const [otherItemsUrls, setOtherItemsUrls] = useState(null);
     const [otherMenuOpen, setOtherMenuOpen] = useState(false);
 
     const otherMenuOpenClick = () => {
@@ -51,9 +50,7 @@ export default (props) => {
             minusWidth = 150;
 
         if (siteNameElem) {
-            if (siteNameElem.clientWidth > 31) {
-                minusWidth += siteNameElem.clientWidth;
-            }
+            minusWidth += siteNameElem.clientWidth;
         }
 
         let result = [],
@@ -115,19 +112,29 @@ export default (props) => {
         return result;
     }
 
-    if (props.isDomRender && otherItemsUrls === null) {
-        otherItemsUrls = getOtherItemsUrls();
+    const initOtherItemsUrls = () => {
+        setOtherItemsUrls(getOtherItemsUrls());
     }
 
-    return <div className="menu">
-        {
-            getMenuItems({
-                otherItemsUrls: otherItemsUrls == null ? '' : otherItemsUrls,
-                getOthers: false
-            })
+    useEffect(() => {
+        if (props.isDomRender) {
+            initOtherItemsUrls();
+
+            window.addEventListener("resize", initOtherItemsUrls);
+
+            return () => window.removeEventListener("resize", initOtherItemsUrls);
         }
-        {
-            otherItemsUrls ?
+    }, [props.isDomRender])
+
+    return (
+        <div className="menu">
+            {
+                getMenuItems({
+                    otherItemsUrls: otherItemsUrls == null ? '' : otherItemsUrls,
+                    getOthers: false
+                })
+            }
+            {otherItemsUrls &&
                 <div
                     className={'otherMenu' + (otherMenuOpen ? ' open' : '')}
                     onClick={otherMenuOpenClick}
@@ -144,7 +151,7 @@ export default (props) => {
                         }
                     </div>
                 </div>
-                : ''
-        }
-    </div>
+            }
+        </div>
+    )
 }
