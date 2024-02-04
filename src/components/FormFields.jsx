@@ -22,7 +22,7 @@ const FormFields = (props) => {
         )
     }
 
-    const select = (input) => {
+    const select = (input, errors) => {
         let options = [],
             nameWith = input.name.replace('_id', '');
 
@@ -45,13 +45,13 @@ const FormFields = (props) => {
                 options={options}
                 text_key={input.text_key}
                 url={input.url}
-                errors={getError(input.name)}
+                errors={errors}
                 onChange={() => errorHide(input.name)}
             />
         )
     }
 
-    const file = (input) => {
+    const file = (input, errors) => {
         var name = input.name;
 
         if (input.upload_queue) {
@@ -68,38 +68,38 @@ const FormFields = (props) => {
             <File
                 multiple={input.multiple}
                 name={name}
-                errors={getError(input.name)}
+                errors={errors}
                 onInput={fileErrorHide}
                 value={getValue(input)}
                 deleteRequest={input.deleteRequest} />
         )
     }
 
-    const text = (input) => {
+    const text = (input, errors) => {
         return (
             <Textarea
                 name={input.name}
-                errors={getError(input.name)}
+                errors={errors}
                 onInput={() => errorHide(input.name)}
                 value={getValue(input)}
                 max={input.max} />
         )
     }
 
-    const texteditor = (input) => {
-        return <TextEditor name={input.name} errors={getError(input.name)} onInput={() => errorHide(input.name)} value={getValue(input)} />;
+    const texteditor = (input, errors) => {
+        return <TextEditor name={input.name} errors={errors} onInput={() => errorHide(input.name)} value={getValue(input)} />;
     }
 
     const hidden = (input) => {
         return <Input type={input.type} name={input.name} value={getValue(input)} />;
     }
 
-    const string = (input) => {
-        return <Input type={input.type} name={input.name} errors={getError(input.name)} onInput={() => errorHide(input.name)} value={getValue(input)} max={input.max} />;
+    const string = (input, errors) => {
+        return <Input type={input.type} name={input.name} errors={errors} onInput={() => errorHide(input.name)} value={getValue(input)} max={input.max} />;
     }
 
-    const datetime = (input) => {
-        return <Input type={input.type} format={input.format} name={input.name} errors={getError(input.name)} onInput={() => errorHide(input.name)} value={getValue(input)} />;
+    const datetime = (input, errors) => {
+        return <Input type={input.type} format={input.format} name={input.name} errors={errors} onInput={() => errorHide(input.name)} value={getValue(input)} />;
     }
 
     const _constructor = (input) => {
@@ -130,84 +130,75 @@ const FormFields = (props) => {
         return value;
     }
 
-    const getError = useCallback((name) => {
-        if (props.errors && name) {
-            name = name.replace('[]', '');
-
-            return props.errors[name];
-        }
-
-        return null;
-    }, []);
-
     const errorHide = useCallback((name) => {
         if (props.errorHide && name) {
             props.errorHide(name.replace('[]', ''));
         }
     }, []);
 
-    const Component = (input) => {
+    const Component = (input, errorMessage) => {
         switch (input.type) {
             case 'switch':
-                return switchElem(input)
+                return switchElem(input, errorMessage)
                 break;
 
             case 'select':
-                return select(input)
+                return select(input, errorMessage)
                 break;
 
             case 'file':
-                return file(input)
+                return file(input, errorMessage)
                 break;
 
             case 'text':
-                return text(input)
+                return text(input, errorMessage)
                 break;
 
             case 'texteditor':
-                return texteditor(input)
+                return texteditor(input, errorMessage)
                 break;
 
             case 'hidden':
-                return hidden(input)
+                return hidden(input, errorMessage)
                 break;
 
             case 'datetime':
-                return datetime(input)
+                return datetime(input, errorMessage)
                 break;
 
             case '_constructor':
-                return _constructor(input)
+                return _constructor(input, errorMessage)
                 break;
 
             case 'array':
-                return array(input)
+                return array(input, errorMessage)
                 break;
 
             default:
-                return string(input)
+                return string(input, errorMessage)
                 break;
         }
     }
 
-    return props.inputs.map(input => {
+    return props.inputs.map((input, i) => {
         if (!input.readonly && input.name) {
-            let label = null,
-                description = null;
+            let errorMessage = null;
 
-            if (input.type !== 'switch' && input.placeholder) {
-                label = <label>{input.placeholder}</label>;
-            }
+            if (props.errors && input.name) {
+                let name = input.name.replace('[]', '');
 
-            if (input.description) {
-                description = <div className="description" dangerouslySetInnerHTML={{ __html: input.description }}></div>;
+                errorMessage = props.errors[name];
             }
 
             return (
                 <div key={input.name} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
-                    {label}
-                    {description}
-                    {Component(input)}
+                    {(input.type !== 'switch' && input.placeholder) &&
+                        <label>{input.placeholder}</label>
+                    }
+                    {input.description &&
+                        <div className="description" dangerouslySetInnerHTML={{ __html: input.description }}></div>
+                    }
+                    {Component(input, errorMessage)}
                 </div>
             )
         }

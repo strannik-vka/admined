@@ -1,47 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FormFields from "../components/formFields";
 import Modal from "../components/modal";
 import axios from "axios";
 
-class Form extends React.Component {
+const Form = (props) => {
+    const [ajaxProcess, setAjaxProcess] = useState(false);
+    const [errors, setErrors] = useState({});
+    const [uploadQueueTotal, setUploadQueueTotal] = useState(0);
+    const [uploadQueueSuccess, setUploadQueueSuccess] = useState(0);
 
-    constructor(props) {
-        super(props);
+    const errorHide = (name) => {
+        setErrors(prevErrors => {
+            if (prevErrors && prevErrors[name]) {
+                delete prevErrors[name];
 
-        this.state = {
-            ajaxProcess: false,
-            errors: [],
-            upload_queue_total: 0,
-            upload_queue_success: 0,
-        }
-    }
-
-    errorsAdd = (errors) => {
-        this.setState({
-            errors: errors
-        });
-    }
-
-    errorHide = (name) => {
-        this.setState(prevState => {
-            if (prevState.errors[name]) {
-                delete prevState.errors[name];
-
-                return {
-                    errors: prevState.errors
-                };
+                return prevErrors
+            } else {
+                return prevErrors
             }
-        });
+        })
     }
 
-    getUploadQueueName() {
-        if (this.props.editItem.id) {
+    const getUploadQueueName = () => {
+        if (props.editItem.id) {
             return false;
         }
 
         var result = false;
 
-        this.props.page.form.forEach(input => {
+        props.page.form.forEach(input => {
             if (input.upload_queue) {
                 result = input.name;
             }
@@ -56,41 +43,33 @@ class Form extends React.Component {
         return result;
     }
 
-    onSubmit = (e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
 
-        var stateData = {
-            ajaxProcess: true
-        }
-
-        var uploadQueueName = this.getUploadQueueName(),
+        var uploadQueueName = getUploadQueueName(),
             uploadQueueElem = uploadQueueName ? e.target.querySelector('[name="' + uploadQueueName + '"]') : false;
 
         if (uploadQueueName) {
-            stateData.upload_queue_total = uploadQueueElem.files.length;
+            setUploadQueueTotal(uploadQueueElem.files.length);
             uploadQueueElem.removeAttribute('name');
         }
 
-        if (this.state.ajaxProcess) {
-            return false;
-        } else {
-            this.setState(stateData);
-        }
+        setAjaxProcess(true);
 
         var data = new FormData(e.target);
 
-        if (this.props.editItem.id) {
+        if (props.editItem.id) {
             data.append('_method', 'PUT');
         }
 
         if (uploadQueueName) {
             uploadQueueElem.setAttribute('name', uploadQueueName);
-            data.append(uploadQueueName.replace('[]', ''), uploadQueueElem.files[this.state.upload_queue_success]);
+            data.append(uploadQueueName.replace('[]', ''), uploadQueueElem.files[uploadQueueSuccess]);
         }
 
-        this.getCopyData(data, data => {
-            this.getGalleryData(data, data => {
-                this.ajaxSend({
+        getCopyData(data, data => {
+            getGalleryData(data, data => {
+                ajaxSend({
                     uploadQueueName: uploadQueueName,
                     data: data,
                     event: e
@@ -99,8 +78,8 @@ class Form extends React.Component {
         });
     }
 
-    getCopyData(FormData, callback) {
-        if (this.props.copyItem.id) {
+    const getCopyData = (FormData, callback) => {
+        if (props.copyItem.id) {
             let fileElems = document.querySelectorAll('#itemsForm [type="file"]'),
                 files = [];
 
@@ -128,7 +107,7 @@ class Form extends React.Component {
 
                 if (file) {
                     if (file.name && file.extension) {
-                        this.getBlob(file.url, blobData => {
+                        getBlob(file.url, blobData => {
                             if (blobData) {
                                 FormData.append(
                                     file.fieldName,
@@ -153,7 +132,7 @@ class Form extends React.Component {
         }
     }
 
-    getGalleryData(FormData, callback) {
+    const getGalleryData = (FormData, callback) => {
         let galleries = document.querySelectorAll('#itemsForm .gallery'),
             images = [];
 
@@ -177,7 +156,7 @@ class Form extends React.Component {
 
             if (image) {
                 if (image.name && image.extension) {
-                    this.getBlob(image.url, blobData => {
+                    getBlob(image.url, blobData => {
                         if (blobData) {
                             FormData.append(
                                 image.id + '[' + image.index + ']',
@@ -208,7 +187,7 @@ class Form extends React.Component {
         FormDataFill(0);
     }
 
-    getBlob(url, callback) {
+    const getBlob = (url, callback) => {
         axios({
             url: url,
             method: 'get',
@@ -218,14 +197,14 @@ class Form extends React.Component {
         })
     }
 
-    ajaxSend(obj) {
-        let url = location.pathname + '/' + this.props.page.url,
+    const ajaxSend = (obj) => {
+        let url = location.pathname + '/' + props.page.url,
             stateData = {
                 ajaxProcess: false
             };
 
-        if (this.props.editItem.id) {
-            url += '/' + this.props.editItem.id;
+        if (props.editItem.id) {
+            url += '/' + props.editItem.id;
         }
 
         axios({
@@ -237,40 +216,38 @@ class Form extends React.Component {
             headers: { 'Content-Type': 'multipart/form-data' },
         }).then((response) => {
             if (obj.uploadQueueName) {
-                stateData.upload_queue_success = this.state.upload_queue_success + 1;
+                setUploadQueueSuccess(uploadQueueSuccess + 1);
             }
 
-            this.setState(stateData, () => {
-                if (response.data.errors) {
-                    this.errorsAdd(response.data.errors);
-                } else if (response.data.success) {
-                    this.props.itemEdit(response.data.success);
+            setAjaxProcess(false);
 
-                    if (obj.uploadQueueName) {
-                        if (this.state.upload_queue_success == this.state.upload_queue_total) {
-                            this.setState({
-                                upload_queue_success: 0,
-                                upload_queue_total: 0,
-                            }, () => {
-                                this.props.formVisible(false, true);
-                            });
-                        } else {
-                            setTimeout(() => {
-                                this.onSubmit(obj.event);
-                            }, 0);
-                        }
+            if (response.data.errors) {
+                setErrors(response.data.errors);
+            } else if (response.data.success) {
+                props.itemEdit(response.data.success);
+
+                if (obj.uploadQueueName) {
+                    if (uploadQueueSuccess == uploadQueueTotal) {
+                        setUploadQueueSuccess(0);
+                        setUploadQueueTotal(0);
+
+                        props.formVisible(false, true);
                     } else {
-                        this.props.formVisible(false, true);
+                        setTimeout(() => {
+                            onSubmit(obj.event);
+                        }, 0);
                     }
+                } else {
+                    props.formVisible(false, true);
                 }
-            });
+            }
         }).catch((error) => {
             this.setState(stateData);
 
             if (error.response) {
                 if (error.response.data) {
                     if (error.response.data.errors) {
-                        return this.errorsAdd(error.response.data.errors);
+                        return setErrors(error.response.data.errors);
                     } else if (error.response.data.error) {
                         return alert(error.response.data.error);
                     }
@@ -281,29 +258,37 @@ class Form extends React.Component {
         });
     }
 
-    render() {
-        let title = this.props.editItem.id ? 'Редактирование' : 'Добавление',
-            formData = this.props.editItem.id ? this.props.editItem : this.props.copyItem;
+    let title = props.editItem.id ? 'Редактирование' : 'Добавление',
+        formData = props.editItem.id ? props.editItem : props.copyItem;
 
-        if (this.props.copyItem.id) {
-            title = 'Дублирование';
+    if (props.copyItem.id) {
+        title = 'Дублирование';
 
-            if (formData.published) {
-                formData.published = 0;
-            }
+        if (formData.published) {
+            formData.published = 0;
         }
+    }
 
-        return <Modal
-            show={this.props.show}
-            onHide={() => this.props.formVisible(false)}
+    useEffect(() => {
+        setErrors({});
+    }, [props.show])
+
+    return (
+        <Modal
+            show={props.show}
+            onHide={() => props.formVisible(false)}
         >
             <h3 className="title">{title}</h3>
-            <form id="itemsForm" key={JSON.stringify(formData)} className="form-reverse" onSubmit={this.onSubmit}>
+            <form
+                id="itemsForm"
+                className="form-reverse"
+                onSubmit={ajaxProcess ? (e) => { e.preventDefault() } : onSubmit}
+            >
                 <FormFields
-                    page={this.props.page}
-                    inputs={this.props.page.form}
-                    errors={this.state.errors}
-                    errorHide={(name) => this.errorHide(name)}
+                    page={props.page}
+                    inputs={props.page.form}
+                    errors={errors}
+                    errorHide={(name) => errorHide(name)}
                     editItem={formData}
                 />
                 <div className="d-flex align-items-center footer">
@@ -311,15 +296,15 @@ class Form extends React.Component {
                         type="button"
                         style={{ marginRight: '1rem' }}
                         className="btn btn-save btn-outline"
-                        onClick={() => this.props.formVisible(false)}
+                        onClick={() => props.formVisible(false)}
                     >Отменить</button>
-                    {this.getUploadQueueName() && this.state.ajaxProcess ? <div className="upload_queue_text">Успешно {this.state.upload_queue_success} из {this.state.upload_queue_total}</div> : ''}
-                    {this.props.isPreview ? <button style={{ marginRight: '1rem' }} onClick={() => this.props.previewVisible(true)} type="button" className="btn">Предпросмотр</button> : ''}
-                    <button type="submit" className="btn btn-save" dangerouslySetInnerHTML={{ __html: this.state.ajaxProcess ? '<svg class="SVGpreloader" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="16px" height="16px" viewBox="0 0 128 128" xml:space="preserve"><rect x="0" y="0" width="100%" height="100%" fill="none" /><g><path d="M64 9.75A54.25 54.25 0 0 0 9.75 64H0a64 64 0 0 1 128 0h-9.75A54.25 54.25 0 0 0 64 9.75z" fill="#000000"/><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1800ms" repeatCount="indefinite"></animateTransform></g></svg>' : 'Сохранить' }}></button>
+                    {getUploadQueueName() && ajaxProcess ? <div className="upload_queue_text">Успешно {uploadQueueSuccess} из {uploadQueueTotal}</div> : ''}
+                    {props.isPreview ? <button style={{ marginRight: '1rem' }} onClick={() => props.previewVisible(true)} type="button" className="btn">Предпросмотр</button> : ''}
+                    <button type="submit" className="btn btn-save" dangerouslySetInnerHTML={{ __html: ajaxProcess ? '<svg class="SVGpreloader" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="16px" height="16px" viewBox="0 0 128 128" xml:space="preserve"><rect x="0" y="0" width="100%" height="100%" fill="none" /><g><path d="M64 9.75A54.25 54.25 0 0 0 9.75 64H0a64 64 0 0 1 128 0h-9.75A54.25 54.25 0 0 0 64 9.75z" fill="#000000"/><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1800ms" repeatCount="indefinite"></animateTransform></g></svg>' : 'Сохранить' }}></button>
                 </div>
             </form>
         </Modal>
-    }
+    )
 
 }
 
