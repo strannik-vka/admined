@@ -194,12 +194,10 @@ const FormFields = (props) => {
 
             return (
                 <div key={input.name} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
-                    {(input.type !== 'switch' && input.placeholder) &&
+                    {input.type !== 'switch' &&
                         <Label text={input.placeholder} />
                     }
-                    {input.description &&
-                        <Description text={input.description} />
-                    }
+                    <Description text={input.description} />
                     {Component(input, errorMessage)}
                 </div>
             )
