@@ -1,5 +1,7 @@
 import React from "react";
 import InvalidText from "../forms/InvalidText";
+import { TextCount } from "../../shared/lib/TextCount";
+import { dateFormat } from "../../shared/lib/DateFormat";
 
 class Input extends React.Component {
 
@@ -98,7 +100,7 @@ class Input extends React.Component {
             />
             {
                 this.props.max
-                    ? <div className="textCount">{textCount(this.state.value)}/{this.props.max}</div>
+                    ? <div className="textCount">{TextCount(this.state.value)}/{this.props.max}</div>
                     : ''
             }
             <InvalidText errors={this.props.errors} />

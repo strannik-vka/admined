@@ -1,7 +1,6 @@
 import React from "react";
 
-import './helpers';
-
+import '../shared/lib/WindowFix';
 import './scss/index.scss';
 import './scss/layouts/preview.scss';
 
@@ -17,6 +16,9 @@ import VisibleItems from "./modules/VisibleItems";
 import TableTrSlideUp from "./modules/TableTrSlideUp";
 import EditingTab from "./modules/EditingTab";
 import axios from "axios";
+import { hasStorage, storage } from "../shared/lib/Storage";
+import { isObject } from "../shared/lib/isObject";
+import { URLParam } from "../shared/lib/URLParam";
 
 class Admined extends React.Component {
 

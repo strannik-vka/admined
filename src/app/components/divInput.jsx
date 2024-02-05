@@ -1,4 +1,7 @@
 import React from "react";
+import { getCursorPosition, setCursorPosition } from "../../shared/lib/InputCursor";
+import { isObject } from "../../shared/lib/isObject";
+import { template } from "../../shared/lib/Template";
 
 class DivInput extends React.Component {
 

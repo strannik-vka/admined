@@ -1,5 +1,6 @@
 import React from "react";
 import FormFields from "./formFields";
+import { isObject } from "../../shared/lib/isObject";
 
 class CustomField extends React.Component {
 

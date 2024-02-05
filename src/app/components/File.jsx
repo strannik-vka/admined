@@ -2,6 +2,8 @@ import React, { useCallback, useRef, useState } from "react";
 import FileInfo from "./FileInfo";
 import axios from "axios";
 import InvalidText from "../forms/InvalidText";
+import { URLParam } from "../../shared/lib/URLParam";
+import { isAudio, isImage } from "../../shared/lib/URLType";
 
 const File = (props) => {
     const value = Array.isArray(props.value) ? props.value : (props.value ? [props.value] : []);

@@ -1,5 +1,6 @@
 import React from "react";
 import InvalidText from "../forms/InvalidText";
+import { TextCount } from "../../shared/lib/TextCount";
 
 class Textarea extends React.Component {
 
@@ -58,7 +59,7 @@ class Textarea extends React.Component {
             ></textarea>
             {
                 this.props.max
-                    ? <div className="textCount">{textCount(this.state.value)}/{this.props.max}</div>
+                    ? <div className="textCount">{TextCount(this.state.value)}/{this.props.max}</div>
                     : ''
             }
             <InvalidText errors={this.props.errors} />

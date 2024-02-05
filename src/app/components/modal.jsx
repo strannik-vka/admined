@@ -1,4 +1,6 @@
 import React from "react";
+import { addClass, removeClass } from "../../shared/lib/DomElement";
+import { getScrollBarWidth } from "../../shared/lib/ScrollBar";
 
 export default (props) => {
     let styles = null,

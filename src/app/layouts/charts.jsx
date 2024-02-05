@@ -1,5 +1,6 @@
 import React from "react";
 import { Line } from 'react-chartjs-2';
+import { isObject } from "../../shared/lib/isObject";
 
 class Charts extends React.Component {
 
