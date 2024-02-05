@@ -1,4 +1,5 @@
 import React from "react";
+import InvalidText from "../forms/InvalidText";
 
 class Textarea extends React.Component {
 
@@ -60,11 +61,7 @@ class Textarea extends React.Component {
                     ? <div className="textCount">{textCount(this.state.value)}/{this.props.max}</div>
                     : ''
             }
-            {
-                this.props.errors
-                    ? <div className="invalid-feedback">{this.props.errors[0]}</div>
-                    : ''
-            }
+            <InvalidText errors={this.props.errors} />
         </>;
     }
 

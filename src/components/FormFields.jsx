@@ -7,6 +7,8 @@ import TextEditor from "./texteditor";
 import Textarea from "./textarea";
 import Fieldsets from "./fieldsets";
 import Constructor from "./constructor";
+import Label from "../forms/Label";
+import Description from "../forms/Description";
 
 const FormFields = (props) => {
     const switchElem = (input) => {
@@ -180,7 +182,7 @@ const FormFields = (props) => {
         }
     }
 
-    return props.inputs.map((input, i) => {
+    return props.inputs.map(input => {
         if (!input.readonly && input.name) {
             let errorMessage = null;
 
@@ -193,10 +195,10 @@ const FormFields = (props) => {
             return (
                 <div key={input.name} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
                     {(input.type !== 'switch' && input.placeholder) &&
-                        <label>{input.placeholder}</label>
+                        <Label text={input.placeholder} />
                     }
                     {input.description &&
-                        <div className="description" dangerouslySetInnerHTML={{ __html: input.description }}></div>
+                        <Description text={input.description} />
                     }
                     {Component(input, errorMessage)}
                 </div>

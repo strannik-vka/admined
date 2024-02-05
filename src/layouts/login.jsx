@@ -4,6 +4,7 @@ import Modal from "../components/modal"
 import Switch from "../components/switch"
 import axios from "axios"
 import React from "react";
+import Label from "../forms/Label"
 
 export default () => {
     const [ajaxProcess, setAjaxProcess] = useState(false);
@@ -68,7 +69,7 @@ export default () => {
         >
             <h3 className="mt-0 mb-3">Авторизация</h3>
             <div className="form-group mb-3">
-                <label>Email</label>
+                <Label text="Email" />
                 <Input
                     name="email"
                     email={true}
@@ -78,7 +79,7 @@ export default () => {
                 />
             </div>
             <div className="form-group mb-3">
-                <label>Пароль</label>
+                <Label text="Пароль" />
                 <Input
                     name="password"
                     password={true}

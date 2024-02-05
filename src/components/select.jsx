@@ -1,6 +1,7 @@
 import axios from "axios";
 import React from "react";
 import ReactSelect, { components } from 'react-select';
+import InvalidText from "../forms/InvalidText";
 
 class Select extends React.Component {
 
@@ -307,9 +308,7 @@ class Select extends React.Component {
                     )
                 }}
             />
-            {
-                this.isErrors() ? <div className="invalid-feedback">{this.props.errors[0]}</div> : ''
-            }
+            <InvalidText errors={this.props.errors} />
         </>
     }
 

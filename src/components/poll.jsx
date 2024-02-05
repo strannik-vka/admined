@@ -2,6 +2,7 @@ import React from "react";
 import Input from "./input";
 import Fieldsets from "./fieldsets";
 import Switch from "./switch";
+import Label from "../forms/Label";
 
 class Poll extends React.Component {
 
@@ -102,7 +103,7 @@ class Poll extends React.Component {
 
         return <>
             <div className="form-group mb-2">
-                <label>Вопрос</label>
+                <Label text="Вопрос" />
                 <Input
                     name={this.props.name + '[question]'}
                     value={this.question}

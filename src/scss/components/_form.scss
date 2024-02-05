@@ -137,20 +137,6 @@ select.form-control {
 .form-group {
     position: relative;
 
-    label {
-        display: block;
-        margin-bottom: 0.3rem;
-        font-weight: 700;
-        color: var(--label);
-    }
-
-    .description {
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
-        margin-top: -5px;
-        color: var(--c-placeholder-dark);
-    }
-
     .download_file {
         display: inline-block;
         margin: 0 0.5rem 0.5rem 0;

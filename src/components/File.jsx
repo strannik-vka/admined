@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import FileInfo from "./FileInfo";
 import axios from "axios";
+import InvalidText from "../forms/InvalidText";
 
 const File = (props) => {
     const value = Array.isArray(props.value) ? props.value : (props.value ? [props.value] : []);
@@ -142,9 +143,7 @@ const File = (props) => {
             multiple={props.multiple}
         />
 
-        {props.errors &&
-            <div className="invalid-feedback">{props.errors[0]}</div>
-        }
+        <InvalidText errors={props.errors} />
     </>
 }
 

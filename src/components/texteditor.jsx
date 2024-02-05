@@ -2,6 +2,7 @@ import React from "react";
 import { stateToHTML } from 'draft-js-export-html';
 import { stateFromHTML } from 'draft-js-import-html';
 import { Editor, EditorState, RichUtils, CompositeDecorator } from 'draft-js';
+import InvalidText from "../forms/InvalidText";
 
 class TextEditor extends React.Component {
 
@@ -129,11 +130,7 @@ class TextEditor extends React.Component {
                     onChange={() => { }}
                     style={{ display: 'none' }}
                 ></textarea>
-                {
-                    this.props.errors
-                        ? <div className="invalid-feedback">{this.props.errors[0]}</div>
-                        : ''
-                }
+                <InvalidText errors={this.props.errors} />
             </>
         );
     }
