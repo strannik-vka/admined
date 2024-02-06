@@ -4,6 +4,12 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const FileSize = React.memo((props) => {
     const getFileSize = useCallback((url) => {
+        if (url.indexOf('://') > -1) {
+            if (url.indexOf(location.host) === -1) {
+                return false;
+            }
+        }
+
         const req = new XMLHttpRequest();
 
         req.open("GET", url, false);

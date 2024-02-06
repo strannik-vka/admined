@@ -40,6 +40,10 @@ const File = (props) => {
 
                 setSelectedFiles([]);
             }
+        } else if (url.indexOf('://') > -1) {
+            const mewUploadedFiles = uploadedFiles.filter(item => item !== url);
+
+            setUploadedFiles(mewUploadedFiles);
         } else {
             if (confirm('Подтверждаете удаление, отменить будет невозможно?')) {
                 axios.get(location.pathname + '/' + URLParam('url'), {
@@ -49,9 +53,7 @@ const File = (props) => {
                         url: url,
                         action: 'fileDelete'
                     }
-                }).then((response) => {
-                    console.log(response);
-
+                }).then(() => {
                     const mewUploadedFiles = uploadedFiles.filter(item => item !== url);
 
                     setUploadedFiles(mewUploadedFiles);
@@ -61,7 +63,7 @@ const File = (props) => {
     }, [props.multiple, inputRef, selectedFiles, uploadedFiles, props.name]);
 
     const onClickDeleteCallback = useCallback((url, key) => {
-        if (props.deleteRequest || url.indexOf('blob:') > -1) {
+        if (props.deleteRequest || url.indexOf('blob:') > -1 || url.indexOf('://') > -1) {
             return () => onClickDelete(url, key)
         }
 
@@ -144,6 +146,19 @@ const File = (props) => {
             name={props.name}
             multiple={props.multiple}
         />
+
+        {uploadedFiles.map(item => {
+            if (item.indexOf('://') > -1 || item.indexOf(location.host) === -1) {
+                return (
+                    <input
+                        key={item}
+                        type="hidden"
+                        name={props.name + '_url'}
+                        value={item}
+                    />
+                )
+            }
+        })}
 
         <InvalidText errors={props.errors} />
     </>

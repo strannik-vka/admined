@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import Input from "./input";
 import Select from "./select";
 import SwitchComp from "./switch";
@@ -11,8 +11,11 @@ import Label from "../forms/Label";
 import Description from "../forms/Description";
 import { getDataValue } from "../../shared/lib/GetDataValue";
 import { nowDateTime } from "../../shared/lib/NowDateTime";
+import { UrlMetaDataApi } from "../../entities/UrlMetaData";
 
 const FormFields = (props) => {
+    const [metaData, setMetaData] = useState({});
+
     const switchElem = (input) => {
         let value = getValue(input);
 
@@ -64,7 +67,7 @@ const FormFields = (props) => {
             }
         }
 
-        const fileErrorHide = useCallback(() => {
+        const onInput = useCallback(() => {
             errorHide(input.name)
         }, []);
 
@@ -73,7 +76,7 @@ const FormFields = (props) => {
                 multiple={input.multiple}
                 name={name}
                 errors={errors}
-                onInput={fileErrorHide}
+                onInput={onInput}
                 value={getValue(input)}
                 deleteRequest={input.deleteRequest} />
         )
@@ -99,7 +102,34 @@ const FormFields = (props) => {
     }
 
     const string = (input, errors) => {
-        return <Input type={input.type} name={input.name} errors={errors} onInput={() => errorHide(input.name)} value={getValue(input)} max={input.max} />;
+        let timeout = false;
+
+        const onInput = useCallback((event) => {
+            errorHide(input.name)
+
+            if (input.isMetaDataUrl) {
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+
+                timeout = setTimeout(() => {
+                    UrlMetaDataApi.fetchMetaData(event.target.value, data => {
+                        setMetaData(data)
+                    })
+                }, 1000)
+            }
+        }, [])
+
+        return (
+            <Input
+                type={input.type}
+                name={input.name}
+                errors={errors}
+                onInput={onInput}
+                value={getValue(input)}
+                max={input.max}
+            />
+        )
     }
 
     const datetime = (input, errors) => {
@@ -128,6 +158,12 @@ const FormFields = (props) => {
                 value = input.value();
             } else if (value == 'now') {
                 value = nowDateTime();
+            }
+        }
+
+        if (input.metaDataKey) {
+            if (metaData[input.metaDataKey]) {
+                value = metaData[input.metaDataKey];
             }
         }
 
@@ -184,7 +220,7 @@ const FormFields = (props) => {
         }
     }
 
-    return props.inputs.map(input => {
+    return props.inputs.map((input, i) => {
         if (!input.readonly && input.name) {
             let errorMessage = null;
 
@@ -194,13 +230,21 @@ const FormFields = (props) => {
                 errorMessage = props.errors[name];
             }
 
+            let metaDataValue = null;
+
+            if (input.metaDataKey) {
+                if (metaData[input.metaDataKey]) {
+                    metaDataValue = metaData[input.metaDataKey];
+                }
+            }
+
             return (
-                <div key={input.name} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
+                <div key={input.name + '_' + metaDataValue} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
                     {input.type !== 'switch' &&
                         <Label text={input.placeholder} />
                     }
                     <Description text={input.description} />
-                    {Component(input, errorMessage)}
+                    {Component(input, errorMessage, metaDataValue)}
                 </div>
             )
         }
