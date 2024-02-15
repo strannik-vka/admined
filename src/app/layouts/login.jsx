@@ -1,6 +1,6 @@
 import { useState } from "react"
 import Input from "../components/input"
-import Modal from "../components/modal"
+import Modal from "../../shared/ui/Modal"
 import Switch from "../components/switch"
 import axios from "axios"
 import React from "react";

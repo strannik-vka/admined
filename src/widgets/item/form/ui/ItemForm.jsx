@@ -1,31 +1,32 @@
 import React, { useEffect, useState } from "react";
-import FormFields from "../components/formFields";
-import Modal from "../components/modal";
 import axios from "axios";
+import FormFields from "../../../../app/components/formFields";
+import Modal from "../../../../shared/ui/Modal";
+import { ItemApi } from "../../../../entities/item";
+import { ItemFormHeader } from "./ItemFormHeader";
+import { ItemFormFooter } from "./ItemFormFooter";
 
-const Form = (props) => {
+export const ItemForm = (props) => {
     const [ajaxProcess, setAjaxProcess] = useState(false);
-    const [errors, setErrors] = useState({});
+    const [errors, setErrors] = useState(null);
     const [uploadQueueTotal, setUploadQueueTotal] = useState(0);
     const [uploadQueueSuccess, setUploadQueueSuccess] = useState(0);
 
     const errorHide = (name) => {
         setErrors(prevErrors => {
-            if (prevErrors && prevErrors[name]) {
-                delete prevErrors[name];
+            const errors = prevErrors !== null ? JSON.parse(prevErrors) : null;
 
-                return prevErrors
-            } else {
-                return prevErrors
+            if (prevErrors && errors[name]) {
+                delete errors[name];
+
+                return JSON.stringify(errors)
             }
+
+            return prevErrors
         })
     }
 
     const getUploadQueueName = () => {
-        if (props.editItem.id) {
-            return false;
-        }
-
         var result = false;
 
         props.page.form.forEach(input => {
@@ -44,38 +45,19 @@ const Form = (props) => {
     }
 
     const onSubmit = (e) => {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
 
-        var uploadQueueName = getUploadQueueName(),
-            uploadQueueElem = uploadQueueName ? e.target.querySelector('[name="' + uploadQueueName + '"]') : false;
+        var uploadQueueName = getUploadQueueName();
 
         if (uploadQueueName) {
+            const form = document.getElementById('itemsForm');
+            const uploadQueueElem = form.querySelector('[name="' + uploadQueueName + '"]');
             setUploadQueueTotal(uploadQueueElem.files.length);
-            uploadQueueElem.removeAttribute('name');
         }
 
         setAjaxProcess(true);
-
-        var data = new FormData(e.target);
-
-        if (props.editItem.id) {
-            data.append('_method', 'PUT');
-        }
-
-        if (uploadQueueName) {
-            uploadQueueElem.setAttribute('name', uploadQueueName);
-            data.append(uploadQueueName.replace('[]', ''), uploadQueueElem.files[uploadQueueSuccess]);
-        }
-
-        getCopyData(data, data => {
-            getGalleryData(data, data => {
-                ajaxSend({
-                    uploadQueueName: uploadQueueName,
-                    data: data,
-                    event: e
-                });
-            });
-        });
     }
 
     const getCopyData = (FormData, callback) => {
@@ -197,115 +179,160 @@ const Form = (props) => {
         })
     }
 
-    const ajaxSend = (obj) => {
-        let url = location.pathname + '/' + props.page.url,
-            stateData = {
-                ajaxProcess: false
-            };
+    const sendCallback = (response, obj) => {
+        const form = document.getElementById('itemsForm');
+        const uploadQueueName = getUploadQueueName();
 
-        if (props.editItem.id) {
-            url += '/' + props.editItem.id;
+        if (uploadQueueName) {
+            const uploadQueueElem = form.querySelector('[data-name="' + uploadQueueName + '"]');
+
+            uploadQueueElem.setAttribute('name', uploadQueueName);
+            uploadQueueElem.removeAttribute('data-name');
         }
 
-        axios({
-            method: 'post',
-            url: url,
-            data: obj.data,
-            processData: false,
-            contentType: false,
-            headers: { 'Content-Type': 'multipart/form-data' },
-        }).then((response) => {
+        if (response.success) {
+            let newUploadQueueSuccess = 0;
+
             if (obj.uploadQueueName) {
-                setUploadQueueSuccess(uploadQueueSuccess + 1);
+                newUploadQueueSuccess = uploadQueueSuccess + 1;
+                setUploadQueueSuccess(newUploadQueueSuccess);
             }
 
-            setAjaxProcess(false);
+            props.itemEdit(response.success);
 
-            if (response.data.errors) {
-                setErrors(response.data.errors);
-            } else if (response.data.success) {
-                props.itemEdit(response.data.success);
+            if (obj.uploadQueueName) {
+                if (newUploadQueueSuccess >= uploadQueueTotal) {
+                    setUploadQueueSuccess(0);
+                    setUploadQueueTotal(0);
 
-                if (obj.uploadQueueName) {
-                    if (uploadQueueSuccess == uploadQueueTotal) {
-                        setUploadQueueSuccess(0);
-                        setUploadQueueTotal(0);
-
-                        props.formVisible(false, true);
-                    } else {
-                        setTimeout(() => {
-                            onSubmit(obj.event);
-                        }, 0);
-                    }
-                } else {
                     props.formVisible(false, true);
+                } else {
+                    setTimeout(() => {
+                        onSubmit();
+                    }, 0);
                 }
+            } else {
+                props.formVisible(false, true);
             }
-        }).catch((error) => {
-            this.setState(stateData);
+        } else if (response.errors) {
+            setErrors(JSON.stringify(response.errors));
+        } else if (response.error) {
+            alert(response.error);
+        }
 
-            if (error.response) {
-                if (error.response.data) {
-                    if (error.response.data.errors) {
-                        return setErrors(error.response.data.errors);
-                    } else if (error.response.data.error) {
-                        return alert(error.response.data.error);
-                    }
+        setAjaxProcess(false);
+    }
+
+    const formSend = () => {
+        const form = document.getElementById('itemsForm');
+
+        const uploadQueueName = getUploadQueueName();
+
+        let uploadQueueElem = null;
+
+        if (uploadQueueName) {
+            uploadQueueElem = form.querySelector('[name="' + uploadQueueName + '"]');
+
+            uploadQueueElem.removeAttribute('name');
+            uploadQueueElem.setAttribute('data-name', uploadQueueName);
+        }
+
+        let data = new FormData(form);
+
+        if (uploadQueueName) {
+            if (uploadQueueElem.files[uploadQueueSuccess]) {
+                data.append(
+                    uploadQueueName.replace('[]', ''),
+                    uploadQueueElem.files[uploadQueueSuccess]
+                );
+            }
+        }
+
+        getCopyData(data, data => {
+            getGalleryData(data, data => {
+                const obj = {
+                    uploadQueueName: uploadQueueName,
+                    data: data,
                 }
-            }
 
-            alert('Ошибка сервера');
+                if (props.editItem.id) {
+                    ItemApi.update(
+                        props.page.url,
+                        props.editItem.id,
+                        obj.data,
+                        (response) => sendCallback(response, obj)
+                    )
+                } else {
+                    ItemApi.store(
+                        props.page.url,
+                        obj.data,
+                        (response) => sendCallback(response, obj)
+                    )
+                }
+            });
         });
     }
 
-    let title = props.editItem.id ? 'Редактирование' : 'Добавление',
-        formData = props.editItem.id ? props.editItem : props.copyItem;
+    const preventDefault = (e) => {
+        e.preventDefault()
+    }
+
+    let formData = props.editItem.id ? props.editItem : props.copyItem;
 
     if (props.copyItem.id) {
-        title = 'Дублирование';
-
         if (formData.published) {
             formData.published = 0;
         }
     }
 
     useEffect(() => {
-        setErrors({});
+        setErrors(null);
     }, [props.show])
+
+    useEffect(() => {
+        if (ajaxProcess) {
+            formSend()
+        }
+    }, [ajaxProcess])
 
     return (
         <Modal
             show={props.show}
             onHide={() => props.formVisible(false)}
         >
-            <h3 className="title">{title}</h3>
+            <ItemFormHeader
+                isEdit={props.editItem.id}
+                isCopy={props.copyItem.id}
+            />
+
             <form
                 id="itemsForm"
                 className="form-reverse"
-                onSubmit={ajaxProcess ? (e) => { e.preventDefault() } : onSubmit}
+                onSubmit={ajaxProcess ? preventDefault : onSubmit}
             >
                 <FormFields
                     page={props.page}
                     inputs={props.page.form}
-                    errors={errors}
+                    errors={errors !== null ? JSON.parse(errors) : null}
                     errorHide={(name) => errorHide(name)}
                     editItem={formData}
                 />
-                <div className="d-flex align-items-center footer">
-                    <button
-                        type="button"
-                        style={{ marginRight: '1rem' }}
-                        className="btn btn-save btn-outline"
-                        onClick={() => props.formVisible(false)}
-                    >Отменить</button>
-                    {getUploadQueueName() && ajaxProcess ? <div className="upload_queue_text">Успешно {uploadQueueSuccess} из {uploadQueueTotal}</div> : ''}
-                    {props.isPreview ? <button style={{ marginRight: '1rem' }} onClick={() => props.previewVisible(true)} type="button" className="btn">Предпросмотр</button> : ''}
-                    <button type="submit" className="btn btn-save" dangerouslySetInnerHTML={{ __html: ajaxProcess ? '<svg class="SVGpreloader" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="16px" height="16px" viewBox="0 0 128 128" xml:space="preserve"><rect x="0" y="0" width="100%" height="100%" fill="none" /><g><path d="M64 9.75A54.25 54.25 0 0 0 9.75 64H0a64 64 0 0 1 128 0h-9.75A54.25 54.25 0 0 0 64 9.75z" fill="#000000"/><animateTransform attributeName="transform" type="rotate" from="0 64 64" to="360 64 64" dur="1800ms" repeatCount="indefinite"></animateTransform></g></svg>' : 'Сохранить' }}></button>
-                </div>
+
+                <ItemFormFooter
+                    onCancel={() => props.formVisible(false)}
+                    isUploadQueue={getUploadQueueName()}
+                    uploadQueueSuccess={uploadQueueSuccess}
+                    uploadQueueTotal={uploadQueueTotal}
+                    isPreview={props.isPreview}
+                    onPreviewShow={() => props.previewVisible(true)}
+                    isSending={ajaxProcess}
+                />
+
+                {props.editItem.id &&
+                    <input type="hidden" name="_method" value="PUT" />
+                }
             </form>
         </Modal>
     )
 
 }
-
-export default Form;

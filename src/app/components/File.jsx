@@ -14,9 +14,13 @@ const File = (props) => {
 
     const onChange = useCallback((event) => {
         setSelectedFiles(event.target.files);
+
+        if (props.onInput) {
+            props.onInput();
+        }
     }, []);
 
-    const onClickDelete = useCallback((url, key) => {
+    const onClickDelete = (url, key) => {
         if (url.indexOf('blob:') > -1) {
             const dt = new DataTransfer()
 
@@ -31,6 +35,8 @@ const File = (props) => {
                         newList.push(file);
                     }
                 }
+
+                console.log(url, key);
 
                 inputRef.current.files = dt.files
 
@@ -60,15 +66,15 @@ const File = (props) => {
                 });
             }
         }
-    }, [props.multiple, inputRef, selectedFiles, uploadedFiles, props.name]);
+    }
 
-    const onClickDeleteCallback = useCallback((url, key) => {
+    const onClickDeleteCallback = (url, key) => {
         if (props.deleteRequest || url.indexOf('blob:') > -1 || url.indexOf('://') > -1) {
             return () => onClickDelete(url, key)
         }
 
         return null;
-    }, [props.deleteRequest])
+    }
 
     const getOtherPreview = (url, key, filesCount) => {
         return (
@@ -148,7 +154,7 @@ const File = (props) => {
         />
 
         {uploadedFiles.map(item => {
-            if (item.indexOf('://') > -1 || item.indexOf(location.host) === -1) {
+            if (item.indexOf('://') > -1 || (item.indexOf('://') > -1 && item.indexOf(location.host) === -1)) {
                 return (
                     <input
                         key={item}

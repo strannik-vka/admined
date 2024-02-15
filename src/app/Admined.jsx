@@ -8,7 +8,7 @@ import Login from "./layouts/login";
 import Header from "./layouts/header";
 import Filter from "./layouts/filter";
 import Items from './layouts/items';
-import Form from "./layouts/form";
+import { ItemForm } from "../widgets/item/form/index";
 import Charts from "./layouts/charts";
 import Preview from "./layouts/preview";
 import ClientActivity from "./modules/ClientActivity";
@@ -1462,7 +1462,7 @@ class Admined extends React.Component {
                     </tbody>
                 </table>
             </div>
-            <Form
+            <ItemForm
                 page={this.state.page}
                 show={this.state.formIsShow}
                 editItem={this.state.editItem}
