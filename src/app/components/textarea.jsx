@@ -1,5 +1,5 @@
 import React from "react";
-import InvalidText from "../forms/InvalidText";
+import InvalidText from "../../shared/ui/form/InvalidText";
 import { TextCount } from "../../shared/lib/TextCount";
 
 class Textarea extends React.Component {

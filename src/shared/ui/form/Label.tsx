@@ -1,5 +1,5 @@
 import React from "react"
-import styles from '../scss/forms/Label.module.scss'
+import styles from '../../../app/scss/shared/ui/forms/Label.module.scss'
 
 const Label = (props) => {
     if (props.text) {

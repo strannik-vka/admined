@@ -1,5 +1,5 @@
 import React from "react"
-import styles from '../scss/forms/Description.module.scss'
+import styles from '../../../app/scss/forms/Description.module.scss'
 
 const Description = (props) => {
     if (props.text) {

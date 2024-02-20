@@ -1,0 +1,76 @@
+.popover {
+    background: var(--ad-bg-white);
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.25rem;
+    box-shadow: var(--ad-border-box-shadow);
+    z-index: 9999;
+
+    .body {
+        max-height: 95vh;
+        overflow-y: auto;
+    }
+
+    .arrow,
+    .arrow::before {
+        z-index: -1;
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        background: inherit;
+    }
+
+    .arrow {
+        visibility: hidden;
+    }
+
+    .arrow::before {
+        content: "";
+        transform: rotate(45deg);
+        visibility: visible;
+    }
+
+    &[data-popper-placement^="top"] > .arrow {
+        bottom: -5px;
+
+        &::before {
+            border-right: 1px solid var(--ad-shadow-color);
+            border-bottom: 1px solid var(--ad-shadow-color);
+        }
+    }
+
+    &[data-popper-placement^="bottom"] > .arrow {
+        top: -5px;
+
+        &::before {
+            border-left: 1px solid var(--ad-shadow-color);
+            border-top: 1px solid var(--ad-shadow-color);
+        }
+    }
+
+    &[data-popper-placement^="left"] > .arrow {
+        right: -5px;
+
+        &::before {
+            border-right: 1px solid var(--ad-shadow-color);
+            border-top: 1px solid var(--ad-shadow-color);
+        }
+    }
+
+    &[data-popper-placement^="right"] > .arrow {
+        left: -5px;
+
+        &::before {
+            border-left: 1px solid var(--ad-shadow-color);
+            border-bottom: 1px solid var(--ad-shadow-color);
+        }
+    }
+
+    &.hide {
+        visibility: hidden;
+        pointer-events: none;
+
+        .arrow::before {
+            visibility: hidden;
+        }
+    }
+}

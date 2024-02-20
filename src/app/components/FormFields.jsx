@@ -6,9 +6,9 @@ import File from "./File";
 import TextEditor from "./texteditor";
 import Textarea from "./textarea";
 import Fieldsets from "./fieldsets";
-import Constructor from "./constructor";
-import Label from "../forms/Label";
-import Description from "../forms/Description";
+import Constructor from "../../shared/ui/Constructor/Constructor";
+import Label from "../../shared/ui/form/Label";
+import Description from "../../shared/ui/form/Description";
 import { getDataValue } from "../../shared/lib/GetDataValue";
 import { nowDateTime } from "../../shared/lib/NowDateTime";
 import { UrlMetaDataApi } from "../../entities/UrlMetaData";
@@ -137,7 +137,14 @@ const FormFields = (props) => {
     }
 
     const _constructor = (input) => {
-        return <Constructor name={input.name} screen={input.screen} options={input.options} fields={input.fields} defaultFields={input.defaultFields} value={getValue(input)} />;
+        return <Constructor
+            name={input.name}
+            screens={input.screen}
+            options={input.options}
+            customFields={input.fields || input.customFields}
+            defaultFields={input.defaultFields}
+            value={getValue(input)}
+        />
     }
 
     const array = (input) => {

@@ -4,7 +4,7 @@ import Modal from "../../shared/ui/Modal"
 import Switch from "../components/switch"
 import axios from "axios"
 import React from "react";
-import Label from "../forms/Label"
+import Label from "../../shared/ui/form/Label"
 
 export default () => {
     const [ajaxProcess, setAjaxProcess] = useState(false);

@@ -2,7 +2,7 @@ import React from "react";
 import Input from "./input";
 import Fieldsets from "./fieldsets";
 import Switch from "./switch";
-import Label from "../forms/Label";
+import Label from "../../shared/ui/form/Label";
 
 class Poll extends React.Component {
 

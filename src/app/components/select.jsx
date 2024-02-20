@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 import ReactSelect, { components } from 'react-select';
-import InvalidText from "../forms/InvalidText";
+import InvalidText from "../../shared/ui/form/InvalidText";
 import { isObject } from "../../shared/lib/isObject";
 
 class Select extends React.Component {

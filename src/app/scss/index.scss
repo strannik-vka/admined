@@ -82,3 +82,32 @@ a {
     border: 0;
     border-bottom: 1px solid var(--c-border-light);
 }
+
+/* svg icons */
+.svg-icon {
+    background: var(--ad-bg-gray);
+    cursor: pointer;
+    height: 24px;
+    width: 24px;
+    border-radius: 0.25rem;
+    transition: background 20ms ease-in 0s;
+
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    vertical-align: middle;
+
+    svg {
+        fill: var(--ad-fill-gray-color);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        display: block;
+        flex-shrink: 0;
+        height: 14px;
+        width: 14px;
+    }
+
+    &:hover {
+        background: var(--ad-bg-gray-hover);
+    }
+}

@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useState } from "react";
 import FileInfo from "./FileInfo";
 import axios from "axios";
-import InvalidText from "../forms/InvalidText";
+import InvalidText from "../../shared/ui/form/InvalidText";
 import { URLParam } from "../../shared/lib/URLParam";
 import { isAudio, isImage } from "../../shared/lib/URLType";
 
@@ -35,8 +35,6 @@ const File = (props) => {
                         newList.push(file);
                     }
                 }
-
-                console.log(url, key);
 
                 inputRef.current.files = dt.files
 

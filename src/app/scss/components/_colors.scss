@@ -57,6 +57,28 @@
     --modal-close: hsl(0, 0%, var(--l-50));
 
     --popover-head: hsl(0, 0%, var(--l-94));
+
+    // ad
+    --ad-black-color: rgb(55, 53, 47);
+    --ad-gray-color: rgba(55, 53, 47, 0.65);
+    --ad-invalid-color: red;
+
+    --ad-font-size: 0.875rem;
+    --ad-font-small-size: 0.75rem;
+
+    --ad-bg-gray: rgba(55, 53, 47, 0.08);
+    --ad-bg-gray-hover: rgba(55, 53, 47, 0.13);
+    --ad-bg-white: white;
+
+    --ad-fill-gray-color: rgba(55, 53, 47, 0.35);
+    --ad-fill-gray-color-hover: rgba(55, 53, 47, 0.7);
+
+    --ad-border-box-shadow: rgba(15, 15, 15, 0.05) 0px 0px 0px 1px, rgba(15, 15, 15, 0.1) 0px 3px 6px,
+        rgba(15, 15, 15, 0.2) 0px 9px 24px;
+    --ad-border-box-shadow-small: rgba(15, 15, 15, 0.1) 0px 0px 0px 1px;
+
+    --ad-border-color: rgba(55, 53, 47, 0.16);
+    --ad-shadow-color: rgba(15, 15, 15, 0.2);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -106,5 +128,23 @@
         --select-label: hsl(0, 0%, 80%);
         --select-drop-svg: hsl(0, 0%, 20%);
         --select-separator: hsl(0, 0%, 20%);
+
+        // ad
+        --ad-black-color: rgba(255, 255, 255, 0.81);
+        --ad-gray-color: rgba(255, 255, 255, 0.443);
+
+        --ad-bg-gray: rgba(255, 255, 255, 0.055);
+        --ad-bg-gray-hover: rgba(255, 255, 255, 0.105);
+        --ad-bg-white: rgb(25, 25, 25);
+
+        --ad-fill-gray-color: rgba(255, 255, 255, 0.282);
+        --ad-fill-gray-color-hover: rgba(255, 255, 255, 0.6);
+
+        --ad-border-box-shadow: rgba(240, 240, 240, 0.1) 0px 0px 0px 1px, rgba(50, 50, 50, 0.2) 0px 3px 6px,
+            rgba(50, 50, 50, 0.4) 0px 9px 24px;
+        --ad-border-box-shadow-small: rgba(240, 240, 240, 0.1) 0px 0px 0px 1px;
+
+        --ad-border-color: rgba(255, 255, 255, 0.13);
+        --ad-shadow-color: rgba(240, 240, 240, 0.2);
     }
 }

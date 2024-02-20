@@ -1,0 +1,25 @@
+.constructor {
+    font-size: var(--ad-font-size);
+    padding: 0.5rem;
+    border: 1px solid var(--ad-border-color);
+    border-radius: 0.25rem;
+
+    margin-right: 0.25rem;
+
+    .field-group-parent {
+        position: relative;
+    }
+
+    .svg-icons {
+        display: flex;
+        column-gap: 0.25rem;
+
+        position: absolute;
+        right: 0;
+        top: 0.5rem;
+    }
+
+    [class^="_popover_"] {
+        padding: 0.25rem;
+    }
+}
