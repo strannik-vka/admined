@@ -85,15 +85,7 @@ const Constructor = (props) => {
     const [selectedFields, setSelectedFields] = useState(valueFields);
 
     const storeFieldId = () => {
-        let id = 0;
-
-        selectedFields.forEach(item => {
-            if (item.id > id) {
-                id = item.id;
-            }
-        })
-
-        return id + 1;
+        return new String(Math.random()).replace('.', '');
     }
 
     const fieldFocus = () => {
