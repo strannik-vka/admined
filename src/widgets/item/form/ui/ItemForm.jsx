@@ -5,6 +5,7 @@ import Modal from "../../../../shared/ui/Modal";
 import { ItemApi } from "../../../../entities/item";
 import { ItemFormHeader } from "./ItemFormHeader";
 import { ItemFormFooter } from "./ItemFormFooter";
+import ScrollTo from "../../../../shared/lib/ScrollTo";
 
 export const ItemForm = (props) => {
     const [ajaxProcess, setAjaxProcess] = useState(false);
@@ -216,6 +217,8 @@ export const ItemForm = (props) => {
             }
         } else if (response.errors) {
             setErrors(JSON.stringify(response.errors));
+
+            ScrollTo('#itemsForm .is-invalid');
         } else if (response.error) {
             alert(response.error);
         }
