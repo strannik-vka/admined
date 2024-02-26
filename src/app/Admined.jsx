@@ -653,7 +653,9 @@ class Admined extends React.Component {
 
                 this.editingTab.hideEditing();
             } else {
-                this.setState(data);
+                this.setState(data, () => {
+                    this.historyPushState();
+                });
             }
         }
     }
@@ -700,6 +702,8 @@ class Admined extends React.Component {
 
         if (this.state.editItem.id) {
             urlParams.push('edit_item_id=' + this.state.editItem.id);
+        } else if (this.state.formIsShow) {
+            urlParams.push('ad_form_show=true');
         }
 
         let url = location.pathname + '?url=' + this.state.page.url;
@@ -719,6 +723,7 @@ class Admined extends React.Component {
         stateDefault.page = { ...stateDefault.page, ...page };
 
         let editItemId = null
+        let formIsShow = false;
 
         if (!reset) {
             let urlParams = window.location.search.substring(1);
@@ -737,8 +742,12 @@ class Admined extends React.Component {
                         if (['sortAsc', 'sortDesc'].indexOf(urlParamArr[0]) > -1) {
                             stateDefault.sort.active.name = urlParamArr[1];
                             stateDefault.sort.active.up = urlParamArr[0] == 'sortAsc';
-                        } if (urlParamArr[0] == 'edit_item_id') {
+                        }
+
+                        if (urlParamArr[0] == 'edit_item_id') {
                             editItemId = urlParamArr[1];
+                        } else if (urlParamArr[0] == 'ad_form_show') {
+                            formIsShow = true;
                         } else {
                             stateDefault.page.filter[urlParamArr[0]] = decodeURIComponent(urlParamArr[1]);
                         }
@@ -759,6 +768,12 @@ class Admined extends React.Component {
                 callback: () => {
                     if (editItemId) {
                         this.setItemEdit(editItemId);
+                    } else if (formIsShow) {
+                        this.setState({
+                            formIsShow: true
+                        }, () => {
+                            this.historyPushState();
+                        });
                     }
 
                     this.itemsUpdateStart();

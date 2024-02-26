@@ -12,6 +12,7 @@ import Description from "../../shared/ui/form/Description";
 import { getDataValue } from "../../shared/lib/GetDataValue";
 import { nowDateTime } from "../../shared/lib/NowDateTime";
 import { UrlMetaDataApi } from "../../entities/UrlMetaData";
+import SelectCreateButton from "../../features/item/form/ui/selectCreateButton";
 
 const FormFields = (props) => {
     const [metaData, setMetaData] = useState({});
@@ -247,8 +248,14 @@ const FormFields = (props) => {
 
             return (
                 <div key={input.name + '_' + metaDataValue} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
-                    {input.type !== 'switch' &&
+                    {(input.type !== 'switch' || input.description) &&
                         <Label text={input.placeholder} />
+                    }
+                    {input?.createButton &&
+                        <SelectCreateButton
+                            inputName={input.name}
+                            options={input.createButton}
+                        />
                     }
                     <Description text={input.description} />
                     {Component(input, errorMessage, metaDataValue)}
