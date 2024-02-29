@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-export default (props) => {
+const HeaderMenu = (props) => {
     const [otherItemsUrls, setOtherItemsUrls] = useState(null);
     const [otherMenuOpen, setOtherMenuOpen] = useState(false);
 
@@ -47,7 +47,7 @@ export default (props) => {
 
     const getOtherItemsUrls = () => {
         let siteNameElem = document.querySelector('#header .siteName'),
-            minusWidth = 150;
+            minusWidth = 250;
 
         if (siteNameElem) {
             minusWidth += siteNameElem.clientWidth;
@@ -155,3 +155,5 @@ export default (props) => {
         </div>
     )
 }
+
+export default React.memo(HeaderMenu)

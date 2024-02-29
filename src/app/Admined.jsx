@@ -5,7 +5,7 @@ import './scss/index.scss';
 import './scss/layouts/preview.scss';
 
 import Login from "./layouts/login";
-import Header from "./layouts/header";
+import Header from "../widgets/header/ui/header";
 import Filter from "./layouts/filter";
 import Items from './layouts/items';
 import { ItemForm } from "../widgets/item/form/index";
