@@ -1,9 +1,11 @@
 import React from "react";
 
 const HeaderActions = (props) => {
+    const isActions = typeof props.page.actions !== 'undefined';
+
     let locationSearch = '';
 
-    if (typeof props.page.actions !== 'undefined') {
+    if (isActions) {
         if (location.search.indexOf('&') > -1) {
             locationSearch = location.search.substring(
                 location.search.indexOf('&') + 1, location.search.length
@@ -28,7 +30,7 @@ const HeaderActions = (props) => {
                 ></span>
             </div>
             <div>
-                {typeof props.page.actions !== 'undefined' &&
+                {isActions &&
                     props.page.actions.map((action, i) =>
                         <a
                             className="btn action-item"

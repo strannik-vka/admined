@@ -1,6 +1,6 @@
 import React from "react";
 
-export const ItemFormFooter = (props) => {
+export const FormFooter = (props) => {
     return (
         <div className="d-flex align-items-center footer">
             <button

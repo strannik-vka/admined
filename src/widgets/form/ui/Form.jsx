@@ -3,11 +3,11 @@ import axios from "axios";
 import FormFields from "../../../../app/components/formFields";
 import Modal from "../../../../shared/ui/Modal";
 import { ItemApi } from "../../../../entities/item";
-import { ItemFormHeader } from "./ItemFormHeader";
-import { ItemFormFooter } from "./ItemFormFooter";
+import { FormHeader } from "./FormHeader";
+import { FormFooter } from "./FormFooter";
 import ScrollTo from "../../../../shared/lib/ScrollTo";
 
-export const ItemForm = (props) => {
+export const Form = (props) => {
     const [ajaxProcess, setAjaxProcess] = useState(false);
     const [errors, setErrors] = useState(null);
     const [uploadQueueTotal, setUploadQueueTotal] = useState(0);
@@ -303,7 +303,7 @@ export const ItemForm = (props) => {
             show={props.show}
             onHide={() => props.formVisible(false)}
         >
-            <ItemFormHeader
+            <FormHeader
                 isEdit={props.editItem.id}
                 isCopy={props.copyItem.id}
             />
@@ -321,7 +321,7 @@ export const ItemForm = (props) => {
                     editItem={formData}
                 />
 
-                <ItemFormFooter
+                <FormFooter
                     onCancel={() => props.formVisible(false)}
                     isUploadQueue={getUploadQueueName()}
                     uploadQueueSuccess={uploadQueueSuccess}

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const ItemFormHeader = (props) => {
+export const FormHeader = (props) => {
     let title = props.isEdit ? 'Редактирование' : 'Добавление';
 
     if (props.isCopy) {

@@ -12,7 +12,7 @@ import Description from "../../shared/ui/form/Description";
 import { getDataValue } from "../../shared/lib/GetDataValue";
 import { nowDateTime } from "../../shared/lib/NowDateTime";
 import { UrlMetaDataApi } from "../../entities/UrlMetaData";
-import SelectCreateButton from "../../features/item/form/ui/selectCreateButton";
+import SelectCreateButton from "../../features/form/ui/SelectCreateButton";
 
 const FormFields = (props) => {
     const [metaData, setMetaData] = useState({});

@@ -1,6 +1,6 @@
 import React from "react"
-import { isObject } from "../../../../shared/lib/IsObject"
-import styles from './SelectCreateButton.module.scss'
+import { isObject } from "../../shared/lib/IsObject"
+import styles from '../../../app/scss/fetures/form/SelectCreateButton.module.scss'
 
 const SelectCreateButton = (props) => {
     let options = isObject(props.options) ? props.options : { url: false }
