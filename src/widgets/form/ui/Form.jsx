@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import FormFields from "../../../../app/components/formFields";
-import Modal from "../../../../shared/ui/Modal";
-import { ItemApi } from "../../../../entities/item";
+import FormFields from "../../../app/components/formFields";
+import Modal from "../../../shared/ui/Modal";
+import { ItemApi } from "../../../entities/item";
 import { FormHeader } from "./FormHeader";
 import { FormFooter } from "./FormFooter";
-import ScrollTo from "../../../../shared/lib/ScrollTo";
+import ScrollTo from "../../../shared/lib/ScrollTo";
 
 export const Form = (props) => {
     const [ajaxProcess, setAjaxProcess] = useState(false);

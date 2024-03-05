@@ -1,5 +1,5 @@
 import React from "react"
-import { isObject } from "../../shared/lib/IsObject"
+import { isObject } from "../../../shared/lib/IsObject"
 import styles from '../../../app/scss/fetures/form/SelectCreateButton.module.scss'
 
 const SelectCreateButton = (props) => {
