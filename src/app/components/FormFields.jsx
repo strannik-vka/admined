@@ -230,6 +230,8 @@ const FormFields = (props) => {
 
     return props.inputs.map((input, i) => {
         if (!input.readonly && input.name) {
+            input = Object.create(input);
+
             let errorMessage = null;
 
             if (props.errors && input.name) {
@@ -244,6 +246,11 @@ const FormFields = (props) => {
                 if (metaData[input.metaDataKey]) {
                     metaDataValue = metaData[input.metaDataKey];
                 }
+            }
+
+            if (props.isCreateForm && input.createMultiple) {
+                input.name += '[]';
+                input.multiple = true;
             }
 
             return (

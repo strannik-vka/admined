@@ -280,6 +280,8 @@ export const Form = (props) => {
         e.preventDefault()
     }
 
+    const isCreateForm = !props.editItem.id && !props.copyItem.id;
+
     let formData = props.editItem.id ? props.editItem : props.copyItem;
 
     if (props.copyItem.id) {
@@ -314,6 +316,7 @@ export const Form = (props) => {
                 onSubmit={ajaxProcess ? preventDefault : onSubmit}
             >
                 <FormFields
+                    isCreateForm={isCreateForm}
                     page={props.page}
                     inputs={props.page.form}
                     errors={errors !== null ? JSON.parse(errors) : null}
