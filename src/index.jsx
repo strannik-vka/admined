@@ -8,6 +8,10 @@ const AdminedDOM = ReactDOM.render(
 )
 
 window.Admined = {
+    setItemsUpdateSeconds: (...args) => {
+        AdminedDOM.setItemsUpdateSeconds(...args);
+    },
+
     page: (...args) => {
         AdminedDOM.page(...args);
     }

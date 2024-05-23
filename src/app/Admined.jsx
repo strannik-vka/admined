@@ -32,6 +32,7 @@ class Admined extends React.Component {
         this.ajaxItems = false;
         this.itemsUpdateAllow = true;
         this.itemsUpdateTimeout = false;
+        this.itemsUpdateSeconds = 5;
         this.pages = [];
         this.isMiddleware = false;
         this.lastFastEdit = {};
@@ -98,6 +99,10 @@ class Admined extends React.Component {
                 }
             }
         });
+    }
+
+    setItemsUpdateSeconds = (seconds) => {
+        this.itemsUpdateSeconds = seconds;
     }
 
     onFormChange = (event) => {
@@ -795,7 +800,7 @@ class Admined extends React.Component {
                     this.itemsUpdateStart();
                 });
             }
-        }, 5000);
+        }, this.itemsUpdateSeconds * 1000);
     }
 
     itemsUpdateSupport(callback) {
