@@ -41,7 +41,7 @@ const FormFields = (props) => {
         if (props.editItem[nameWith]) {
             let option = props.editItem[nameWith];
 
-            if (JSON.stringify(options).indexOf('"id":' + option.id + '') == -1) {
+            if (JSON.stringify(options).indexOf('"id":' + option.id + ',') === -1) {
                 options.unshift(option);
             }
         }

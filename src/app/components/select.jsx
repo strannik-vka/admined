@@ -87,7 +87,7 @@ class Select extends React.Component {
                 let propsOptions = JSON.stringify([...this.props.options, ...this.localOptions.options]);
 
                 options = options.filter(option => {
-                    return propsOptions.indexOf('"id":' + option.id + '') == -1;
+                    return propsOptions.indexOf('"id":' + option.id + ',') === -1;
                 });
 
                 this.setState({

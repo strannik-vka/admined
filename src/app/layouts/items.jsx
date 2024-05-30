@@ -40,7 +40,7 @@ class Items extends React.Component {
         if (item[nameWith]) {
             let option = item[nameWith];
 
-            if (JSON.stringify(options).indexOf('"id":' + option.id + '') == -1) {
+            if (JSON.stringify(options).indexOf('"id":' + option.id + ',') === -1) {
                 options.unshift(option);
             }
         }
