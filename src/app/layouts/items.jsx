@@ -149,7 +149,12 @@ class Items extends React.Component {
 
         if (typeof input.text_key !== 'undefined') {
             var withObj = this.with(input, item);
-            value = withObj[input.text_key];
+
+            if (withObj !== null) {
+                value = withObj[input.text_key];
+            } else {
+                value = '';
+            }
         }
 
         return <DivInput
