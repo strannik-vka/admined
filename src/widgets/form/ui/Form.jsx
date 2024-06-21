@@ -340,5 +340,4 @@ export const Form = (props) => {
             </form>
         </Modal>
     )
-
 }

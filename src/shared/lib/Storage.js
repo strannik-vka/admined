@@ -4,7 +4,11 @@ export const hasStorage = (key) => {
 
 export const storage = (key, val) => {
     if (typeof val !== 'undefined') {
-        return localStorage.setItem(key, JSON.stringify(val));
+        if (val === null) {
+            return localStorage.removeItem(key);
+        } else {
+            return localStorage.setItem(key, JSON.stringify(val));
+        }
     } else {
         let data = localStorage.getItem(key);
 

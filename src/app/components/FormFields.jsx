@@ -13,9 +13,33 @@ import { getDataValue } from "../../shared/lib/GetDataValue";
 import { nowDateTime } from "../../shared/lib/NowDateTime";
 import { UrlMetaDataApi } from "../../entities/UrlMetaData";
 import SelectCreateButton from "../../features/form/ui/SelectCreateButton";
+import SaveValueButton from "../../features/form/ui/SaveValueButton";
+import styles from '../scss/forms/FormFields.module.scss';
+import { hasStorage, storage } from "../../shared/lib/Storage";
+import { URLParam } from "../../shared/lib/URLParam";
 
 const FormFields = (props) => {
     const [metaData, setMetaData] = useState({});
+
+    const errorHide = useCallback((name) => {
+        if (props.errorHide && name) {
+            props.errorHide(name.replace('[]', ''));
+        }
+    }, []);
+
+    const onInputHandler = useCallback((event) => {
+        errorHide(event.target.name);
+
+        const inputKey = URLParam('url') + '_' + event.target.name;
+
+        if (hasStorage(inputKey)) {
+            storage(inputKey, event.target.value);
+        }
+
+        if (event?.selectedOption) {
+            storage(inputKey + '_option', event.selectedOption);
+        }
+    }, []);
 
     const switchElem = (input) => {
         let value = getValue(input);
@@ -54,7 +78,13 @@ const FormFields = (props) => {
                 text_key={input.text_key}
                 url={input.url}
                 errors={errors}
-                onChange={() => errorHide(input.name)}
+                onChange={(value, selectedOption) => onInputHandler({
+                    target: {
+                        value: value,
+                        name: input.name
+                    },
+                    selectedOption: selectedOption
+                })}
             />
         )
     }
@@ -68,16 +98,12 @@ const FormFields = (props) => {
             }
         }
 
-        const onInput = useCallback(() => {
-            errorHide(input.name)
-        }, []);
-
         return (
             <File
                 multiple={input.multiple}
                 name={name}
                 errors={errors}
-                onInput={onInput}
+                onInput={onInputHandler}
                 value={getValue(input)}
                 deleteRequest={input.deleteRequest} />
         )
@@ -88,14 +114,19 @@ const FormFields = (props) => {
             <Textarea
                 name={input.name}
                 errors={errors}
-                onInput={() => errorHide(input.name)}
+                onInput={onInputHandler}
                 value={getValue(input)}
                 max={input.max} />
         )
     }
 
     const texteditor = (input, errors) => {
-        return <TextEditor name={input.name} errors={errors} onInput={() => errorHide(input.name)} value={getValue(input)} />;
+        return <TextEditor
+            name={input.name}
+            errors={errors}
+            onInput={onInputHandler}
+            value={getValue(input)}
+        />;
     }
 
     const hidden = (input) => {
@@ -106,7 +137,7 @@ const FormFields = (props) => {
         let timeout = false;
 
         const onInput = useCallback((event) => {
-            errorHide(input.name)
+            onInputHandler(event);
 
             if (input.isMetaDataUrl) {
                 if (timeout) {
@@ -134,7 +165,14 @@ const FormFields = (props) => {
     }
 
     const datetime = (input, errors) => {
-        return <Input type={input.type} format={input.format} name={input.name} errors={errors} onInput={() => errorHide(input.name)} value={getValue(input)} />;
+        return <Input
+            type={input.type}
+            format={input.format}
+            name={input.name}
+            errors={errors}
+            onInput={onInputHandler}
+            value={getValue(input)}
+        />;
     }
 
     const _constructor = (input) => {
@@ -175,14 +213,16 @@ const FormFields = (props) => {
             }
         }
 
+        if (!value) {
+            const inputKey = URLParam('url') + '_' + input.name;
+
+            if (hasStorage(inputKey)) {
+                value = storage(inputKey);
+            }
+        }
+
         return value;
     }
-
-    const errorHide = useCallback((name) => {
-        if (props.errorHide && name) {
-            props.errorHide(name.replace('[]', ''));
-        }
-    }, []);
 
     const Component = (input, errorMessage) => {
         switch (input.type) {
@@ -253,17 +293,30 @@ const FormFields = (props) => {
                 input.multiple = true;
             }
 
+            if (typeof input.SaveValueButton === 'undefined') {
+                input.SaveValueButton = ['switch', 'select', 'text', 'datetime', 'string'].indexOf(input.type) > -1 || !input.type
+            }
+
             return (
                 <div key={input.name + '_' + metaDataValue} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
-                    {(input.type !== 'switch' || input.description) &&
-                        <Label text={input.placeholder} />
-                    }
-                    {input?.createButton &&
-                        <SelectCreateButton
-                            inputName={input.name}
-                            options={input.createButton}
-                        />
-                    }
+                    <div className={styles.labelWrap}>
+                        {(input.type !== 'switch' || input.description) &&
+                            <Label text={input.placeholder} />
+                        }
+                        <div className={styles.labelRight}>
+                            {input?.createButton &&
+                                <SelectCreateButton
+                                    inputName={input.name}
+                                    options={input.createButton}
+                                />
+                            }
+                            {input?.SaveValueButton &&
+                                <SaveValueButton
+                                    inputName={input.name}
+                                />
+                            }
+                        </div>
+                    </div>
                     <Description text={input.description} />
                     {Component(input, errorMessage, metaDataValue)}
                 </div>

@@ -16,7 +16,7 @@ const File = (props) => {
         setSelectedFiles(event.target.files);
 
         if (props.onInput) {
-            props.onInput();
+            props.onInput(event);
         }
     }, []);
 

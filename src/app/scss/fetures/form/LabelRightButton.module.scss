@@ -1,0 +1,13 @@
+.btn {
+    color: var(--ad-fill-black-color);
+    opacity: 0.2;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.5;
+    }
+
+    &.active {
+        opacity: 0.8;
+    }
+}

@@ -105,7 +105,9 @@ class TextEditor extends React.Component {
             })
         }, () => {
             if (typeof this.props.onInput === 'function') {
-                this.props.onInput();
+                this.props.onInput({
+                    target: document.querySelector('#itemsForm [name="'+ this.props.name +'"]')
+                });
             }
         });
     }

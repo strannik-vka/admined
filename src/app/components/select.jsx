@@ -3,6 +3,8 @@ import React from "react";
 import ReactSelect, { components } from 'react-select';
 import InvalidText from "../../shared/ui/form/InvalidText";
 import { isObject } from "../../shared/lib/isObject";
+import { URLParam } from "../../shared/lib/URLParam";
+import { hasStorage, storage } from "../../shared/lib/Storage";
 
 class Select extends React.Component {
 
@@ -10,6 +12,7 @@ class Select extends React.Component {
         super(props);
 
         this.localOptions = this.getLocalOptions();
+        this.storageOptions = this.getStorageOptions();
 
         this.state = {
             isLoading: false,
@@ -41,6 +44,52 @@ class Select extends React.Component {
                     }
                 }
             });
+        }
+
+        return {
+            ids: ids,
+            options: options
+        }
+    }
+
+    getStorageOptions = () => {
+        let options = [],
+            ids = [];
+
+        const inputKey = URLParam('url') + '_' + this.props.name;
+
+        if (hasStorage(inputKey + '_option')) {
+            const storageOptions = storage(inputKey + '_option');
+
+            if (Array.isArray(storageOptions)) {
+                storageOptions.forEach(storageOption => {
+                    if (isObject(storageOption)) {
+                        let localOption = {
+                            id: storageOption.value,
+                            name: storageOption.label
+                        }
+
+                        if (localOption.id && localOption.name) {
+                            ids.push(localOption.id);
+                            options.push(localOption);
+                        }
+                    }
+                })
+            } else {
+                const storageOption = storageOptions;
+
+                if (isObject(storageOption)) {
+                    let localOption = {
+                        id: storageOption.value,
+                        name: storageOption.label
+                    }
+
+                    if (localOption.id && localOption.name) {
+                        ids.push(localOption.id);
+                        options.push(localOption);
+                    }
+                }
+            }
         }
 
         return {
@@ -116,7 +165,7 @@ class Select extends React.Component {
                 }
             }
 
-            this.props.onChange(value);
+            this.props.onChange(value, selectedOption);
         } else {
             this.setState({
                 value: value
@@ -263,6 +312,16 @@ class Select extends React.Component {
 
         if (this.state.ajaxOptions) {
             options = [...this.state.ajaxOptions, ...options];
+        }
+
+        if (this.storageOptions.options.length) {
+            this.storageOptions.options.forEach(option => {
+                const findOption = options.find((item) => item.id === option.id);
+
+                if (!findOption) {
+                    options.push(option);
+                }
+            })
         }
 
         let value = this.getValue(this.props.value),

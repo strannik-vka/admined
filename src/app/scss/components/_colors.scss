@@ -79,6 +79,9 @@
 
     --ad-border-color: rgba(55, 53, 47, 0.16);
     --ad-shadow-color: rgba(15, 15, 15, 0.2);
+
+    // tooltip
+    --tooltip-bg: rgba(0, 0, 0, 0.75);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -146,5 +149,8 @@
 
         --ad-border-color: rgba(255, 255, 255, 0.13);
         --ad-shadow-color: rgba(240, 240, 240, 0.2);
+
+        // tooltip
+        --tooltip-bg: rgba(255, 255, 255, 0.75);
     }
 }
