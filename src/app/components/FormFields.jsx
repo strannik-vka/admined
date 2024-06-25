@@ -300,9 +300,7 @@ const FormFields = (props) => {
             return (
                 <div key={input.name + '_' + metaDataValue} className={'form-group mb-3' + (input.max ? ' maxLength' : '')}>
                     <div className={styles.labelWrap}>
-                        {(input.type !== 'switch' || input.description) &&
-                            <Label text={input.placeholder} />
-                        }
+                        <Label text={input.placeholder} />
                         <div className={styles.labelRight}>
                             {input?.createButton &&
                                 <SelectCreateButton
