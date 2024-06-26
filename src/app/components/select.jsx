@@ -58,7 +58,7 @@ class Select extends React.Component {
 
         const inputKey = URLParam('url') + '_' + this.props.name;
 
-        if (hasStorage(inputKey + '_option')) {
+        if (hasStorage(inputKey) && hasStorage(inputKey + '_option')) {
             const storageOptions = storage(inputKey + '_option');
 
             if (Array.isArray(storageOptions)) {
