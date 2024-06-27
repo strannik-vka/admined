@@ -138,6 +138,7 @@ class Filter extends React.Component {
                 onChange={(value) => this.props.onChange(value, key)}
                 text_key={input.text_key}
                 url={input.url}
+                optionDescription={input.optionDescription}
             />;
         } else if (input.type == 'switch') {
             result = <Select
