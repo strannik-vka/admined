@@ -21,6 +21,16 @@ class Select extends React.Component {
         }
     }
 
+    getOptionDescription = (item) => {
+        if (typeof this.props.optionDescription === 'function') {
+            return this.props.optionDescription(item);
+        } else if (typeof this.props.optionDescription === 'string') {
+            return item[this.props.optionDescription];
+        }
+
+        return null;
+    }
+
     getLocalOptions = () => {
         let options = [],
             ids = [];
@@ -37,6 +47,10 @@ class Select extends React.Component {
                     localOption.name = typeof option.name !== 'undefined' ? option.name : (
                         typeof option.title !== 'undefined' ? option.title : ''
                     )
+
+                    if (this.props.optionDescription) {
+                        localOption.description = this.getOptionDescription(option);
+                    }
 
                     if (localOption.id && localOption.name) {
                         ids.push(localOption.id);
@@ -66,7 +80,11 @@ class Select extends React.Component {
                     if (isObject(storageOption)) {
                         let localOption = {
                             id: storageOption.value,
-                            name: storageOption.label
+                            name: storageOption.label,
+                        }
+
+                        if (storageOption.description) {
+                            localOption.description = storageOption.description;
                         }
 
                         if (localOption.id && localOption.name) {
@@ -81,7 +99,11 @@ class Select extends React.Component {
                 if (isObject(storageOption)) {
                     let localOption = {
                         id: storageOption.value,
-                        name: storageOption.label
+                        name: storageOption.label,
+                    }
+
+                    if (storageOption.description) {
+                        localOption.description = storageOption.description;
                     }
 
                     if (localOption.id && localOption.name) {
@@ -275,6 +297,10 @@ class Select extends React.Component {
                     );
 
                     result.label = labelKey ? option[labelKey] : option.name
+
+                    if (this.props.optionDescription) {
+                        result.description = this.getOptionDescription(option);
+                    }
                 }
 
                 let optionDefaultValue = this.getDefaultValue(value, result);
@@ -365,7 +391,18 @@ class Select extends React.Component {
                                 <line x1="5.41421" y1="7.5" x2="10" y2="12.0858" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                             </svg>
                         </components.DropdownIndicator>
-                    )
+                    ),
+                    Option: ({ ...props }) => {
+                        return (
+                            <components.Option {...props}>
+                                {props.label}
+                                {props.data.description && <>
+                                    <br />
+                                    <small>{props.data.description}</small>
+                                </>}
+                            </components.Option>
+                        )
+                    }
                 }}
             />
             <InvalidText errors={this.props.errors} />

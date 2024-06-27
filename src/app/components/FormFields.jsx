@@ -85,6 +85,7 @@ const FormFields = (props) => {
                     },
                     selectedOption: selectedOption
                 })}
+                optionDescription={input.optionDescription}
             />
         )
     }
