@@ -360,7 +360,7 @@ class Select extends React.Component {
 
         return <>
             <ReactSelect
-                key={this.props.name + '_' + JSON.stringify(value) + '_' + JSON.stringify(formatOptions.options)}
+                key={this.props.name + '_' + JSON.stringify(value)}
                 className={'react-select-container' + (this.isErrors() ? ' is-invalid' : '')}
                 classNamePrefix="react-select"
                 placeholder={this.getPlaceholder()}
