@@ -1,7 +1,13 @@
 export const imageUrl = (url, thumb) => {
-    if (thumb && url) {
-        var name = url.split('/'),
-            name = name[name.length - 1];
+    if (url) {
+        if (url.indexOf('.svg') > -1) {
+            return url;
+        }
+
+        if (thumb) {
+            var name = url.split('/'),
+                name = name[name.length - 1];
+        }
     }
 
     return url ? (
