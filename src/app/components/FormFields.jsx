@@ -117,7 +117,8 @@ const FormFields = (props) => {
                 errors={errors}
                 onInput={onInputHandler}
                 value={getValue(input)}
-                max={input.max} />
+                max={input.max}
+                showLength={input.showLength} />
         )
     }
 

@@ -47,6 +47,8 @@ class Textarea extends React.Component {
     }
 
     render() {
+        const showLength = this.props.max || this.props.showLength;
+
         return <>
             <textarea
                 name={this.props.name}
@@ -57,11 +59,9 @@ class Textarea extends React.Component {
                 value={this.state.value}
                 maxLength={this.props.max}
             ></textarea>
-            {
-                this.props.max
-                    ? <div className="textCount">{TextCount(this.state.value)}/{this.props.max}</div>
-                    : ''
-            }
+            {showLength && (
+                <div className="textCount">{TextCount(this.state.value)}/{this.props.max}</div>
+            )}
             <InvalidText errors={this.props.errors} />
         </>;
     }

@@ -1,4 +1,4 @@
-import React from "react"
+import React from "react";
 
 const InvalidText = (props) => {
     if (props.errors) {
@@ -13,4 +13,4 @@ const InvalidText = (props) => {
     return null
 }
 
-export default InvalidText
+export default React.memo(InvalidText)
