@@ -2,7 +2,6 @@ import React from "react";
 
 import '../shared/lib/WindowFix';
 import './scss/index.scss';
-import './scss/layouts/preview.scss';
 
 import Login from "./layouts/login";
 import Header from "../widgets/header/ui/header";

@@ -8,10 +8,10 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'src/index.jsx'),
       name: 'index',
-      fileName: (format) => `index.${format}.js`
+      fileName: (format) => `index.${format}.js`,
+      formats: ['es', 'umd'],
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
       output: {
         globals: {
           react: 'React'
